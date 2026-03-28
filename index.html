@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NC XITER - Painel</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b0b0b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: linear-gradient(180deg, #0b63ff 0%, #238cff 37%, #edf1f5 37%, #edf1f5 100%);
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    .top {
+      padding: 24px 20px 18px;
+      color: #fff;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #d8d8d8;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .profile h1 {
+      font-size: 18px;
+      margin-bottom: 4px;
+      text-transform: lowercase;
+    }
+
+    .profile p {
+      font-size: 15px;
+      opacity: .95;
+    }
+
+    .top-icons {
+      display: flex;
+      gap: 14px;
+      font-size: 24px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .card {
+      background: #114fcf;
+      border-radius: 22px;
+      padding: 18px 16px;
+      min-height: 150px;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    .card .label {
+      font-size: 15px;
+      opacity: .95;
+      margin-bottom: 14px;
+    }
+
+    .card .big {
+      font-size: 60px;
+      line-height: 1;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .card .sub {
+      font-size: 14px;
+      opacity: .95;
+    }
+
+    .card .mini {
+      margin-top: 5px;
+      font-size: 18px;
+      color: #ff7a7a;
+    }
+
+    .card .mini.white {
+      color: #fff;
+    }
+
+    .go {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #2ddc51;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      box-shadow: 0 8px 18px rgba(45,220,81,.45);
+    }
+
+    .content {
+      background: #edf1f5;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      min-height: 560px;
+      padding: 20px 14px 92px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      color: #222;
+    }
+
+    .tabs span {
+      cursor: pointer;
+    }
+
+    .panel {
+      background: #fff;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+    }
+
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 14px;
+      color: #1f2937;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .field select, .field input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d7dce3;
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .key-box {
+      background: #07122b;
+      color: #00df57;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 14px;
+      word-break: break-word;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-blue {
+      background: #0b63ff;
+      color: #fff;
+    }
+
+    .btn-dark {
+      background: #07122b;
+      color: #fff;
+    }
+
+    .btn-green {
+      background: #12d44f;
+      color: #fff;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .item .code {
+      font-weight: bold;
+      color: #111827;
+      font-size: 14px;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .item .meta {
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .empty {
+      text-align: center;
+      color: #6b7280;
+      padding: 18px 10px;
+      font-size: 14px;
+    }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 82px;
+      background: #fff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #ddd;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8c8c8c;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .nav-item .icon {
+      display: block;
+      font-size: 23px;
+      margin-bottom: 4px;
+    }
+
+    .nav-item.active {
+      color: #2d5bff;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="top">
+      <div class="topbar">
+        <div class="profile">
+          <div class="avatar">N</div>
+          <div>
+            <h1>nc xiter</h1>
+            <p>Pro</p>
+          </div>
+        </div>
+        <div class="top-icons">
+          <span>⌕</span>
+          <span>⌘</span>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="label">◫ Devices</div>
+          <div class="big" id="devicesCount">0</div>
+          <div class="sub">Expired devices</div>
+          <div class="mini" id="expiredDevicesCount">0</div>
+          <div class="go">➜</div>
+        </div>
+
+        <div class="card">
+          <div class="label">⛓ Keys</div>
+          <div class="big" id="keysCount">0</div>
+          <div class="sub">Packages</div>
+          <div class="mini white">4</div>
+          <div class="go">➜</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="tabs">
+        <span onclick="showView('home')">Create key</span>
+        <span onclick="showView('validas')">Válidas</span>
+        <span onclick="showView('invalidas')">Inválidas</span>
+        <span onclick="showView('perfil')">Profile</span>
+      </div>
+
+      <div id="view-home" class="panel">
+        <h2>Criar licença</h2>
+
+        <div class="key-box" id="keyAtual">HG-TPIJUV</div>
+
+        <div class="field">
+          <label for="formato">Formato</label>
+          <select id="formato">
+            <option value="hg">HG-XXXXXX</option>
+            <option value="sem">XXXXXX</option>
+            <option value="misto">Misto</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="dias">Dias</label>
+          <select id="dias">
+            <option value="1">1 dia</option>
+            <option value="7">7 dias</option>
+            <option value="10">10 dias</option>
+            <option value="30">30 dias</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button class="btn-blue" onclick="gerarPreview()">Gerar key</button>
+          <button class="btn-dark" onclick="copiarKey()">Copiar</button>
+        </div>
+
+        <button class="btn-green" onclick="salvarKey()">Salvar key</button>
+      </div>
+
+      <div id="view-validas" class="panel hidden">
+        <h2>Licenças válidas</h2>
+        <div id="listaValidas" class="list"></div>
+      </div>
+
+      <div id="view-invalidas" class="panel hidden">
+        <h2>Licenças inválidas</h2>
+        <div id="listaInvalidas" class="list"></div>
+      </div>
+
+      <div id="view-perfil" class="panel hidden">
+        <h2>Perfil</h2>
+        <div class="item">
+          <div class="meta">
+            Nome: <strong>nc xiter</strong><br>
+            Plano: <strong>Pro</strong><br>
+            Status: <strong>Online</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="showView('home', this)">
+        <span class="icon">▦</span>Home
+      </div>
+      <div class="nav-item" onclick="showView('validas', this)">
+        <span class="icon">⛓</span>Válidas
+      </div>
+      <div class="nav-item" onclick="showView('invalidas', this)">
+        <span class="icon">▣</span>Inválidas
+      </div>
+      <div class="nav-item" onclick="showView('perfil', this)">
+        <span class="icon">◉</span>Profile
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let previewKey = "";
+
+    function letras(qtd) {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let r = "";
+      for (let i = 0; i < qtd; i++) {
+        r += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return r;
+    }
+
+    function criarKey() {
+      const formato = document.getElementById("formato").value;
+
+      if (formato === "hg") return "HG-" + letras(6);
+      if (formato === "sem") return letras(6);
+
+      return Math.random() < 0.9 ? "HG-" + letras(6) : letras(6);
+    }
+
+    function gerarPreview() {
+      previewKey = criarKey();
+      document.getElementById("keyAtual").textContent = previewKey;
+    }
+
+    function copiarKey() {
+      const key = document.getElementById("keyAtual").textContent;
+      navigator.clipboard.writeText(key).then(() => {
+        alert("Key copiada: " + key);
+      });
+    }
+
+    function getKeys() {
+      return JSON.parse(localStorage.getItem("ncx_keys") || "[]");
+    }
+
+    function setKeys(keys) {
+      localStorage.setItem("ncx_keys", JSON.stringify(keys));
+    }
+
+    function salvarKey() {
+      if (!previewKey) gerarPreview();
+
+      const dias = parseInt(document.getElementById("dias").value, 10);
+      const agora = new Date();
+      const expira = new Date();
+      expira.setDate(agora.getDate() + dias);
+
+      const keys = getKeys();
+
+      keys.push({
+        code: previewKey,
+        dias: dias,
+        criadaEm: agora.toISOString(),
+        expiraEm: expira.toISOString()
+      });
+
+      setKeys(keys);
+      atualizarTudo();
+      alert("Key salva com sucesso.");
+      gerarPreview();
+    }
+
+    function separarKeys() {
+      const agora = new Date();
+      const keys = getKeys();
+
+      const validas = [];
+      const invalidas = [];
+
+      keys.forEach(k => {
+        if (new Date(k.expiraEm) > agora) {
+          validas.push(k);
+        } else {
+          invalidas.push(k);
+        }
+      });
+
+      return { validas, invalidas };
+    }
+
+    function formatarData(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString("pt-BR");
+    }
+
+    function renderListas() {
+      const { validas, invalidas } = separarKeys();
+
+      const listaValidas = document.getElementById("listaValidas");
+      const listaInvalidas = document.getElementById("listaInvalidas");
+
+      listaValidas.innerHTML = "";
+      listaInvalidas.innerHTML = "";
+
+      if (!validas.length) {
+        listaValidas.innerHTML = '<div class="empty">Nenhuma licença válida.</div>';
+      } else {
+        validas.forEach(k => {
+          listaValidas.innerHTML += `
+            <div class="item">
+              <div class="code">${k.code}</div>
+              <div class="meta">
+                Dias: ${k.dias}<br>
+                Criada em: ${formatarData(k.criadaEm)}<br>
+                Expira em: ${formatarData(k.expiraEm)}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      if (!invalidas.length) {
+        listaInvalidas.innerHTML = '<div class="empty">Nenhuma licença inválida.</div>';
+      } else {
+        invalidas.forEach(k => {
+          listaInvalidas.innerHTML += `
+            <div class="item">
+              <div class="code">${k.code}</div>
+              <div class="meta">
+                Dias: ${k.dias}<br>
+                Criada em: ${formatarData(k.criadaEm)}<br>
+                Expirada em: ${formatarData(k.expiraEm)}
+              </div>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function atualizarCards() {
+      const { validas, invalidas } = separarKeys();
+      document.getElementById("keysCount").textContent = validas.length;
+      document.getElementById("expiredDevicesCount").textContent = invalidas.length;
+      document.getElementById("devicesCount").textContent = 0;
+    }
+
+    function atualizarTudo() {
+      renderListas();
+      atualizarCards();
+    }
+
+    function showView(view, el = null) {
+      document.getElementById("view-home").classList.add("hidden");
+      document.getElementById("view-validas").classList.add("hidden");
+      document.getElementById("view-invalidas").classList.add("hidden");
+      document.getElementById("view-perfil").classList.add("hidden");
+
+      document.getElementById("view-" + view).classList.remove("hidden");
+
+      document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+      if (el) el.classList.add("active");
+    }
+
+    gerarPreview();
+    atualizarTudo();
+  </script>
+</body>
+</html>
