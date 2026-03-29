@@ -137,7 +137,8 @@
       letter-spacing:.4px;
     }
 
-    .field input{
+    .field input,
+    .field select{
       width:100%;
       border:1px solid var(--line);
       background:#f9fafb;
@@ -148,7 +149,8 @@
       outline:none;
     }
 
-    .field input:focus{
+    .field input:focus,
+    .field select:focus{
       border-color:#93c5fd;
       box-shadow:0 0 0 4px rgba(59,130,246,.10);
     }
@@ -173,6 +175,12 @@
     .btn-dark{
       background:#111827;
       color:#fff;
+    }
+
+    .btn-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
     }
 
     .error-box{
@@ -418,6 +426,36 @@
       word-break:break-word;
     }
 
+    .user-list{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .user-item{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .user-item strong{
+      display:block;
+      font-size:14px;
+      color:#111827;
+      margin-bottom:6px;
+      text-transform:uppercase;
+    }
+
+    .user-item span{
+      display:block;
+      font-size:12px;
+      color:#6b7280;
+      text-transform:uppercase;
+      line-height:1.5;
+      word-break:break-word;
+    }
+
     .bottom-nav{
       position:absolute;
       left:0;
@@ -493,7 +531,7 @@
         <div class="top">
           <div class="topbar">
             <div class="brand">
-              <div class="avatar">D</div>
+              <div class="avatar" id="mainAvatar">D</div>
               <div class="brand-text">
                 <h2>Development</h2>
                 <p>Painel administrativo</p>
@@ -557,6 +595,7 @@
     const logoutBtn = document.getElementById("logoutBtn");
     const tabContent = document.getElementById("tabContent");
     const tabButtons = document.querySelectorAll(".tab-btn");
+    const mainAvatar = document.getElementById("mainAvatar");
 
     let currentUser = null;
 
@@ -596,22 +635,59 @@
       `,
       dev: `
         <div class="panel-title">DEV</div>
-        <div class="profile-grid">
-          <div class="mini-box">
-            <small>Usuário</small>
-            <strong id="devUserValue">-</strong>
+
+        <div class="panel-card">
+          <h3>Criar usuário</h3>
+
+          <div class="field">
+            <label for="newUser">Usuário</label>
+            <input id="newUser" placeholder="Digite o usuário">
           </div>
-          <div class="mini-box">
-            <small>Tipo</small>
-            <strong id="devTypeValue">DEV</strong>
+
+          <div class="field">
+            <label for="newPass">Senha</label>
+            <input id="newPass" placeholder="Digite a senha">
           </div>
-          <div class="mini-box">
-            <small>Status</small>
-            <strong>ONLINE</strong>
+
+          <div class="field">
+            <label for="newType">Tipo</label>
+            <select id="newType">
+              <option value="HG">HG</option>
+              <option value="DRIP">DRIP</option>
+              <option value="MISTO">MISTO</option>
+            </select>
           </div>
-          <div class="mini-box">
-            <small>Banco</small>
-            <strong>SUPABASE</strong>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="criarUsuario()">Criar</button>
+            <button class="btn btn-dark" onclick="carregarUsuarios()">Atualizar</button>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <h3>Usuários do banco</h3>
+          <div id="listaUsers" class="user-list">Carregando...</div>
+        </div>
+
+        <div class="panel-card">
+          <h3>Perfil DEV</h3>
+          <div class="profile-grid">
+            <div class="mini-box">
+              <small>Usuário</small>
+              <strong id="devUserValue">-</strong>
+            </div>
+            <div class="mini-box">
+              <small>Tipo</small>
+              <strong id="devTypeValue">DEV</strong>
+            </div>
+            <div class="mini-box">
+              <small>Status</small>
+              <strong>ONLINE</strong>
+            </div>
+            <div class="mini-box">
+              <small>Banco</small>
+              <strong>SUPABASE</strong>
+            </div>
           </div>
         </div>
       `
@@ -634,8 +710,12 @@
 
       tabContent.innerHTML = tabViews[tabName];
 
-      if (tabName === "dev" && currentUser) {
-        document.getElementById("devUserValue").textContent = currentUser.username || "-";
+      if (tabName === "dev") {
+        if (currentUser) {
+          const devUserValue = document.getElementById("devUserValue");
+          if (devUserValue) devUserValue.textContent = currentUser.username || "-";
+        }
+        setTimeout(carregarUsuarios, 100);
       }
     }
 
@@ -675,9 +755,70 @@
       }
 
       currentUser = data;
+      mainAvatar.textContent = currentUser.username ? currentUser.username[0].toUpperCase() : "D";
       loginScreen.classList.add("hidden");
       panelScreen.classList.remove("hidden");
       setTab("hg");
+    }
+
+    async function criarUsuario(){
+      const username = document.getElementById("newUser")?.value.trim();
+      const password = document.getElementById("newPass")?.value.trim();
+      const type = document.getElementById("newType")?.value;
+
+      if(!username || !password){
+        alert("PREENCHA TUDO");
+        return;
+      }
+
+      const { error } = await db.from("users").insert([
+        {
+          username,
+          password,
+          type
+        }
+      ]);
+
+      if(error){
+        alert("ERRO: " + error.message);
+        return;
+      }
+
+      alert("USUÁRIO CRIADO!");
+      document.getElementById("newUser").value = "";
+      document.getElementById("newPass").value = "";
+      document.getElementById("newType").value = "HG";
+      carregarUsuarios();
+    }
+
+    async function carregarUsuarios(){
+      const lista = document.getElementById("listaUsers");
+      if (!lista) return;
+
+      lista.innerHTML = "Carregando...";
+
+      const { data, error } = await db
+        .from("users")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if(error){
+        lista.innerHTML = "<div class='user-item'><span>Erro ao carregar</span></div>";
+        return;
+      }
+
+      if(!data || !data.length){
+        lista.innerHTML = "<div class='user-item'><span>Nenhum usuário</span></div>";
+        return;
+      }
+
+      lista.innerHTML = data.map(u => `
+        <div class="user-item">
+          <strong>${u.username}</strong>
+          <span>TIPO: ${u.type || "NÃO DEFINIDO"}</span>
+          <span>SENHA: ${u.password || "-"}</span>
+        </div>
+      `).join("");
     }
 
     function logoutDev(){
