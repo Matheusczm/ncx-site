@@ -9,16 +9,19 @@
     :root{
       --bg1:#07101f;
       --bg2:#0c1630;
-      --login1:#2563eb;
-      --login2:#3b82f6;
+      --theme1:#2563eb;
+      --theme2:#3b82f6;
+      --soft:#dbeafe;
       --card:#ffffff;
       --text:#111827;
       --muted:#6b7280;
       --line:#e5e7eb;
       --shadow:0 24px 60px rgba(0,0,0,.22);
-      --soft:#dbeafe;
       --glass:rgba(255,255,255,.18);
       --glassBorder:rgba(255,255,255,.22);
+      --danger:#ef4444;
+      --success:#22c55e;
+      --warning:#f59e0b;
     }
 
     *{
@@ -49,7 +52,7 @@
       position:relative;
     }
 
-    @media (min-width: 431px){
+    @media (min-width:431px){
       body{ padding:18px; }
       .app{
         width:min(100vw - 24px, 430px);
@@ -63,8 +66,9 @@
     .base-bg{
       position:absolute;
       inset:0;
-      background:linear-gradient(180deg,var(--login1) 0%, var(--login2) 42%, #f8fafc 42%, #f8fafc 100%);
+      background:linear-gradient(180deg,var(--theme1) 0%, var(--theme2) 42%, #f8fafc 42%, #f8fafc 100%);
       z-index:1;
+      transition:background .25s ease;
     }
 
     .screen{
@@ -96,7 +100,7 @@
       width:84px;
       height:84px;
       border-radius:50%;
-      background:linear-gradient(180deg,var(--login1),var(--login2));
+      background:linear-gradient(180deg,var(--theme1),var(--theme2));
       display:flex;
       align-items:center;
       justify-content:center;
@@ -123,9 +127,7 @@
       margin-bottom:18px;
     }
 
-    .field{
-      margin-bottom:14px;
-    }
+    .field{ margin-bottom:14px; }
 
     .field label{
       display:block;
@@ -167,7 +169,7 @@
     }
 
     .btn-primary{
-      background:linear-gradient(180deg,var(--login1),var(--login2));
+      background:linear-gradient(180deg,var(--theme1),var(--theme2));
       color:#fff;
       box-shadow:0 12px 26px rgba(37,99,235,.22);
     }
@@ -283,6 +285,20 @@
       letter-spacing:.4px;
     }
 
+    .warning{
+      background:#fff7ed;
+      color:#9a3412;
+      border:1px solid #fdba74;
+      border-radius:14px;
+      padding:10px 12px;
+      margin-bottom:12px;
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      line-height:1.5;
+      display:none;
+    }
+
     .stats{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -332,7 +348,6 @@
 
     .tabs{
       display:grid;
-      grid-template-columns:repeat(4,1fr);
       gap:8px;
       margin-bottom:16px;
     }
@@ -351,7 +366,7 @@
 
     .tabs button.active{
       background:var(--soft);
-      color:var(--login1);
+      color:var(--theme1);
     }
 
     .panel{
@@ -487,26 +502,26 @@
     }
 
     .nav-item.active{
-      color:var(--login1);
+      color:var(--theme1);
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="base-bg"></div>
+    <div class="base-bg" id="baseBg"></div>
 
     <div class="screen" id="loginScreen">
       <div class="login-screen">
         <div class="login-card">
-          <div class="logo">D</div>
-          <h1>Dev Login</h1>
+          <div class="logo" id="loginLogo">D</div>
+          <h1>Login</h1>
           <div class="subtitle">Acesso do painel principal.</div>
 
           <div class="error-box" id="loginError"></div>
 
           <div class="field">
             <label for="username">Usuário</label>
-            <input id="username" type="text" placeholder="dev">
+            <input id="username" type="text" placeholder="Digite seu usuário">
           </div>
 
           <div class="field">
@@ -517,10 +532,9 @@
           <button class="btn btn-primary" id="loginBtn">Entrar</button>
 
           <div class="hint">
-            Login apenas do DEV por enquanto.<br>
-            Conta esperada no banco:<br>
-            usuário: dev<br>
-            senha: dev123
+            Login pelo Supabase.<br>
+            DEV vê tudo.<br>
+            HG/DRIP/MISTO entram direto no próprio painel.
           </div>
         </div>
       </div>
@@ -533,51 +547,36 @@
             <div class="brand">
               <div class="avatar" id="mainAvatar">D</div>
               <div class="brand-text">
-                <h2>Development</h2>
-                <p>Painel administrativo</p>
+                <h2 id="mainTitle">Development</h2>
+                <p id="mainSubtitle">Painel administrativo</p>
               </div>
             </div>
             <button class="logout-btn" id="logoutBtn">Sair</button>
           </div>
 
-          <div class="banner">Modo desenvolvedor • 4 painéis visíveis • só DEV ativo</div>
+          <div class="banner" id="mainBanner">Modo desenvolvedor • painel principal</div>
+          <div class="warning" id="mainWarning"></div>
 
           <div class="stats">
             <div class="stat">
               <div class="label">Sessão</div>
               <div class="value">ON</div>
-              <div class="sub">Status atual</div>
+              <div class="sub" id="sessionTypeText">Status atual</div>
             </div>
             <div class="stat">
               <div class="label">Painéis</div>
-              <div class="value">4</div>
-              <div class="sub">HG, DRIP, MISTO, DEV</div>
+              <div class="value" id="panelsCount">4</div>
+              <div class="sub" id="panelsLabel">HG, DRIP, MISTO, DEV</div>
             </div>
           </div>
         </div>
 
         <div class="main">
-          <div class="tabs">
-            <button class="tab-btn active" data-tab="hg">HG</button>
-            <button class="tab-btn" data-tab="drip">DRIP</button>
-            <button class="tab-btn" data-tab="misto">MISTO</button>
-            <button class="tab-btn" data-tab="dev">DEV</button>
-          </div>
-
+          <div class="tabs" id="tabsContainer"></div>
           <div class="panel" id="tabContent"></div>
         </div>
 
-        <div class="bottom-nav">
-          <div class="nav-item active">
-            <span class="icon">◉</span>Painel
-          </div>
-          <div class="nav-item">
-            <span class="icon">☰</span>Menu
-          </div>
-          <div class="nav-item">
-            <span class="icon">⚙</span>Dev
-          </div>
-        </div>
+        <div class="bottom-nav" id="bottomNav"></div>
       </div>
     </div>
   </div>
@@ -585,55 +584,146 @@
   <script>
     const SUPABASE_URL = "https://iwhldffataeqmpntprvk.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wYhrdDe0bM-H3QqmcMwXRQ_RGb_u5ok";
-
     const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const TYPE_THEMES = {
+      DEV: { c1:"#f59e0b", c2:"#fbbf24", soft:"#fef3c7", title:"Development", subtitle:"Painel administrativo", banner:"Modo desenvolvedor • painel principal", panels:4, logo:"D" },
+      HG: { c1:"#d62828", c2:"#ef4444", soft:"#fee2e2", title:"HG Menu", subtitle:"Painel do cliente", banner:"Acesso HG ativo", panels:1, logo:"H" },
+      DRIP: { c1:"#6d28d9", c2:"#8b5cf6", soft:"#ede9fe", title:"DRIP Menu", subtitle:"Painel do cliente", banner:"Acesso DRIP ativo", panels:1, logo:"D" },
+      MISTO: { c1:"#d81b60", c2:"#8e24aa", soft:"#fce7f3", title:"MISTO Menu", subtitle:"Painel do cliente", banner:"Acesso MISTO ativo", panels:1, logo:"M" }
+    };
 
     const loginScreen = document.getElementById("loginScreen");
     const panelScreen = document.getElementById("panelScreen");
     const loginError = document.getElementById("loginError");
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
-    const tabContent = document.getElementById("tabContent");
-    const tabButtons = document.querySelectorAll(".tab-btn");
     const mainAvatar = document.getElementById("mainAvatar");
+    const baseBg = document.getElementById("baseBg");
+    const tabsContainer = document.getElementById("tabsContainer");
+    const bottomNav = document.getElementById("bottomNav");
+    const tabContent = document.getElementById("tabContent");
 
     let currentUser = null;
+    let currentTab = "hg";
 
-    const tabViews = {
-      hg: `
-        <div class="panel-title">HG</div>
-        <div class="panel-card">
-          <h3>HG Menu</h3>
-          <p>Preview do painel HG. Essa área fica pronta para ligar depois com banco, validade, contas e funções reais.</p>
+    function showError(msg){
+      loginError.style.display = "block";
+      loginError.textContent = msg;
+    }
+
+    function clearError(){
+      loginError.style.display = "none";
+      loginError.textContent = "";
+    }
+
+    async function sha256(text) {
+      const data = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    function formatDateBr(dateValue){
+      if (!dateValue) return "NÃO DEFINIDA";
+      return new Date(dateValue).toLocaleString("pt-BR");
+    }
+
+    function isExpired(expiresAt){
+      if (!expiresAt) return false;
+      return new Date(expiresAt) <= new Date();
+    }
+
+    function applyTheme(type){
+      const theme = TYPE_THEMES[type] || TYPE_THEMES.DEV;
+      document.documentElement.style.setProperty("--theme1", theme.c1);
+      document.documentElement.style.setProperty("--theme2", theme.c2);
+      document.documentElement.style.setProperty("--soft", theme.soft);
+      baseBg.style.background = `linear-gradient(180deg, ${theme.c1} 0%, ${theme.c2} 42%, #f8fafc 42%, #f8fafc 100%)`;
+      document.getElementById("loginLogo").textContent = theme.logo;
+      document.getElementById("mainTitle").textContent = theme.title;
+      document.getElementById("mainSubtitle").textContent = theme.subtitle;
+      document.getElementById("mainBanner").textContent = theme.banner;
+      document.getElementById("panelsCount").textContent = theme.panels;
+      document.getElementById("panelsLabel").textContent = type === "DEV" ? "HG, DRIP, MISTO, DEV" : `${type} VISÍVEL`;
+      document.getElementById("sessionTypeText").textContent = `TIPO ${type}`;
+    }
+
+    function getAllowedTabs(type){
+      if (type === "DEV") {
+        return [
+          { key:"hg", label:"HG", icon:"H" },
+          { key:"drip", label:"DRIP", icon:"D" },
+          { key:"misto", label:"MISTO", icon:"M" },
+          { key:"dev", label:"DEV", icon:"⚙" }
+        ];
+      }
+      if (type === "HG") return [{ key:"hg", label:"HG", icon:"H" }];
+      if (type === "DRIP") return [{ key:"drip", label:"DRIP", icon:"D" }];
+      if (type === "MISTO") return [{ key:"misto", label:"MISTO", icon:"M" }];
+      return [{ key:"hg", label:"HG", icon:"H" }];
+    }
+
+    function buildTabsForType(type){
+      const tabs = getAllowedTabs(type);
+      tabsContainer.style.gridTemplateColumns = `repeat(${tabs.length},1fr)`;
+      tabsContainer.innerHTML = tabs.map(tab => `
+        <button class="${tab.key === currentTab ? 'active' : ''}" onclick="setTab('${tab.key}')">${tab.label}</button>
+      `).join("");
+
+      bottomNav.innerHTML = tabs.map(tab => `
+        <div class="nav-item ${tab.key === currentTab ? 'active' : ''}" onclick="setTab('${tab.key}')">
+          <span class="icon">${tab.icon}</span>${tab.label}
         </div>
-        <div class="panel-card">
-          <h3>Status</h3>
-          <p>Modo teste ativo.</p>
-        </div>
-      `,
-      drip: `
-        <div class="panel-title">DRIP</div>
-        <div class="panel-card">
-          <h3>DRIP Menu</h3>
-          <p>Preview do painel DRIP. Essa área fica pronta para ligar depois com banco, validade, contas e funções reais.</p>
-        </div>
-        <div class="panel-card">
-          <h3>Status</h3>
-          <p>Modo teste ativo.</p>
-        </div>
-      `,
-      misto: `
-        <div class="panel-title">MISTO</div>
-        <div class="panel-card">
-          <h3>MISTO Menu</h3>
-          <p>Preview do painel misto. Essa área fica pronta para ligar depois com banco, troca de gerador e funções reais.</p>
-        </div>
-        <div class="panel-card">
-          <h3>Status</h3>
-          <p>Modo teste ativo.</p>
-        </div>
-      `,
-      dev: `
+      `).join("");
+    }
+
+    function getPanelHtml(tabName){
+      const commonType = currentUser?.type || "DEV";
+
+      if (tabName === "hg") {
+        return `
+          <div class="panel-title">HG</div>
+          <div class="panel-card">
+            <h3>HG MENU</h3>
+            <p>PAINEL HG ATIVO.</p>
+          </div>
+          <div class="panel-card">
+            <h3>STATUS</h3>
+            <p>USUÁRIO: ${currentUser.username}<br>TIPO: ${commonType}</p>
+          </div>
+        `;
+      }
+
+      if (tabName === "drip") {
+        return `
+          <div class="panel-title">DRIP</div>
+          <div class="panel-card">
+            <h3>DRIP MENU</h3>
+            <p>PAINEL DRIP ATIVO.</p>
+          </div>
+          <div class="panel-card">
+            <h3>STATUS</h3>
+            <p>USUÁRIO: ${currentUser.username}<br>TIPO: ${commonType}</p>
+          </div>
+        `;
+      }
+
+      if (tabName === "misto") {
+        return `
+          <div class="panel-title">MISTO</div>
+          <div class="panel-card">
+            <h3>MISTO MENU</h3>
+            <p>PAINEL MISTO ATIVO.</p>
+          </div>
+          <div class="panel-card">
+            <h3>STATUS</h3>
+            <p>USUÁRIO: ${currentUser.username}<br>TIPO: ${commonType}</p>
+          </div>
+        `;
+      }
+
+      return `
         <div class="panel-title">DEV</div>
 
         <div class="panel-card">
@@ -646,7 +736,7 @@
 
           <div class="field">
             <label for="newPass">Senha</label>
-            <input id="newPass" placeholder="Digite a senha">
+            <input id="newPass" type="password" placeholder="Digite a senha">
           </div>
 
           <div class="field">
@@ -655,6 +745,17 @@
               <option value="HG">HG</option>
               <option value="DRIP">DRIP</option>
               <option value="MISTO">MISTO</option>
+              <option value="DEV">DEV</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="newValidity">Validade</label>
+            <select id="newValidity">
+              <option value="1">1 DIA</option>
+              <option value="7">7 DIAS</option>
+              <option value="30">30 DIAS</option>
+              <option value="permanente">PERMANENTE</option>
             </select>
           </div>
 
@@ -674,11 +775,11 @@
           <div class="profile-grid">
             <div class="mini-box">
               <small>Usuário</small>
-              <strong id="devUserValue">-</strong>
+              <strong>${currentUser.username}</strong>
             </div>
             <div class="mini-box">
               <small>Tipo</small>
-              <strong id="devTypeValue">DEV</strong>
+              <strong>${currentUser.type}</strong>
             </div>
             <div class="mini-box">
               <small>Status</small>
@@ -690,36 +791,31 @@
             </div>
           </div>
         </div>
-      `
-    };
-
-    function showError(msg){
-      loginError.style.display = "block";
-      loginError.textContent = msg;
-    }
-
-    function clearError(){
-      loginError.style.display = "none";
-      loginError.textContent = "";
+      `;
     }
 
     function setTab(tabName){
-      tabButtons.forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.tab === tabName);
-      });
-
-      tabContent.innerHTML = tabViews[tabName];
-
-      if (tabName === "dev") {
-        if (currentUser) {
-          const devUserValue = document.getElementById("devUserValue");
-          if (devUserValue) devUserValue.textContent = currentUser.username || "-";
-        }
+      currentTab = tabName;
+      buildTabsForType(currentUser.type);
+      tabContent.innerHTML = getPanelHtml(tabName);
+      if (tabName === "dev" && currentUser.type === "DEV") {
         setTimeout(carregarUsuarios, 100);
       }
     }
 
-    async function loginDev(){
+    function showWarning(msg){
+      const el = document.getElementById("mainWarning");
+      el.style.display = "block";
+      el.textContent = msg;
+    }
+
+    function clearWarning(){
+      const el = document.getElementById("mainWarning");
+      el.style.display = "none";
+      el.textContent = "";
+    }
+
+    async function loginUser(){
       clearError();
 
       const username = document.getElementById("username").value.trim().toLowerCase();
@@ -737,8 +833,6 @@
         .from("users")
         .select("*")
         .eq("username", username)
-        .eq("password", password)
-        .eq("type", "DEV")
         .maybeSingle();
 
       loginBtn.disabled = false;
@@ -754,32 +848,75 @@
         return;
       }
 
+      const inputHash = await sha256(password);
+      const legacyOk = data.password && data.password === password;
+      const hashOk = data.password_hash && data.password_hash === inputHash;
+
+      if (!legacyOk && !hashOk) {
+        showError("LOGIN INVÁLIDO");
+        return;
+      }
+
+      if (isExpired(data.expires_at)) {
+        showError("ACESSO EXPIRADO");
+        return;
+      }
+
       currentUser = data;
-      mainAvatar.textContent = currentUser.username ? currentUser.username[0].toUpperCase() : "D";
+      mainAvatar.textContent = currentUser.username ? currentUser.username[0].toUpperCase() : "U";
+
+      applyTheme(currentUser.type || "DEV");
+      clearWarning();
+
+      if (currentUser.expires_at) {
+        showWarning(`VALIDADE ATÉ ${formatDateBr(currentUser.expires_at)}`);
+      }
+
       loginScreen.classList.add("hidden");
       panelScreen.classList.remove("hidden");
-      setTab("hg");
+
+      currentTab = currentUser.type === "DEV"
+        ? "dev"
+        : currentUser.type === "HG"
+          ? "hg"
+          : currentUser.type === "DRIP"
+            ? "drip"
+            : "misto";
+
+      setTab(currentTab);
     }
 
     async function criarUsuario(){
       const username = document.getElementById("newUser")?.value.trim();
       const password = document.getElementById("newPass")?.value.trim();
       const type = document.getElementById("newType")?.value;
+      const validity = document.getElementById("newValidity")?.value;
 
-      if(!username || !password){
+      if (!username || !password) {
         alert("PREENCHA TUDO");
         return;
+      }
+
+      const password_hash = await sha256(password);
+
+      let expires_at = null;
+      if (validity !== "permanente") {
+        const date = new Date();
+        date.setDate(date.getDate() + parseInt(validity, 10));
+        expires_at = date.toISOString();
       }
 
       const { error } = await db.from("users").insert([
         {
           username,
-          password,
-          type
+          password: null,
+          password_hash,
+          type,
+          expires_at
         }
       ]);
 
-      if(error){
+      if (error) {
         alert("ERRO: " + error.message);
         return;
       }
@@ -788,6 +925,7 @@
       document.getElementById("newUser").value = "";
       document.getElementById("newPass").value = "";
       document.getElementById("newType").value = "HG";
+      document.getElementById("newValidity").value = "1";
       carregarUsuarios();
     }
 
@@ -802,47 +940,51 @@
         .select("*")
         .order("created_at", { ascending: false });
 
-      if(error){
-        lista.innerHTML = "<div class='user-item'><span>Erro ao carregar</span></div>";
+      if (error) {
+        lista.innerHTML = "<div class='user-item'><span>ERRO AO CARREGAR</span></div>";
         return;
       }
 
-      if(!data || !data.length){
-        lista.innerHTML = "<div class='user-item'><span>Nenhum usuário</span></div>";
+      if (!data || !data.length) {
+        lista.innerHTML = "<div class='user-item'><span>NENHUM USUÁRIO</span></div>";
         return;
       }
 
-      lista.innerHTML = data.map(u => `
-        <div class="user-item">
-          <strong>${u.username}</strong>
-          <span>TIPO: ${u.type || "NÃO DEFINIDO"}</span>
-          <span>SENHA: ${u.password || "-"}</span>
-        </div>
-      `).join("");
+      lista.innerHTML = data.map(u => {
+        const expired = isExpired(u.expires_at);
+        return `
+          <div class="user-item">
+            <strong>${u.username}</strong>
+            <span>TIPO: ${u.type || "NÃO DEFINIDO"}</span>
+            <span>SENHA: •••••••</span>
+            <span>VALIDADE: ${u.expires_at ? formatDateBr(u.expires_at) : "PERMANENTE"}</span>
+            <span>STATUS: ${expired ? "EXPIRADO" : "ATIVO"}</span>
+          </div>
+        `;
+      }).join("");
     }
 
-    function logoutDev(){
+    function logoutUser(){
       currentUser = null;
       panelScreen.classList.add("hidden");
       loginScreen.classList.remove("hidden");
       document.getElementById("password").value = "";
+      document.getElementById("username").value = "";
       clearError();
+      clearWarning();
+      applyTheme("DEV");
     }
 
-    loginBtn.addEventListener("click", loginDev);
-    logoutBtn.addEventListener("click", logoutDev);
+    loginBtn.addEventListener("click", loginUser);
+    logoutBtn.addEventListener("click", logoutUser);
 
     document.getElementById("username").addEventListener("keydown", e => {
-      if (e.key === "Enter") loginDev();
+      if (e.key === "Enter") loginUser();
     });
 
     document.getElementById("password").addEventListener("keydown", e => {
-      if (e.key === "Enter") loginDev();
-    });
-
-    tabButtons.forEach(btn => {
-      btn.addEventListener("click", () => setTab(btn.dataset.tab));
+      if (e.key === "Enter") loginUser();
     });
   </script>
 </body>
-</html>
+  </html>
