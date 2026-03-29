@@ -9,16 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --blue1:#1f55f0;
-      --blue2:#2f74ff;
-      --blue3:#4c95ff;
+      --c1:#d62828;
+      --c2:#ef4444;
+      --c3:#f87171;
       --bg:#eef3f8;
       --panel:#ffffff;
       --text:#111827;
       --muted:#6b7280;
       --green:#22c55e;
       --green2:#16a34a;
-      --danger:#ef4444;
       --dark:#06142f;
       --line:#dbe4ee;
       --shadow:0 24px 60px rgba(0,0,0,.28);
@@ -28,13 +27,13 @@
       margin:0;
       padding:0;
       box-sizing:border-box;
-      -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color:transparent;
       font-family:"Inter",sans-serif;
     }
 
     body{
       background:
-        radial-gradient(circle at top, rgba(54,133,255,.18), transparent 30%),
+        radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),
         linear-gradient(180deg,#07101f 0%, #0c1630 100%);
       min-height:100vh;
       display:flex;
@@ -47,11 +46,129 @@
       width:390px;
       max-width:100%;
       min-height:100vh;
-      background:linear-gradient(180deg,var(--blue1) 0%, var(--blue2) 18%, var(--blue3) 34%, var(--bg) 34%, var(--bg) 100%);
+      background:linear-gradient(180deg,var(--c1) 0%, var(--c2) 18%, var(--c3) 34%, var(--bg) 34%, var(--bg) 100%);
       border-radius:32px;
       overflow:hidden;
       box-shadow:var(--shadow);
       position:relative;
+    }
+
+    .hidden{ display:none !important; }
+
+    .screen{
+      min-height:100vh;
+    }
+
+    .login-screen{
+      padding:26px 22px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:18px;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,.08), transparent 28%),
+        linear-gradient(180deg,var(--c1) 0%, var(--c2) 45%, #edf2f7 45%, #edf2f7 100%);
+    }
+
+    .login-card{
+      background:rgba(255,255,255,.96);
+      border-radius:28px;
+      padding:22px;
+      box-shadow:0 20px 50px rgba(0,0,0,.14);
+    }
+
+    .login-logo{
+      width:72px;
+      height:72px;
+      border-radius:22px;
+      background:linear-gradient(180deg,var(--c1),var(--c2));
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:800;
+      margin-bottom:16px;
+    }
+
+    .login-card h1{
+      font-size:28px;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:8px;
+    }
+
+    .login-card p{
+      color:#6b7280;
+      font-size:14px;
+      margin-bottom:18px;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    .field label{
+      display:block;
+      font-size:14px;
+      font-weight:700;
+      color:#1f2937;
+      margin-bottom:8px;
+    }
+
+    .field input,
+    .field select{
+      width:100%;
+      border:1px solid var(--line);
+      background:#f9fbff;
+      border-radius:16px;
+      padding:15px 14px;
+      font-size:15px;
+      color:#111827;
+      outline:none;
+    }
+
+    .field input:focus,
+    .field select:focus{
+      border-color:#fca5a5;
+      box-shadow:0 0 0 4px rgba(239,68,68,.10);
+    }
+
+    .login-btn,
+    button{
+      border:none;
+      border-radius:18px;
+      padding:15px 16px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .login-btn{
+      width:100%;
+      background:linear-gradient(180deg,var(--c1),var(--c2));
+      color:#fff;
+      box-shadow:0 12px 26px rgba(220,38,38,.24);
+      margin-top:4px;
+    }
+
+    .login-hint{
+      margin-top:14px;
+      font-size:12px;
+      line-height:1.6;
+      color:#6b7280;
+    }
+
+    .error-box{
+      background:#fef2f2;
+      color:#b91c1c;
+      border:1px solid #fecaca;
+      border-radius:14px;
+      padding:12px 14px;
+      font-size:13px;
+      margin-bottom:14px;
+      display:none;
     }
 
     .top{
@@ -93,6 +210,7 @@
       font-weight:800;
       line-height:1.1;
       margin-bottom:4px;
+      text-transform:lowercase;
     }
 
     .brand-text p{
@@ -106,12 +224,23 @@
       gap:14px;
       font-size:22px;
       flex-shrink:0;
+      align-items:center;
+    }
+
+    .logout-btn{
+      background:rgba(255,255,255,.16);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:12px;
+      padding:8px 10px;
+      font-size:12px;
+      font-weight:700;
     }
 
     .search-bar{
       background:rgba(255,255,255,.16);
       border:1px solid rgba(255,255,255,.14);
-      backdrop-filter: blur(10px);
+      backdrop-filter:blur(10px);
       border-radius:18px;
       padding:12px 14px;
       display:flex;
@@ -140,7 +269,7 @@
     }
 
     .card{
-      background:linear-gradient(180deg, rgba(31,63,181,.92), rgba(28,83,217,.88));
+      background:linear-gradient(180deg, rgba(80,10,10,.35), rgba(0,0,0,.10));
       border-radius:24px;
       padding:18px;
       min-height:165px;
@@ -172,7 +301,7 @@
       margin-top:6px;
       font-size:18px;
       font-weight:700;
-      color:#fca5a5;
+      color:#fecaca;
     }
 
     .card .mini.white{
@@ -222,8 +351,8 @@
     }
 
     .tabs span.active-tab{
-      background:#dfe9f8;
-      color:var(--blue1);
+      background:#fde2e2;
+      color:var(--c1);
     }
 
     .panel{
@@ -232,10 +361,6 @@
       padding:18px;
       box-shadow:0 18px 45px rgba(15,23,42,.07);
       border:1px solid rgba(15,23,42,.04);
-    }
-
-    .hidden{
-      display:none;
     }
 
     .panel-title{
@@ -258,36 +383,6 @@
       word-break:break-word;
     }
 
-    .field{
-      margin-bottom:14px;
-    }
-
-    .field label{
-      display:block;
-      font-size:14px;
-      font-weight:700;
-      color:#1f2937;
-      margin-bottom:8px;
-    }
-
-    .field select,
-    .field input{
-      width:100%;
-      border:1px solid var(--line);
-      background:#f9fbff;
-      border-radius:16px;
-      padding:15px 14px;
-      font-size:15px;
-      color:#111827;
-      outline:none;
-    }
-
-    .field select:focus,
-    .field input:focus{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 4px rgba(59,130,246,.10);
-    }
-
     .btn-row{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -295,19 +390,10 @@
       margin-top:6px;
     }
 
-    button{
-      border:none;
-      border-radius:18px;
-      padding:15px 16px;
-      font-size:15px;
-      font-weight:800;
-      cursor:pointer;
-    }
-
     .btn-primary{
-      background:linear-gradient(180deg,#2670ff,#1d4ed8);
+      background:linear-gradient(180deg,var(--c1),var(--c2));
       color:#fff;
-      box-shadow:0 12px 26px rgba(37,99,235,.24);
+      box-shadow:0 12px 26px rgba(220,38,38,.24);
     }
 
     .btn-dark{
@@ -403,147 +489,197 @@
     }
 
     .nav-item.active{
-      color:var(--blue1);
+      color:var(--c1);
     }
 
     @media (max-width:430px){
-      body{
-        padding:0;
-      }
-      .phone{
-        width:100%;
-        border-radius:0;
-      }
+      body{ padding:0; }
+      .phone{ width:100%; border-radius:0; }
     }
   </style>
 </head>
 <body>
   <div class="phone">
-    <div class="top">
-      <div class="topbar">
-        <div class="brand">
-          <div class="avatar">K</div>
-          <div class="brand-text">
-            <h1>Key Manager</h1>
-            <p>Premium</p>
+    <div id="loginScreen" class="screen login-screen">
+      <div class="login-card">
+        <div class="login-logo" id="loginLogo">K</div>
+        <h1 id="loginTitle">Key Manager</h1>
+        <p>Entre com seu usuário e senha para acessar o painel.</p>
+
+        <div class="error-box" id="loginError">Usuário ou senha inválidos.</div>
+
+        <div class="field">
+          <label for="username">Usuário</label>
+          <input type="text" id="username" placeholder="Digite o usuário">
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="Digite a senha">
+        </div>
+
+        <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+
+        <div class="login-hint">
+          Perfis configurados no sistema:<br>
+          Nc HG / HG<br>
+          Sx HG / HG<br>
+          Nc Drip / Drip<br>
+          Sx Drip / Drip
+        </div>
+      </div>
+    </div>
+
+    <div id="appScreen" class="screen hidden">
+      <div class="top">
+        <div class="topbar">
+          <div class="brand">
+            <div class="avatar" id="avatarLetter">H</div>
+            <div class="brand-text">
+              <h1 id="panelName">hg menu</h1>
+              <p id="panelPlan">Premium</p>
+            </div>
+          </div>
+
+          <div class="top-icons">
+            <span>⌕</span>
+            <button class="logout-btn" onclick="logout()">Sair</button>
           </div>
         </div>
 
-        <div class="top-icons">
+        <div class="search-bar">
           <span>⌕</span>
-          <span>⌘</span>
+          <input type="text" id="globalSearch" placeholder="Buscar key..." oninput="aplicarBuscaGlobal()">
+        </div>
+
+        <div class="stats">
+          <div class="card">
+            <div class="label">◫ Devices</div>
+            <div class="value" id="devicesCount">0</div>
+            <div class="sub">Expired devices</div>
+            <div class="mini" id="expiredDevicesCount">0</div>
+            <div class="go">➜</div>
+          </div>
+
+          <div class="card">
+            <div class="label">⛓ Keys</div>
+            <div class="value" id="keysCount">0</div>
+            <div class="sub">Packages</div>
+            <div class="mini white">4</div>
+            <div class="go">➜</div>
+          </div>
         </div>
       </div>
 
-      <div class="search-bar">
-        <span>⌕</span>
-        <input type="text" id="globalSearch" placeholder="Buscar key..." oninput="aplicarBuscaGlobal()">
-      </div>
-
-      <div class="stats">
-        <div class="card">
-          <div class="label">◫ Devices</div>
-          <div class="value" id="devicesCount">0</div>
-          <div class="sub">Expired devices</div>
-          <div class="mini" id="expiredDevicesCount">0</div>
-          <div class="go">➜</div>
+      <div class="main">
+        <div class="tabs">
+          <span id="tab-home" class="active-tab" onclick="showView('home')">Criar</span>
+          <span id="tab-validas" onclick="showView('validas')">Válidas</span>
+          <span id="tab-invalidas" onclick="showView('invalidas')">Inválidas</span>
+          <span id="tab-perfil" onclick="showView('perfil')">Perfil</span>
         </div>
 
-        <div class="card">
-          <div class="label">⛓ Keys</div>
-          <div class="value" id="keysCount">0</div>
-          <div class="sub">Packages</div>
-          <div class="mini white">4</div>
-          <div class="go">➜</div>
-        </div>
-      </div>
-    </div>
+        <div id="view-home" class="panel">
+          <div class="panel-title">Criar licença</div>
 
-    <div class="main">
-      <div class="tabs">
-        <span id="tab-home" class="active-tab" onclick="showView('home')">Criar</span>
-        <span id="tab-validas" onclick="showView('validas')">Válidas</span>
-        <span id="tab-invalidas" onclick="showView('invalidas')">Inválidas</span>
-        <span id="tab-perfil" onclick="showView('perfil')">Perfil</span>
-      </div>
+          <div class="key-box" id="keyAtual">HG-ABCDEF</div>
 
-      <div id="view-home" class="panel">
-        <div class="panel-title">Criar licença</div>
+          <div class="field">
+            <label for="dias">Dias</label>
+            <select id="dias">
+              <option value="1">1 dia</option>
+              <option value="7">7 dias</option>
+              <option value="10">10 dias</option>
+              <option value="30">30 dias</option>
+            </select>
+          </div>
 
-        <div class="key-box" id="keyAtual">HG-ZG00ZL</div>
+          <div class="btn-row">
+            <button class="btn-primary" onclick="gerarPreview()">Gerar key</button>
+            <button class="btn-dark" onclick="copiarKey()">Copiar</button>
+          </div>
 
-        <div class="field">
-          <label for="formato">Formato</label>
-          <select id="formato">
-            <option value="hg">HG-XXXXXX</option>
-            <option value="sem">XXXXXX</option>
-            <option value="misto">Misto</option>
-          </select>
+          <button class="btn-success" onclick="salvarKey()">Salvar key</button>
         </div>
 
-        <div class="field">
-          <label for="dias">Dias</label>
-          <select id="dias">
-            <option value="1">1 dia</option>
-            <option value="7">7 dias</option>
-            <option value="10">10 dias</option>
-            <option value="30">30 dias</option>
-          </select>
+        <div id="view-validas" class="panel hidden">
+          <div class="panel-title">Licenças válidas</div>
+          <div class="field list-search">
+            <input type="text" id="searchValidas" placeholder="Buscar nas válidas..." oninput="renderListas()">
+          </div>
+          <div id="listaValidas" class="list"></div>
         </div>
 
-        <div class="btn-row">
-          <button class="btn-primary" onclick="gerarPreview()">Gerar key</button>
-          <button class="btn-dark" onclick="copiarKey()">Copiar</button>
+        <div id="view-invalidas" class="panel hidden">
+          <div class="panel-title">Licenças inválidas</div>
+          <div class="field list-search">
+            <input type="text" id="searchInvalidas" placeholder="Buscar nas inválidas..." oninput="renderListas()">
+          </div>
+          <div id="listaInvalidas" class="list"></div>
         </div>
 
-        <button class="btn-success" onclick="salvarKey()">Salvar key</button>
-      </div>
-
-      <div id="view-validas" class="panel hidden">
-        <div class="panel-title">Licenças válidas</div>
-        <div class="field list-search">
-          <input type="text" id="searchValidas" placeholder="Buscar nas válidas..." oninput="renderListas()">
-        </div>
-        <div id="listaValidas" class="list"></div>
-      </div>
-
-      <div id="view-invalidas" class="panel hidden">
-        <div class="panel-title">Licenças inválidas</div>
-        <div class="field list-search">
-          <input type="text" id="searchInvalidas" placeholder="Buscar nas inválidas..." oninput="renderListas()">
-        </div>
-        <div id="listaInvalidas" class="list"></div>
-      </div>
-
-      <div id="view-perfil" class="panel hidden">
-        <div class="panel-title">Perfil</div>
-        <div class="profile-card">
-          Nome: <strong>Key Manager</strong><br>
-          Plano: <strong>Premium</strong><br>
-          Status: <strong>Online</strong><br>
-          Sistema: <strong>Ativo</strong>
+        <div id="view-perfil" class="panel hidden">
+          <div class="panel-title">Perfil</div>
+          <div class="profile-card">
+            Usuário: <strong id="profileUser">-</strong><br>
+            Nome do painel: <strong id="profilePanel">-</strong><br>
+            Tipo: <strong id="profileType">-</strong><br>
+            Status: <strong>Online</strong><br>
+            Sistema: <strong>Ativo</strong>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="bottom-nav">
-      <div class="nav-item active" id="nav-home" onclick="showView('home')">
-        <span class="icon">▦</span>Home
-      </div>
-      <div class="nav-item" id="nav-validas" onclick="showView('validas')">
-        <span class="icon">⛓</span>Válidas
-      </div>
-      <div class="nav-item" id="nav-invalidas" onclick="showView('invalidas')">
-        <span class="icon">▣</span>Inválidas
-      </div>
-      <div class="nav-item" id="nav-perfil" onclick="showView('perfil')">
-        <span class="icon">◉</span>Perfil
+      <div class="bottom-nav">
+        <div class="nav-item active" id="nav-home" onclick="showView('home')">
+          <span class="icon">▦</span>Home
+        </div>
+        <div class="nav-item" id="nav-validas" onclick="showView('validas')">
+          <span class="icon">⛓</span>Válidas
+        </div>
+        <div class="nav-item" id="nav-invalidas" onclick="showView('invalidas')">
+          <span class="icon">▣</span>Inválidas
+        </div>
+        <div class="nav-item" id="nav-perfil" onclick="showView('perfil')">
+          <span class="icon">◉</span>Perfil
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     let previewKey = "";
+    let currentProfile = null;
+
+    const USERS = [
+      { username: "Nc HG", password: "HG", theme: "hg", panelName: "hg menu", keyType: "hg", profileType: "HG" },
+      { username: "Sx HG", password: "HG", theme: "hg", panelName: "hg menu", keyType: "hg", profileType: "HG" },
+      { username: "Nc Drip", password: "Drip", theme: "drip", panelName: "drip cliente", keyType: "numeric", profileType: "Drip" },
+      { username: "Sx Drip", password: "Drip", theme: "drip", panelName: "drip cliente", keyType: "numeric", profileType: "Drip" }
+    ];
+
+    function normalize(value) {
+      return value.trim().toLowerCase();
+    }
+
+    function setTheme(theme) {
+      const root = document.documentElement;
+
+      if (theme === "drip") {
+        root.style.setProperty("--c1", "#6d28d9");
+        root.style.setProperty("--c2", "#8b5cf6");
+        root.style.setProperty("--c3", "#a78bfa");
+      } else {
+        root.style.setProperty("--c1", "#d62828");
+        root.style.setProperty("--c2", "#ef4444");
+        root.style.setProperty("--c3", "#f87171");
+      }
+    }
+
+    function getStorageKey() {
+      if (!currentProfile) return "panel_keys_default";
+      return "panel_keys_" + normalize(currentProfile.username).replace(/\s+/g, "_");
+    }
 
     function letras(qtd) {
       const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -554,11 +690,23 @@
       return r;
     }
 
+    function numeros(qtd) {
+      const chars = "0123456789";
+      let r = "";
+      for (let i = 0; i < qtd; i++) {
+        r += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return r;
+    }
+
     function criarKey() {
-      const formato = document.getElementById("formato").value;
-      if (formato === "hg") return "HG-" + letras(6);
-      if (formato === "sem") return letras(6);
-      return Math.random() < 0.9 ? "HG-" + letras(6) : letras(6);
+      if (!currentProfile) return "HG-" + letras(6);
+
+      if (currentProfile.keyType === "numeric") {
+        return numeros(10);
+      }
+
+      return "HG-" + letras(6);
     }
 
     function gerarPreview() {
@@ -574,11 +722,11 @@
     }
 
     function getKeys() {
-      return JSON.parse(localStorage.getItem("key_manager_keys") || "[]");
+      return JSON.parse(localStorage.getItem(getStorageKey()) || "[]");
     }
 
     function setKeys(keys) {
-      localStorage.setItem("key_manager_keys", JSON.stringify(keys));
+      localStorage.setItem(getStorageKey(), JSON.stringify(keys));
     }
 
     function salvarKey() {
@@ -720,8 +868,74 @@
       renderListas();
     }
 
-    gerarPreview();
-    atualizarTudo();
+    function abrirPainel(profile) {
+      currentProfile = profile;
+      setTheme(profile.theme);
+
+      document.getElementById("panelName").textContent = profile.panelName;
+      document.getElementById("panelPlan").textContent = profile.profileType;
+      document.getElementById("profileUser").textContent = profile.username;
+      document.getElementById("profilePanel").textContent = profile.panelName;
+      document.getElementById("profileType").textContent = profile.profileType;
+      document.getElementById("avatarLetter").textContent = profile.theme === "drip" ? "D" : "H";
+      document.getElementById("loginLogo").textContent = profile.theme === "drip" ? "D" : "H";
+      document.getElementById("loginTitle").textContent = profile.theme === "drip" ? "Drip Cliente" : "HG Menu";
+
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appScreen").classList.remove("hidden");
+
+      gerarPreview();
+      atualizarTudo();
+      showView("home");
+      localStorage.setItem("current_profile_demo", JSON.stringify(profile));
+    }
+
+    function fazerLogin() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const error = document.getElementById("loginError");
+
+      const profile = USERS.find(user =>
+        normalize(user.username) === normalize(username) &&
+        user.password === password
+      );
+
+      if (!profile) {
+        error.style.display = "block";
+        return;
+      }
+
+      error.style.display = "none";
+      abrirPainel(profile);
+    }
+
+    function logout() {
+      currentProfile = null;
+      localStorage.removeItem("current_profile_demo");
+      document.getElementById("appScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("password").value = "";
+      document.getElementById("globalSearch").value = "";
+      document.getElementById("searchValidas").value = "";
+      document.getElementById("searchInvalidas").value = "";
+      setTheme("hg");
+    }
+
+    function restaurarSessao() {
+      const raw = localStorage.getItem("current_profile_demo");
+      if (!raw) return;
+      try {
+        const profile = JSON.parse(raw);
+        abrirPainel(profile);
+      } catch (e) {}
+    }
+
+    setTheme("hg");
+    restaurarSessao();
+    if (!currentProfile) {
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("appScreen").classList.add("hidden");
+    }
   </script>
 </body>
 </html>
