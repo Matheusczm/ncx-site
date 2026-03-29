@@ -8,394 +8,411 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0b1020;
-      --bg-soft: #121933;
-      --panel: #f4f7fb;
-      --card: rgba(255,255,255,0.08);
-      --card-strong: rgba(255,255,255,0.12);
-      --text: #0f172a;
-      --muted: #6b7280;
-      --white: #ffffff;
-      --line: rgba(255,255,255,0.08);
-      --blue-1: #2563eb;
-      --blue-2: #3b82f6;
-      --blue-3: #60a5fa;
-      --green: #22c55e;
-      --green-dark: #16a34a;
-      --danger: #ef4444;
-      --shadow: 0 24px 60px rgba(0,0,0,0.30);
-      --radius-xl: 28px;
-      --radius-lg: 22px;
-      --radius-md: 16px;
+    :root{
+      --blue1:#1f55f0;
+      --blue2:#2f74ff;
+      --blue3:#4c95ff;
+      --bg:#eef3f8;
+      --panel:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --green:#22c55e;
+      --green2:#16a34a;
+      --danger:#ef4444;
+      --dark:#06142f;
+      --line:#dbe4ee;
+      --shadow:0 24px 60px rgba(0,0,0,.28);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
       -webkit-tap-highlight-color: transparent;
+      font-family:"Inter",sans-serif;
     }
 
-    body {
-      font-family: "Inter", sans-serif;
-      min-height: 100vh;
+    body{
       background:
-        radial-gradient(circle at top, rgba(59,130,246,0.24), transparent 30%),
-        linear-gradient(180deg, #060914 0%, #0d1428 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 18px;
-      color: var(--text);
+        radial-gradient(circle at top, rgba(54,133,255,.18), transparent 30%),
+        linear-gradient(180deg,#07101f 0%, #0c1630 100%);
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding:18px;
     }
 
-    .phone {
-      width: 390px;
-      min-height: 844px;
-      background:
-        linear-gradient(180deg, #1d4ed8 0%, #2563eb 18%, #3b82f6 34%, #eef3f9 34%, #eef3f9 100%);
-      border-radius: 34px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      position: relative;
-      border: 1px solid rgba(255,255,255,0.08);
+    .phone{
+      width:390px;
+      max-width:100%;
+      min-height:100vh;
+      background:linear-gradient(180deg,var(--blue1) 0%, var(--blue2) 18%, var(--blue3) 34%, var(--bg) 34%, var(--bg) 100%);
+      border-radius:32px;
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      position:relative;
     }
 
-    .top {
-      padding: 24px 22px 18px;
-      color: var(--white);
+    .top{
+      padding:24px 20px 18px;
+      color:#fff;
     }
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:18px;
+      gap:12px;
     }
 
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      min-width:0;
     }
 
-    .avatar {
-      width: 58px;
-      height: 58px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.88);
-      color: #8b8b8b;
-      display: grid;
-      place-items: center;
-      font-size: 28px;
-      font-weight: 800;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
+    .avatar{
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      background:rgba(255,255,255,.9);
+      color:#8a8a8a;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:800;
+      flex-shrink:0;
     }
 
-    .brand-meta h1 {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-      margin-bottom: 4px;
+    .brand-text h1{
+      font-size:18px;
+      font-weight:800;
+      line-height:1.1;
+      margin-bottom:4px;
     }
 
-    .brand-meta p {
-      font-size: 14px;
-      opacity: 0.9;
-      font-weight: 500;
+    .brand-text p{
+      font-size:14px;
+      opacity:.92;
+      font-weight:500;
     }
 
-    .actions-top {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      font-size: 23px;
-      opacity: 0.95;
+    .top-icons{
+      display:flex;
+      gap:14px;
+      font-size:22px;
+      flex-shrink:0;
     }
 
-    .stat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
+    .search-bar{
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(10px);
+      border-radius:18px;
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:18px;
     }
 
-    .stat-card {
-      background: linear-gradient(180deg, rgba(22,40,110,0.72), rgba(29,78,216,0.55));
-      border: 1px solid rgba(255,255,255,0.10);
-      backdrop-filter: blur(8px);
-      border-radius: 24px;
-      padding: 18px;
-      min-height: 168px;
-      position: relative;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    .search-bar input{
+      width:100%;
+      background:transparent;
+      border:none;
+      outline:none;
+      color:#fff;
+      font-size:14px;
     }
 
-    .stat-label {
-      font-size: 15px;
-      font-weight: 500;
-      opacity: 0.95;
-      margin-bottom: 16px;
+    .search-bar input::placeholder{
+      color:rgba(255,255,255,.85);
     }
 
-    .stat-value {
-      font-size: 58px;
-      line-height: 1;
-      font-weight: 800;
-      margin-bottom: 24px;
-      letter-spacing: -2px;
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
     }
 
-    .stat-sub {
-      font-size: 14px;
-      opacity: 0.95;
+    .card{
+      background:linear-gradient(180deg, rgba(31,63,181,.92), rgba(28,83,217,.88));
+      border-radius:24px;
+      padding:18px;
+      min-height:165px;
+      position:relative;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.08);
     }
 
-    .stat-mini {
-      font-size: 18px;
-      margin-top: 6px;
-      font-weight: 700;
-      color: #fca5a5;
+    .card .label{
+      font-size:15px;
+      opacity:.95;
+      margin-bottom:16px;
     }
 
-    .stat-mini.white {
-      color: var(--white);
+    .card .value{
+      font-size:58px;
+      font-weight:800;
+      line-height:1;
+      margin-bottom:24px;
+      letter-spacing:-2px;
     }
 
-    .go-badge {
-      position: absolute;
-      right: 16px;
-      bottom: 16px;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, #30e46c, #16a34a);
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 22px;
-      font-weight: 800;
-      box-shadow: 0 10px 24px rgba(34,197,94,0.42);
+    .card .sub{
+      font-size:14px;
+      opacity:.95;
     }
 
-    .main {
-      background: #eef3f9;
-      min-height: 590px;
-      border-top-left-radius: 30px;
-      border-top-right-radius: 30px;
-      padding: 18px 16px 96px;
+    .card .mini{
+      margin-top:6px;
+      font-size:18px;
+      font-weight:700;
+      color:#fca5a5;
     }
 
-    .tabs {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 16px;
-      font-weight: 800;
-      color: #1f2937;
-      margin: 4px 2px 18px;
-      flex-wrap: wrap;
+    .card .mini.white{
+      color:#fff;
     }
 
-    .tabs span {
-      cursor: pointer;
+    .go{
+      position:absolute;
+      right:16px;
+      bottom:16px;
+      width:42px;
+      height:42px;
+      border-radius:50%;
+      background:linear-gradient(180deg,var(--green),var(--green2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:22px;
+      color:#fff;
+      font-weight:800;
+      box-shadow:0 10px 22px rgba(34,197,94,.35);
     }
 
-    .panel {
-      background: rgba(255,255,255,0.96);
-      border-radius: 26px;
-      padding: 18px;
-      box-shadow: 0 18px 45px rgba(15,23,42,0.07);
-      border: 1px solid rgba(15,23,42,0.04);
+    .main{
+      min-height:calc(100vh - 300px);
+      background:var(--bg);
+      border-top-left-radius:28px;
+      border-top-right-radius:28px;
+      padding:18px 16px 96px;
     }
 
-    .panel.hidden {
-      display: none;
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:8px;
+      margin-bottom:18px;
     }
 
-    .panel-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 16px;
-      letter-spacing: -0.3px;
+    .tabs span{
+      text-align:center;
+      font-size:14px;
+      font-weight:800;
+      color:#1f2937;
+      padding:10px 4px;
+      border-radius:14px;
+      cursor:pointer;
     }
 
-    .key-box {
-      width: 100%;
-      border-radius: 20px;
-      padding: 18px 16px;
-      margin-bottom: 16px;
-      text-align: center;
-      background: linear-gradient(180deg, #04122e, #071a43);
-      color: #22f06b;
-      font-size: 24px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
-      word-break: break-word;
+    .tabs span.active-tab{
+      background:#dfe9f8;
+      color:var(--blue1);
     }
 
-    .field {
-      margin-bottom: 14px;
+    .panel{
+      background:rgba(255,255,255,.96);
+      border-radius:26px;
+      padding:18px;
+      box-shadow:0 18px 45px rgba(15,23,42,.07);
+      border:1px solid rgba(15,23,42,.04);
     }
 
-    .field label {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      color: #1f2937;
-      margin-bottom: 8px;
+    .hidden{
+      display:none;
+    }
+
+    .panel-title{
+      font-size:18px;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:16px;
+    }
+
+    .key-box{
+      background:linear-gradient(180deg,#04122e,#071a43);
+      color:#20ef66;
+      padding:18px 16px;
+      border-radius:20px;
+      font-size:24px;
+      font-weight:800;
+      text-align:center;
+      letter-spacing:1px;
+      margin-bottom:16px;
+      word-break:break-word;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    .field label{
+      display:block;
+      font-size:14px;
+      font-weight:700;
+      color:#1f2937;
+      margin-bottom:8px;
     }
 
     .field select,
-    .field input {
-      width: 100%;
-      border: 1px solid #dbe3ee;
-      background: #f9fbff;
-      border-radius: 16px;
-      padding: 15px 14px;
-      font-size: 15px;
-      color: #111827;
-      outline: none;
+    .field input{
+      width:100%;
+      border:1px solid var(--line);
+      background:#f9fbff;
+      border-radius:16px;
+      padding:15px 14px;
+      font-size:15px;
+      color:#111827;
+      outline:none;
     }
 
     .field select:focus,
-    .field input:focus {
-      border-color: #93c5fd;
-      box-shadow: 0 0 0 4px rgba(59,130,246,0.10);
+    .field input:focus{
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.10);
     }
 
-    .btn-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-top: 6px;
+    .btn-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:6px;
     }
 
-    button {
-      border: none;
-      border-radius: 18px;
-      padding: 15px 16px;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.12s ease, opacity 0.12s ease;
+    button{
+      border:none;
+      border-radius:18px;
+      padding:15px 16px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
     }
 
-    button:active {
-      transform: scale(0.98);
+    .btn-primary{
+      background:linear-gradient(180deg,#2670ff,#1d4ed8);
+      color:#fff;
+      box-shadow:0 12px 26px rgba(37,99,235,.24);
     }
 
-    .btn-primary {
-      background: linear-gradient(180deg, #2670ff, #1d4ed8);
-      color: white;
-      box-shadow: 0 12px 26px rgba(37,99,235,0.28);
+    .btn-dark{
+      background:linear-gradient(180deg,#061635,#03102b);
+      color:#fff;
     }
 
-    .btn-dark {
-      background: linear-gradient(180deg, #061635, #03102b);
-      color: white;
+    .btn-success{
+      width:100%;
+      margin-top:12px;
+      background:linear-gradient(180deg,#25d366,#16a34a);
+      color:#fff;
+      box-shadow:0 12px 24px rgba(34,197,94,.20);
     }
 
-    .btn-success {
-      width: 100%;
-      margin-top: 12px;
-      background: linear-gradient(180deg, #25d366, #16a34a);
-      color: white;
-      box-shadow: 0 12px 24px rgba(34,197,94,0.22);
+    .list-search{
+      margin-bottom:14px;
     }
 
-    .list {
-      display: grid;
-      gap: 12px;
+    .list{
+      display:grid;
+      gap:12px;
     }
 
-    .item {
-      background: #f8fbff;
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 14px;
+    .item{
+      background:#f8fbff;
+      border:1px solid #e2e8f0;
+      border-radius:18px;
+      padding:14px;
     }
 
-    .item .code {
-      font-size: 14px;
-      font-weight: 800;
-      color: #111827;
-      margin-bottom: 8px;
-      word-break: break-word;
+    .item .code{
+      font-size:14px;
+      font-weight:800;
+      color:#111827;
+      margin-bottom:8px;
+      word-break:break-word;
     }
 
-    .item .meta {
-      font-size: 13px;
-      color: #6b7280;
-      line-height: 1.6;
+    .item .meta{
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.6;
     }
 
-    .empty {
-      text-align: center;
-      color: #6b7280;
-      font-size: 14px;
-      padding: 18px 8px;
+    .empty{
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      padding:18px 8px;
     }
 
-    .profile-box {
-      display: grid;
-      gap: 12px;
+    .profile-card{
+      border-radius:18px;
+      background:#f8fbff;
+      border:1px solid #e2e8f0;
+      padding:16px;
+      line-height:1.8;
+      color:#6b7280;
+      font-size:14px;
     }
 
-    .profile-card {
-      border-radius: 18px;
-      background: #f8fbff;
-      border: 1px solid #e2e8f0;
-      padding: 16px;
+    .profile-card strong{
+      color:#111827;
     }
 
-    .profile-card strong {
-      color: #111827;
+    .bottom-nav{
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(255,255,255,.96);
+      backdrop-filter:blur(14px);
+      height:84px;
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      border-top:1px solid rgba(15,23,42,.06);
     }
 
-    .bottom-nav {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(14px);
-      height: 84px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid rgba(15,23,42,0.06);
+    .nav-item{
+      text-align:center;
+      color:#8a93a3;
+      font-size:12px;
+      font-weight:700;
+      cursor:pointer;
     }
 
-    .nav-item {
-      text-align: center;
-      color: #8a93a3;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
+    .nav-item .icon{
+      display:block;
+      font-size:22px;
+      margin-bottom:5px;
     }
 
-    .nav-item .icon {
-      display: block;
-      font-size: 22px;
-      margin-bottom: 5px;
+    .nav-item.active{
+      color:var(--blue1);
     }
 
-    .nav-item.active {
-      color: #2563eb;
-    }
-
-    @media (max-width: 430px) {
-      body {
-        padding: 0;
+    @media (max-width:430px){
+      body{
+        padding:0;
       }
-
-      .phone {
-        width: 100%;
-        min-height: 100vh;
-        border-radius: 0;
+      .phone{
+        width:100%;
+        border-radius:0;
       }
     }
   </style>
@@ -404,45 +421,50 @@
   <div class="phone">
     <div class="top">
       <div class="topbar">
-        <div class="brand-wrap">
+        <div class="brand">
           <div class="avatar">K</div>
-          <div class="brand-meta">
+          <div class="brand-text">
             <h1>Key Manager</h1>
             <p>Premium</p>
           </div>
         </div>
 
-        <div class="actions-top">
+        <div class="top-icons">
           <span>⌕</span>
           <span>⌘</span>
         </div>
       </div>
 
-      <div class="stat-grid">
-        <div class="stat-card">
-          <div class="stat-label">◫ Devices</div>
-          <div class="stat-value" id="devicesCount">0</div>
-          <div class="stat-sub">Expired devices</div>
-          <div class="stat-mini" id="expiredDevicesCount">0</div>
-          <div class="go-badge">➜</div>
+      <div class="search-bar">
+        <span>⌕</span>
+        <input type="text" id="globalSearch" placeholder="Buscar key..." oninput="aplicarBuscaGlobal()">
+      </div>
+
+      <div class="stats">
+        <div class="card">
+          <div class="label">◫ Devices</div>
+          <div class="value" id="devicesCount">0</div>
+          <div class="sub">Expired devices</div>
+          <div class="mini" id="expiredDevicesCount">0</div>
+          <div class="go">➜</div>
         </div>
 
-        <div class="stat-card">
-          <div class="stat-label">⛓ Keys</div>
-          <div class="stat-value" id="keysCount">0</div>
-          <div class="stat-sub">Packages</div>
-          <div class="stat-mini white">4</div>
-          <div class="go-badge">➜</div>
+        <div class="card">
+          <div class="label">⛓ Keys</div>
+          <div class="value" id="keysCount">0</div>
+          <div class="sub">Packages</div>
+          <div class="mini white">4</div>
+          <div class="go">➜</div>
         </div>
       </div>
     </div>
 
     <div class="main">
       <div class="tabs">
-        <span onclick="showView('home')">Criar</span>
-        <span onclick="showView('validas')">Válidas</span>
-        <span onclick="showView('invalidas')">Inválidas</span>
-        <span onclick="showView('perfil')">Perfil</span>
+        <span id="tab-home" class="active-tab" onclick="showView('home')">Criar</span>
+        <span id="tab-validas" onclick="showView('validas')">Válidas</span>
+        <span id="tab-invalidas" onclick="showView('invalidas')">Inválidas</span>
+        <span id="tab-perfil" onclick="showView('perfil')">Perfil</span>
       </div>
 
       <div id="view-home" class="panel">
@@ -479,45 +501,43 @@
 
       <div id="view-validas" class="panel hidden">
         <div class="panel-title">Licenças válidas</div>
+        <div class="field list-search">
+          <input type="text" id="searchValidas" placeholder="Buscar nas válidas..." oninput="renderListas()">
+        </div>
         <div id="listaValidas" class="list"></div>
       </div>
 
       <div id="view-invalidas" class="panel hidden">
         <div class="panel-title">Licenças inválidas</div>
+        <div class="field list-search">
+          <input type="text" id="searchInvalidas" placeholder="Buscar nas inválidas..." oninput="renderListas()">
+        </div>
         <div id="listaInvalidas" class="list"></div>
       </div>
 
       <div id="view-perfil" class="panel hidden">
         <div class="panel-title">Perfil</div>
-        <div class="profile-box">
-          <div class="profile-card">
-            <div style="line-height:1.8; color:#6b7280; font-size:14px;">
-              Nome: <strong>Key Manager</strong><br>
-              Plano: <strong>Premium</strong><br>
-              Status: <strong>Online</strong><br>
-              Sistema: <strong>Ativo</strong>
-            </div>
-          </div>
+        <div class="profile-card">
+          Nome: <strong>Key Manager</strong><br>
+          Plano: <strong>Premium</strong><br>
+          Status: <strong>Online</strong><br>
+          Sistema: <strong>Ativo</strong>
         </div>
       </div>
     </div>
 
     <div class="bottom-nav">
-      <div class="nav-item active" onclick="showView('home', this)">
-        <span class="icon">▦</span>
-        Home
+      <div class="nav-item active" id="nav-home" onclick="showView('home')">
+        <span class="icon">▦</span>Home
       </div>
-      <div class="nav-item" onclick="showView('validas', this)">
-        <span class="icon">⛓</span>
-        Válidas
+      <div class="nav-item" id="nav-validas" onclick="showView('validas')">
+        <span class="icon">⛓</span>Válidas
       </div>
-      <div class="nav-item" onclick="showView('invalidas', this)">
-        <span class="icon">▣</span>
-        Inválidas
+      <div class="nav-item" id="nav-invalidas" onclick="showView('invalidas')">
+        <span class="icon">▣</span>Inválidas
       </div>
-      <div class="nav-item" onclick="showView('perfil', this)">
-        <span class="icon">◉</span>
-        Perfil
+      <div class="nav-item" id="nav-perfil" onclick="showView('perfil')">
+        <span class="icon">◉</span>Perfil
       </div>
     </div>
   </div>
@@ -536,10 +556,8 @@
 
     function criarKey() {
       const formato = document.getElementById("formato").value;
-
       if (formato === "hg") return "HG-" + letras(6);
       if (formato === "sem") return letras(6);
-
       return Math.random() < 0.9 ? "HG-" + letras(6) : letras(6);
     }
 
@@ -572,7 +590,6 @@
       expira.setDate(agora.getDate() + dias);
 
       const keys = getKeys();
-
       keys.push({
         code: previewKey,
         dias: dias,
@@ -608,18 +625,36 @@
       return d.toLocaleString("pt-BR");
     }
 
+    function filtrarLista(lista, termo) {
+      if (!termo) return lista;
+      termo = termo.toLowerCase();
+      return lista.filter(k =>
+        k.code.toLowerCase().includes(termo) ||
+        String(k.dias).includes(termo) ||
+        formatarData(k.criadaEm).toLowerCase().includes(termo) ||
+        formatarData(k.expiraEm).toLowerCase().includes(termo)
+      );
+    }
+
     function renderListas() {
       const { validas, invalidas } = separarKeys();
       const listaValidas = document.getElementById("listaValidas");
       const listaInvalidas = document.getElementById("listaInvalidas");
 
+      const termoGlobal = (document.getElementById("globalSearch").value || "").trim();
+      const termoValidas = (document.getElementById("searchValidas").value || "").trim() || termoGlobal;
+      const termoInvalidas = (document.getElementById("searchInvalidas").value || "").trim() || termoGlobal;
+
+      const validasFiltradas = filtrarLista(validas, termoValidas);
+      const invalidasFiltradas = filtrarLista(invalidas, termoInvalidas);
+
       listaValidas.innerHTML = "";
       listaInvalidas.innerHTML = "";
 
-      if (!validas.length) {
-        listaValidas.innerHTML = '<div class="empty">Nenhuma licença válida.</div>';
+      if (!validasFiltradas.length) {
+        listaValidas.innerHTML = '<div class="empty">Nenhuma licença válida encontrada.</div>';
       } else {
-        validas.forEach(k => {
+        validasFiltradas.forEach(k => {
           listaValidas.innerHTML += `
             <div class="item">
               <div class="code">${k.code}</div>
@@ -633,10 +668,10 @@
         });
       }
 
-      if (!invalidas.length) {
-        listaInvalidas.innerHTML = '<div class="empty">Nenhuma licença inválida.</div>';
+      if (!invalidasFiltradas.length) {
+        listaInvalidas.innerHTML = '<div class="empty">Nenhuma licença inválida encontrada.</div>';
       } else {
-        invalidas.forEach(k => {
+        invalidasFiltradas.forEach(k => {
           listaInvalidas.innerHTML += `
             <div class="item">
               <div class="code">${k.code}</div>
@@ -663,7 +698,12 @@
       atualizarCards();
     }
 
-    function showView(view, el = null) {
+    function limparTabsENav() {
+      document.querySelectorAll(".tabs span").forEach(el => el.classList.remove("active-tab"));
+      document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+    }
+
+    function showView(view) {
       document.getElementById("view-home").classList.add("hidden");
       document.getElementById("view-validas").classList.add("hidden");
       document.getElementById("view-invalidas").classList.add("hidden");
@@ -671,8 +711,13 @@
 
       document.getElementById("view-" + view).classList.remove("hidden");
 
-      document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
-      if (el) el.classList.add("active");
+      limparTabsENav();
+      document.getElementById("tab-" + view).classList.add("active-tab");
+      document.getElementById("nav-" + view).classList.add("active");
+    }
+
+    function aplicarBuscaGlobal() {
+      renderListas();
     }
 
     gerarPreview();
