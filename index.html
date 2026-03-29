@@ -3,24 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Key Manager</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>DevCore</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{
-      --c1:#2563eb;
-      --c2:#3b82f6;
-      --c3:#60a5fa;
-      --bg:#eef3f8;
-      --panel:#ffffff;
+      --bg1:#07101f;
+      --bg2:#0c1630;
+      --login1:#2563eb;
+      --login2:#3b82f6;
+      --card:#ffffff;
       --text:#111827;
       --muted:#6b7280;
-      --green:#22c55e;
-      --green2:#16a34a;
-      --line:#dbe4ee;
-      --shadow:0 24px 60px rgba(0,0,0,.28);
-      --softActive:#dbeafe;
+      --line:#e5e7eb;
+      --shadow:0 24px 60px rgba(0,0,0,.22);
+      --soft:#dbeafe;
+      --glass:rgba(255,255,255,.18);
+      --glassBorder:rgba(255,255,255,.22);
     }
 
     *{
@@ -28,79 +26,99 @@
       padding:0;
       box-sizing:border-box;
       -webkit-tap-highlight-color:transparent;
-      font-family:"Inter",sans-serif;
+      font-family:Arial, sans-serif;
     }
 
     body{
+      min-height:100vh;
       background:
         radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),
-        linear-gradient(180deg,#07101f 0%, #0c1630 100%);
-      min-height:100vh;
+        linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 100%);
       display:flex;
       justify-content:center;
-      align-items:flex-start;
-      padding:18px;
+      align-items:center;
+      padding:0;
     }
 
-    .phone{
-      width:390px;
-      max-width:100%;
+    .app{
+      width:min(100vw, 430px);
       min-height:100vh;
-      background:linear-gradient(180deg,var(--c1) 0%, var(--c2) 20%, var(--c3) 40%, var(--bg) 40%, var(--bg) 100%);
-      border-radius:32px;
+      height:100dvh;
+      background:#fff;
       overflow:hidden;
-      box-shadow:var(--shadow);
       position:relative;
+    }
+
+    @media (min-width: 431px){
+      body{ padding:18px; }
+      .app{
+        width:min(100vw - 24px, 430px);
+        height:844px;
+        min-height:844px;
+        border-radius:32px;
+        box-shadow:var(--shadow);
+      }
+    }
+
+    .base-bg{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,var(--login1) 0%, var(--login2) 42%, #f8fafc 42%, #f8fafc 100%);
+      z-index:1;
+    }
+
+    .screen{
+      position:relative;
+      z-index:2;
+      height:100%;
     }
 
     .hidden{ display:none !important; }
 
-    .screen{
-      min-height:100vh;
-    }
-
     .login-screen{
-      padding:26px 22px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,.10), transparent 30%),
-        linear-gradient(180deg,#2563eb 0%, #3b82f6 45%, #edf2f7 45%, #edf2f7 100%);
-    }
-
-    .login-card{
-      background:rgba(255,255,255,.97);
-      border-radius:28px;
-      padding:22px;
-      box-shadow:0 20px 50px rgba(0,0,0,.14);
-    }
-
-    .login-logo{
-      width:72px;
-      height:72px;
-      border-radius:22px;
-      background:linear-gradient(180deg,#2563eb,#3b82f6);
-      color:#fff;
+      height:100%;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:28px;
-      font-weight:800;
-      margin-bottom:16px;
+      padding:22px;
     }
 
-    .login-card h1{
+    .login-card{
+      width:100%;
+      background:rgba(255,255,255,.98);
+      border-radius:28px;
+      padding:22px;
+      box-shadow:0 20px 50px rgba(0,0,0,.12);
+      border:1px solid rgba(255,255,255,.7);
+    }
+
+    .logo{
+      width:84px;
+      height:84px;
+      border-radius:50%;
+      background:linear-gradient(180deg,var(--login1),var(--login2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      margin-bottom:16px;
+      box-shadow:0 16px 35px rgba(37,99,235,.28);
+      border:3px solid rgba(255,255,255,.8);
+      color:#fff;
+      font-size:34px;
+      font-weight:900;
+    }
+
+    h1{
       font-size:28px;
-      font-weight:800;
-      color:#111827;
+      font-weight:900;
+      color:var(--text);
       margin-bottom:8px;
       text-transform:uppercase;
+      letter-spacing:-.5px;
     }
 
-    .login-card p{
-      color:#6b7280;
+    .subtitle{
+      color:var(--muted);
       font-size:14px;
       margin-bottom:18px;
     }
@@ -111,47 +129,50 @@
 
     .field label{
       display:block;
-      font-size:14px;
-      font-weight:700;
+      font-size:13px;
+      font-weight:800;
       color:#1f2937;
       margin-bottom:8px;
       text-transform:uppercase;
+      letter-spacing:.4px;
     }
 
-    .field input,
-    .field select{
+    .field input{
       width:100%;
       border:1px solid var(--line);
-      background:#f9fbff;
+      background:#f9fafb;
       border-radius:16px;
       padding:15px 14px;
       font-size:15px;
-      color:#111827;
+      color:var(--text);
       outline:none;
     }
 
-    .field input:focus,
-    .field select:focus{
+    .field input:focus{
       border-color:#93c5fd;
       box-shadow:0 0 0 4px rgba(59,130,246,.10);
     }
 
-    button{
+    .btn{
+      width:100%;
       border:none;
       border-radius:18px;
       padding:15px 16px;
-      font-size:15px;
+      font-size:14px;
       font-weight:800;
       cursor:pointer;
+      text-transform:uppercase;
     }
 
-    .login-btn{
-      width:100%;
-      background:linear-gradient(180deg,#2563eb,#3b82f6);
+    .btn-primary{
+      background:linear-gradient(180deg,var(--login1),var(--login2));
       color:#fff;
-      box-shadow:0 12px 26px rgba(37,99,235,.24);
-      margin-top:4px;
-      text-transform:uppercase;
+      box-shadow:0 12px 26px rgba(37,99,235,.22);
+    }
+
+    .btn-dark{
+      background:#111827;
+      color:#fff;
     }
 
     .error-box{
@@ -164,45 +185,61 @@
       margin-bottom:14px;
       display:none;
       text-transform:uppercase;
+      font-weight:700;
+      white-space:pre-line;
+    }
+
+    .hint{
+      margin-top:14px;
+      color:#6b7280;
+      font-size:12px;
+      line-height:1.7;
+    }
+
+    .panel-screen{
+      height:100%;
+      display:flex;
+      flex-direction:column;
     }
 
     .top{
-      padding:24px 20px 10px;
+      padding:18px 16px 10px;
       color:#fff;
+      flex:0 0 auto;
     }
 
     .topbar{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      margin-bottom:18px;
       gap:12px;
+      margin-bottom:12px;
     }
 
     .brand{
       display:flex;
       align-items:center;
-      gap:14px;
+      gap:12px;
       min-width:0;
     }
 
     .avatar{
-      width:58px;
-      height:58px;
+      width:56px;
+      height:56px;
       border-radius:50%;
-      background:rgba(255,255,255,.9);
-      color:#8a8a8a;
+      background:rgba(255,255,255,.92);
+      color:#7a7a7a;
       display:flex;
       align-items:center;
       justify-content:center;
-      font-size:28px;
-      font-weight:800;
+      font-size:26px;
+      font-weight:900;
       flex-shrink:0;
     }
 
-    .brand-text h1{
+    .brand-text h2{
       font-size:18px;
-      font-weight:800;
+      font-weight:900;
       line-height:1.1;
       margin-bottom:4px;
       text-transform:uppercase;
@@ -210,264 +247,175 @@
 
     .brand-text p{
       font-size:14px;
-      opacity:.92;
-      font-weight:500;
-    }
-
-    .top-icons{
-      display:flex;
-      gap:12px;
-      font-size:22px;
-      flex-shrink:0;
-      align-items:center;
+      opacity:.95;
+      font-weight:600;
     }
 
     .logout-btn{
-      background:rgba(255,255,255,.16);
+      background:var(--glass);
       color:#fff;
-      border:1px solid rgba(255,255,255,.14);
+      border:1px solid var(--glassBorder);
       border-radius:12px;
-      padding:8px 10px;
+      padding:10px 12px;
       font-size:12px;
-      font-weight:700;
+      font-weight:800;
       text-transform:uppercase;
+      cursor:pointer;
     }
 
-    .search-bar{
+    .banner{
       background:rgba(255,255,255,.16);
       border:1px solid rgba(255,255,255,.14);
-      backdrop-filter:blur(10px);
       border-radius:18px;
       padding:12px 14px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin-bottom:16px;
-    }
-
-    .search-bar input{
-      width:100%;
-      background:transparent;
-      border:none;
-      outline:none;
-      color:#fff;
-      font-size:14px;
-    }
-
-    .search-bar input::placeholder{
-      color:rgba(255,255,255,.88);
+      margin-bottom:12px;
+      font-size:12px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.4px;
     }
 
     .stats{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:14px;
-      margin-bottom:6px;
+      gap:10px;
     }
 
-    .card{
-      background:linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.10));
-      border-radius:24px;
-      padding:18px;
-      min-height:150px;
-      position:relative;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+    .stat{
+      background:linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.08));
+      border-radius:20px;
+      padding:14px;
+      min-height:120px;
       border:1px solid rgba(255,255,255,.08);
     }
 
-    .card .label{
-      font-size:15px;
+    .stat .label{
+      font-size:11px;
       opacity:.95;
-      margin-bottom:16px;
-      font-weight:700;
+      margin-bottom:12px;
+      font-weight:800;
       text-transform:uppercase;
     }
 
-    .card .value{
-      font-size:52px;
-      font-weight:800;
+    .stat .value{
+      font-size:34px;
+      font-weight:900;
       line-height:1;
-      margin-bottom:18px;
-      letter-spacing:-2px;
+      margin-bottom:12px;
     }
 
-    .card .sub{
-      font-size:14px;
+    .stat .sub{
+      font-size:11px;
       opacity:.95;
       text-transform:uppercase;
-    }
-
-    .card .mini{
-      margin-top:6px;
-      font-size:18px;
       font-weight:700;
-      color:#fde68a;
-    }
-
-    .card .mini.white{
-      color:#fff;
-    }
-
-    .go{
-      position:absolute;
-      right:16px;
-      bottom:16px;
-      width:42px;
-      height:42px;
-      border-radius:50%;
-      background:linear-gradient(180deg,var(--green),var(--green2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:22px;
-      color:#fff;
-      font-weight:800;
-      box-shadow:0 10px 22px rgba(34,197,94,.35);
     }
 
     .main{
-      min-height:calc(100vh - 320px);
-      background:var(--bg);
+      flex:1 1 auto;
+      min-height:0;
+      background:#f8fafc;
       border-top-left-radius:28px;
       border-top-right-radius:28px;
-      padding:18px 16px 96px;
-      position:relative;
-      z-index:2;
+      padding:14px 14px 84px;
+      overflow-y:auto;
+      overflow-x:hidden;
     }
 
     .tabs{
       display:grid;
       grid-template-columns:repeat(4,1fr);
       gap:8px;
-      margin-bottom:18px;
+      margin-bottom:16px;
     }
 
-    .tabs span{
-      text-align:center;
-      font-size:13px;
-      font-weight:800;
+    .tabs button{
+      border:none;
+      background:#eef2f7;
       color:#1f2937;
-      padding:10px 4px;
       border-radius:14px;
-      cursor:pointer;
+      padding:10px 6px;
+      font-size:11px;
+      font-weight:900;
       text-transform:uppercase;
+      cursor:pointer;
     }
 
-    .tabs span.active-tab{
-      background:var(--softActive);
-      color:var(--c1);
+    .tabs button.active{
+      background:var(--soft);
+      color:var(--login1);
     }
 
     .panel{
-      background:rgba(255,255,255,.96);
-      border-radius:26px;
-      padding:18px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:22px;
+      padding:16px;
       box-shadow:0 18px 45px rgba(15,23,42,.07);
-      border:1px solid rgba(15,23,42,.04);
     }
 
     .panel-title{
       font-size:18px;
-      font-weight:800;
-      color:#111827;
-      margin-bottom:16px;
-      text-transform:uppercase;
-    }
-
-    .key-box{
-      background:linear-gradient(180deg,#04122e,#071a43);
-      color:#20ef66;
-      padding:18px 16px;
-      border-radius:20px;
-      font-size:24px;
-      font-weight:800;
-      text-align:center;
-      letter-spacing:1px;
-      margin-bottom:16px;
-      word-break:break-word;
-    }
-
-    .btn-row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      margin-top:6px;
-    }
-
-    .btn-primary{
-      background:linear-gradient(180deg,var(--c1),var(--c2));
-      color:#fff;
-      box-shadow:0 12px 26px rgba(37,99,235,.20);
-      text-transform:uppercase;
-    }
-
-    .btn-dark{
-      background:linear-gradient(180deg,#061635,#03102b);
-      color:#fff;
-      text-transform:uppercase;
-    }
-
-    .btn-success{
-      width:100%;
-      margin-top:12px;
-      background:linear-gradient(180deg,#25d366,#16a34a);
-      color:#fff;
-      box-shadow:0 12px 24px rgba(34,197,94,.20);
-      text-transform:uppercase;
-    }
-
-    .list-search{
+      font-weight:900;
+      color:var(--text);
       margin-bottom:14px;
+      text-transform:uppercase;
     }
 
-    .list{
-      display:grid;
-      gap:12px;
-    }
-
-    .item{
-      background:#f8fbff;
-      border:1px solid #e2e8f0;
+    .panel-card{
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
       border-radius:18px;
       padding:14px;
+      margin-bottom:12px;
     }
 
-    .item .code{
-      font-size:14px;
-      font-weight:800;
+    .panel-card:last-child{
+      margin-bottom:0;
+    }
+
+    .panel-card h3{
+      font-size:15px;
+      font-weight:900;
       color:#111827;
       margin-bottom:8px;
-      word-break:break-word;
+      text-transform:uppercase;
     }
 
-    .item .meta{
+    .panel-card p{
       font-size:13px;
-      color:var(--muted);
+      color:#6b7280;
       line-height:1.6;
       text-transform:uppercase;
     }
 
-    .empty{
-      text-align:center;
-      color:var(--muted);
-      font-size:14px;
-      padding:18px 8px;
-      text-transform:uppercase;
+    .profile-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
     }
 
-    .profile-card{
-      border-radius:18px;
-      background:#f8fbff;
-      border:1px solid #e2e8f0;
-      padding:16px;
-      line-height:1.8;
+    .mini-box{
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .mini-box small{
+      display:block;
+      font-size:10px;
       color:#6b7280;
-      font-size:14px;
+      margin-bottom:6px;
       text-transform:uppercase;
+      font-weight:700;
     }
 
-    .profile-card strong{
+    .mini-box strong{
+      font-size:13px;
       color:#111827;
+      text-transform:uppercase;
+      word-break:break-word;
     }
 
     .bottom-nav{
@@ -477,474 +425,283 @@
       bottom:0;
       background:rgba(255,255,255,.96);
       backdrop-filter:blur(14px);
-      height:84px;
+      height:74px;
       display:flex;
       justify-content:space-around;
       align-items:center;
       border-top:1px solid rgba(15,23,42,.06);
+      z-index:3;
     }
 
     .nav-item{
       text-align:center;
       color:#8a93a3;
-      font-size:12px;
-      font-weight:700;
+      font-size:10px;
+      font-weight:800;
       cursor:pointer;
       text-transform:uppercase;
     }
 
     .nav-item .icon{
       display:block;
-      font-size:22px;
-      margin-bottom:5px;
+      font-size:18px;
+      margin-bottom:4px;
     }
 
     .nav-item.active{
-      color:var(--c1);
-    }
-
-    @media (max-width:430px){
-      body{ padding:0; }
-      .phone{ width:100%; border-radius:0; }
+      color:var(--login1);
     }
   </style>
 </head>
 <body>
-  <div class="phone">
-    <div id="loginScreen" class="screen login-screen">
-      <div class="login-card">
-        <div class="login-logo">K</div>
-        <h1>KEY MANAGER</h1>
-        <p>Acesso ao painel.</p>
+  <div class="app">
+    <div class="base-bg"></div>
 
-        <div class="error-box" id="loginError">USUÁRIO OU SENHA INVÁLIDOS</div>
+    <div class="screen" id="loginScreen">
+      <div class="login-screen">
+        <div class="login-card">
+          <div class="logo">D</div>
+          <h1>Dev Login</h1>
+          <div class="subtitle">Acesso do painel principal.</div>
 
-        <div class="field">
-          <label for="username">USUÁRIO</label>
-          <input type="text" id="username" placeholder="Digite seu usuário">
+          <div class="error-box" id="loginError"></div>
+
+          <div class="field">
+            <label for="username">Usuário</label>
+            <input id="username" type="text" placeholder="dev">
+          </div>
+
+          <div class="field">
+            <label for="password">Senha</label>
+            <input id="password" type="password" placeholder="Digite sua senha">
+          </div>
+
+          <button class="btn btn-primary" id="loginBtn">Entrar</button>
+
+          <div class="hint">
+            Login apenas do DEV por enquanto.<br>
+            Conta esperada no banco:<br>
+            usuário: dev<br>
+            senha: dev123
+          </div>
         </div>
-
-        <div class="field">
-          <label for="password">SENHA</label>
-          <input type="password" id="password" placeholder="Digite sua senha">
-        </div>
-
-        <button class="login-btn" onclick="fazerLogin()">ENTRAR</button>
       </div>
     </div>
 
-    <div id="appScreen" class="screen hidden">
-      <div class="top">
-        <div class="topbar">
-          <div class="brand">
-            <div class="avatar" id="avatarLetter">H</div>
-            <div class="brand-text">
-              <h1 id="panelName">HG MENU</h1>
-              <p id="panelSub">Acesso HG</p>
+    <div class="screen hidden" id="panelScreen">
+      <div class="panel-screen">
+        <div class="top">
+          <div class="topbar">
+            <div class="brand">
+              <div class="avatar">D</div>
+              <div class="brand-text">
+                <h2>Development</h2>
+                <p>Painel administrativo</p>
+              </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">Sair</button>
+          </div>
+
+          <div class="banner">Modo desenvolvedor • 4 painéis visíveis • só DEV ativo</div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="label">Sessão</div>
+              <div class="value">ON</div>
+              <div class="sub">Status atual</div>
+            </div>
+            <div class="stat">
+              <div class="label">Painéis</div>
+              <div class="value">4</div>
+              <div class="sub">HG, DRIP, MISTO, DEV</div>
             </div>
           </div>
-
-          <div class="top-icons">
-            <span>⌕</span>
-            <button class="logout-btn" onclick="logout()">SAIR</button>
-          </div>
         </div>
 
-        <div class="search-bar">
-          <span>⌕</span>
-          <input type="text" id="globalSearch" placeholder="Buscar key..." oninput="aplicarBuscaGlobal()">
-        </div>
-
-        <div class="stats">
-          <div class="card">
-            <div class="label">KEYS ATIVAS</div>
-            <div class="value" id="keysCount">0</div>
-            <div class="sub">Licenças em uso</div>
+        <div class="main">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="hg">HG</button>
+            <button class="tab-btn" data-tab="drip">DRIP</button>
+            <button class="tab-btn" data-tab="misto">MISTO</button>
+            <button class="tab-btn" data-tab="dev">DEV</button>
           </div>
 
-          <div class="card">
-            <div class="label">KEYS EXPIRADAS</div>
-            <div class="value" id="expiredCount">0</div>
-            <div class="sub">Licenças vencidas</div>
+          <div class="panel" id="tabContent"></div>
+        </div>
+
+        <div class="bottom-nav">
+          <div class="nav-item active">
+            <span class="icon">◉</span>Painel
           </div>
-        </div>
-      </div>
-
-      <div class="main">
-        <div class="tabs">
-          <span id="tab-home" class="active-tab" onclick="showView('home')">CRIAR</span>
-          <span id="tab-validas" onclick="showView('validas')">VÁLIDAS</span>
-          <span id="tab-invalidas" onclick="showView('invalidas')">INVÁLIDAS</span>
-          <span id="tab-perfil" onclick="showView('perfil')">PERFIL</span>
-        </div>
-
-        <div id="view-home" class="panel">
-          <div class="panel-title">CRIAR LICENÇA</div>
-
-          <div class="key-box" id="keyAtual">HG-ABCDEF</div>
-
-          <div class="field">
-            <label for="dias">DURAÇÃO</label>
-            <select id="dias">
-              <option value="1">1 DIA</option>
-              <option value="7">7 DIAS</option>
-              <option value="10">10 DIAS</option>
-              <option value="30">30 DIAS</option>
-            </select>
+          <div class="nav-item">
+            <span class="icon">☰</span>Menu
           </div>
-
-          <div class="btn-row">
-            <button class="btn-primary" onclick="gerarPreview()">GERAR KEY</button>
-            <button class="btn-dark" onclick="copiarKey()">COPIAR</button>
+          <div class="nav-item">
+            <span class="icon">⚙</span>Dev
           </div>
-
-          <button class="btn-success" onclick="salvarKey()">SALVAR KEY</button>
-        </div>
-
-        <div id="view-validas" class="panel hidden">
-          <div class="panel-title">LICENÇAS VÁLIDAS</div>
-          <div class="field list-search">
-            <input type="text" id="searchValidas" placeholder="Buscar nas válidas..." oninput="renderListas()">
-          </div>
-          <div id="listaValidas" class="list"></div>
-        </div>
-
-        <div id="view-invalidas" class="panel hidden">
-          <div class="panel-title">LICENÇAS INVÁLIDAS</div>
-          <div class="field list-search">
-            <input type="text" id="searchInvalidas" placeholder="Buscar nas inválidas..." oninput="renderListas()">
-          </div>
-          <div id="listaInvalidas" class="list"></div>
-        </div>
-
-        <div id="view-perfil" class="panel hidden">
-          <div class="panel-title">PERFIL</div>
-          <div class="profile-card">
-            USUÁRIO: <strong id="profileUser">-</strong><br>
-            PAINEL: <strong id="profilePanel">-</strong><br>
-            ACESSO: <strong id="profileType">-</strong><br>
-            STATUS: <strong>ONLINE</strong><br>
-            SISTEMA: <strong>ATIVO</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="bottom-nav">
-        <div class="nav-item active" id="nav-home" onclick="showView('home')">
-          <span class="icon">▦</span>HOME
-        </div>
-        <div class="nav-item" id="nav-validas" onclick="showView('validas')">
-          <span class="icon">⛓</span>VÁLIDAS
-        </div>
-        <div class="nav-item" id="nav-invalidas" onclick="showView('invalidas')">
-          <span class="icon">▣</span>INVÁLIDAS
-        </div>
-        <div class="nav-item" id="nav-perfil" onclick="showView('perfil')">
-          <span class="icon">◉</span>PERFIL
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    let previewKey = "";
-    let currentProfile = null;
+    const SUPABASE_URL = "https://iwhldffataeqmpntprvk.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_wYhrdDe0bM-H3QqmcMwXRQ_RGb_u5ok";
 
-    const USERS = ["nc xiter", "sx cheats"];
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    function normalize(value) {
-      return value.trim().toLowerCase();
+    const loginScreen = document.getElementById("loginScreen");
+    const panelScreen = document.getElementById("panelScreen");
+    const loginError = document.getElementById("loginError");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const tabContent = document.getElementById("tabContent");
+    const tabButtons = document.querySelectorAll(".tab-btn");
+
+    let currentUser = null;
+
+    const tabViews = {
+      hg: `
+        <div class="panel-title">HG</div>
+        <div class="panel-card">
+          <h3>HG Menu</h3>
+          <p>Preview do painel HG. Essa área fica pronta para ligar depois com banco, validade, contas e funções reais.</p>
+        </div>
+        <div class="panel-card">
+          <h3>Status</h3>
+          <p>Modo teste ativo.</p>
+        </div>
+      `,
+      drip: `
+        <div class="panel-title">DRIP</div>
+        <div class="panel-card">
+          <h3>DRIP Menu</h3>
+          <p>Preview do painel DRIP. Essa área fica pronta para ligar depois com banco, validade, contas e funções reais.</p>
+        </div>
+        <div class="panel-card">
+          <h3>Status</h3>
+          <p>Modo teste ativo.</p>
+        </div>
+      `,
+      misto: `
+        <div class="panel-title">MISTO</div>
+        <div class="panel-card">
+          <h3>MISTO Menu</h3>
+          <p>Preview do painel misto. Essa área fica pronta para ligar depois com banco, troca de gerador e funções reais.</p>
+        </div>
+        <div class="panel-card">
+          <h3>Status</h3>
+          <p>Modo teste ativo.</p>
+        </div>
+      `,
+      dev: `
+        <div class="panel-title">DEV</div>
+        <div class="profile-grid">
+          <div class="mini-box">
+            <small>Usuário</small>
+            <strong id="devUserValue">-</strong>
+          </div>
+          <div class="mini-box">
+            <small>Tipo</small>
+            <strong id="devTypeValue">DEV</strong>
+          </div>
+          <div class="mini-box">
+            <small>Status</small>
+            <strong>ONLINE</strong>
+          </div>
+          <div class="mini-box">
+            <small>Banco</small>
+            <strong>SUPABASE</strong>
+          </div>
+        </div>
+      `
+    };
+
+    function showError(msg){
+      loginError.style.display = "block";
+      loginError.textContent = msg;
     }
 
-    function setTheme(theme) {
-      const root = document.documentElement;
-
-      if (theme === "drip") {
-        root.style.setProperty("--c1", "#6d28d9");
-        root.style.setProperty("--c2", "#8b5cf6");
-        root.style.setProperty("--c3", "#a78bfa");
-        root.style.setProperty("--softActive", "#ede9fe");
-      } else if (theme === "hg") {
-        root.style.setProperty("--c1", "#d62828");
-        root.style.setProperty("--c2", "#ef4444");
-        root.style.setProperty("--c3", "#f87171");
-        root.style.setProperty("--softActive", "#fee2e2");
-      } else {
-        root.style.setProperty("--c1", "#2563eb");
-        root.style.setProperty("--c2", "#3b82f6");
-        root.style.setProperty("--c3", "#60a5fa");
-        root.style.setProperty("--softActive", "#dbeafe");
-      }
+    function clearError(){
+      loginError.style.display = "none";
+      loginError.textContent = "";
     }
 
-    function getStorageKey() {
-      if (!currentProfile) return "km_default";
-      return "km_" + normalize(currentProfile.username).replace(/\s+/g, "_") + "_" + currentProfile.type.toLowerCase();
-    }
-
-    function letras(qtd) {
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let r = "";
-      for (let i = 0; i < qtd; i++) {
-        r += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return r;
-    }
-
-    function numeros(qtd) {
-      const chars = "0123456789";
-      let r = "";
-      for (let i = 0; i < qtd; i++) {
-        r += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return r;
-    }
-
-    function criarKey() {
-      if (!currentProfile) return "HG-" + letras(6);
-      return currentProfile.type === "DRIP" ? numeros(10) : "HG-" + letras(6);
-    }
-
-    function gerarPreview() {
-      previewKey = criarKey();
-      document.getElementById("keyAtual").textContent = previewKey;
-    }
-
-    function copiarKey() {
-      const key = document.getElementById("keyAtual").textContent;
-      navigator.clipboard.writeText(key).then(() => {
-        alert("KEY COPIADA: " + key);
-      });
-    }
-
-    function getKeys() {
-      return JSON.parse(localStorage.getItem(getStorageKey()) || "[]");
-    }
-
-    function setKeys(keys) {
-      localStorage.setItem(getStorageKey(), JSON.stringify(keys));
-    }
-
-    function salvarKey() {
-      if (!previewKey) gerarPreview();
-
-      const dias = parseInt(document.getElementById("dias").value, 10);
-      const agora = new Date();
-      const expira = new Date();
-      expira.setDate(agora.getDate() + dias);
-
-      const keys = getKeys();
-      keys.push({
-        code: previewKey,
-        dias: dias,
-        criadaEm: agora.toISOString(),
-        expiraEm: expira.toISOString()
+    function setTab(tabName){
+      tabButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === tabName);
       });
 
-      setKeys(keys);
-      atualizarTudo();
-      alert("KEY SALVA COM SUCESSO.");
-      gerarPreview();
-    }
+      tabContent.innerHTML = tabViews[tabName];
 
-    function separarKeys() {
-      const agora = new Date();
-      const keys = getKeys();
-      const validas = [];
-      const invalidas = [];
-
-      keys.forEach(k => {
-        if (new Date(k.expiraEm) > agora) {
-          validas.push(k);
-        } else {
-          invalidas.push(k);
-        }
-      });
-
-      return { validas, invalidas };
-    }
-
-    function formatarData(iso) {
-      const d = new Date(iso);
-      return d.toLocaleString("pt-BR");
-    }
-
-    function filtrarLista(lista, termo) {
-      if (!termo) return lista;
-      termo = termo.toLowerCase();
-      return lista.filter(k =>
-        k.code.toLowerCase().includes(termo) ||
-        String(k.dias).includes(termo) ||
-        formatarData(k.criadaEm).toLowerCase().includes(termo) ||
-        formatarData(k.expiraEm).toLowerCase().includes(termo)
-      );
-    }
-
-    function renderListas() {
-      const { validas, invalidas } = separarKeys();
-      const listaValidas = document.getElementById("listaValidas");
-      const listaInvalidas = document.getElementById("listaInvalidas");
-
-      const termoGlobal = (document.getElementById("globalSearch").value || "").trim();
-      const termoValidas = (document.getElementById("searchValidas").value || "").trim() || termoGlobal;
-      const termoInvalidas = (document.getElementById("searchInvalidas").value || "").trim() || termoGlobal;
-
-      const validasFiltradas = filtrarLista(validas, termoValidas);
-      const invalidasFiltradas = filtrarLista(invalidas, termoInvalidas);
-
-      listaValidas.innerHTML = "";
-      listaInvalidas.innerHTML = "";
-
-      if (!validasFiltradas.length) {
-        listaValidas.innerHTML = '<div class="empty">NENHUMA LICENÇA VÁLIDA ENCONTRADA.</div>';
-      } else {
-        validasFiltradas.forEach(k => {
-          listaValidas.innerHTML += `
-            <div class="item">
-              <div class="code">${k.code}</div>
-              <div class="meta">
-                DURAÇÃO: ${k.dias} DIAS<br>
-                CRIADA EM: ${formatarData(k.criadaEm)}<br>
-                EXPIRA EM: ${formatarData(k.expiraEm)}
-              </div>
-            </div>
-          `;
-        });
-      }
-
-      if (!invalidasFiltradas.length) {
-        listaInvalidas.innerHTML = '<div class="empty">NENHUMA LICENÇA INVÁLIDA ENCONTRADA.</div>';
-      } else {
-        invalidasFiltradas.forEach(k => {
-          listaInvalidas.innerHTML += `
-            <div class="item">
-              <div class="code">${k.code}</div>
-              <div class="meta">
-                DURAÇÃO: ${k.dias} DIAS<br>
-                CRIADA EM: ${formatarData(k.criadaEm)}<br>
-                EXPIRADA EM: ${formatarData(k.expiraEm)}
-              </div>
-            </div>
-          `;
-        });
+      if (tabName === "dev" && currentUser) {
+        document.getElementById("devUserValue").textContent = currentUser.username || "-";
       }
     }
 
-    function atualizarCards() {
-      const { validas, invalidas } = separarKeys();
-      document.getElementById("keysCount").textContent = validas.length;
-      document.getElementById("expiredCount").textContent = invalidas.length;
-    }
+    async function loginDev(){
+      clearError();
 
-    function atualizarTudo() {
-      renderListas();
-      atualizarCards();
-    }
+      const username = document.getElementById("username").value.trim().toLowerCase();
+      const password = document.getElementById("password").value;
 
-    function limparTabsENav() {
-      document.querySelectorAll(".tabs span").forEach(el => el.classList.remove("active-tab"));
-      document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
-    }
-
-    function showView(view) {
-      document.getElementById("view-home").classList.add("hidden");
-      document.getElementById("view-validas").classList.add("hidden");
-      document.getElementById("view-invalidas").classList.add("hidden");
-      document.getElementById("view-perfil").classList.add("hidden");
-
-      document.getElementById("view-" + view).classList.remove("hidden");
-
-      limparTabsENav();
-      document.getElementById("tab-" + view).classList.add("active-tab");
-      document.getElementById("nav-" + view).classList.add("active");
-    }
-
-    function aplicarBuscaGlobal() {
-      renderListas();
-    }
-
-    function abrirPainel(profile) {
-      currentProfile = profile;
-      setTheme(profile.theme);
-
-      document.getElementById("panelName").textContent = profile.panelName;
-      document.getElementById("panelSub").textContent = profile.subTitle;
-      document.getElementById("profileUser").textContent = profile.username.toUpperCase();
-      document.getElementById("profilePanel").textContent = profile.panelName;
-      document.getElementById("profileType").textContent = profile.type;
-      document.getElementById("avatarLetter").textContent = profile.type === "DRIP" ? "D" : "H";
-
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("appScreen").classList.remove("hidden");
-
-      gerarPreview();
-      atualizarTudo();
-      showView("home");
-      localStorage.setItem("km_profile", JSON.stringify(profile));
-    }
-
-    function fazerLogin() {
-      const username = normalize(document.getElementById("username").value);
-      const password = document.getElementById("password").value.trim();
-      const error = document.getElementById("loginError");
-
-      const userOk = USERS.includes(username);
-      const passOk = password === "HG" || password === "Drip";
-
-      if (!userOk || !passOk) {
-        error.style.display = "block";
+      if (!username || !password) {
+        showError("PREENCHA USUÁRIO E SENHA");
         return;
       }
 
-      error.style.display = "none";
+      loginBtn.disabled = true;
+      loginBtn.textContent = "Entrando...";
 
-      const profile = password === "Drip"
-        ? {
-            username: username,
-            type: "DRIP",
-            theme: "drip",
-            panelName: "DRIP CLIENTE",
-            subTitle: "Acesso DRIP"
-          }
-        : {
-            username: username,
-            type: "HG",
-            theme: "hg",
-            panelName: "HG MENU",
-            subTitle: "Acesso HG"
-          };
+      const { data, error } = await db
+        .from("users")
+        .select("*")
+        .eq("username", username)
+        .eq("password", password)
+        .eq("type", "DEV")
+        .maybeSingle();
 
-      abrirPainel(profile);
+      loginBtn.disabled = false;
+      loginBtn.textContent = "Entrar";
+
+      if (error) {
+        showError("ERRO AO CONECTAR NO SUPABASE");
+        return;
+      }
+
+      if (!data) {
+        showError("LOGIN INVÁLIDO");
+        return;
+      }
+
+      currentUser = data;
+      loginScreen.classList.add("hidden");
+      panelScreen.classList.remove("hidden");
+      setTab("hg");
     }
 
-    function logout() {
-      currentProfile = null;
-      localStorage.removeItem("km_profile");
-      document.getElementById("appScreen").classList.add("hidden");
-      document.getElementById("loginScreen").classList.remove("hidden");
+    function logoutDev(){
+      currentUser = null;
+      panelScreen.classList.add("hidden");
+      loginScreen.classList.remove("hidden");
       document.getElementById("password").value = "";
-      document.getElementById("globalSearch").value = "";
-      document.getElementById("searchValidas").value = "";
-      document.getElementById("searchInvalidas").value = "";
-      setTheme("login");
+      clearError();
     }
 
-    function restaurarSessao() {
-      const raw = localStorage.getItem("km_profile");
-      if (!raw) return;
-      try {
-        const profile = JSON.parse(raw);
-        abrirPainel(profile);
-      } catch (e) {}
-    }
+    loginBtn.addEventListener("click", loginDev);
+    logoutBtn.addEventListener("click", logoutDev);
 
-    setTheme("login");
-    restaurarSessao();
+    document.getElementById("username").addEventListener("keydown", e => {
+      if (e.key === "Enter") loginDev();
+    });
 
-    if (!currentProfile) {
-      document.getElementById("loginScreen").classList.remove("hidden");
-      document.getElementById("appScreen").classList.add("hidden");
-    }
+    document.getElementById("password").addEventListener("keydown", e => {
+      if (e.key === "Enter") loginDev();
+    });
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => setTab(btn.dataset.tab));
+    });
   </script>
 </body>
-            </html>
+</html>
