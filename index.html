@@ -3,159 +3,198 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NC XITER - Painel</title>
+  <title>Key Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #0b1020;
+      --bg-soft: #121933;
+      --panel: #f4f7fb;
+      --card: rgba(255,255,255,0.08);
+      --card-strong: rgba(255,255,255,0.12);
+      --text: #0f172a;
+      --muted: #6b7280;
+      --white: #ffffff;
+      --line: rgba(255,255,255,0.08);
+      --blue-1: #2563eb;
+      --blue-2: #3b82f6;
+      --blue-3: #60a5fa;
+      --green: #22c55e;
+      --green-dark: #16a34a;
+      --danger: #ef4444;
+      --shadow: 0 24px 60px rgba(0,0,0,0.30);
+      --radius-xl: 28px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #0b0b0b;
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, rgba(59,130,246,0.24), transparent 30%),
+        linear-gradient(180deg, #060914 0%, #0d1428 100%);
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      padding: 20px;
+      padding: 18px;
+      color: var(--text);
     }
 
     .phone {
       width: 390px;
       min-height: 844px;
-      background: linear-gradient(180deg, #0b63ff 0%, #238cff 37%, #edf1f5 37%, #edf1f5 100%);
-      border-radius: 30px;
+      background:
+        linear-gradient(180deg, #1d4ed8 0%, #2563eb 18%, #3b82f6 34%, #eef3f9 34%, #eef3f9 100%);
+      border-radius: 34px;
       overflow: hidden;
+      box-shadow: var(--shadow);
       position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .top {
-      padding: 24px 20px 18px;
-      color: #fff;
+      padding: 24px 22px 18px;
+      color: var(--white);
     }
 
     .topbar {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 22px;
+      justify-content: space-between;
+      margin-bottom: 24px;
     }
 
-    .profile {
+    .brand-wrap {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .avatar {
-      width: 62px;
-      height: 62px;
+      width: 58px;
+      height: 58px;
       border-radius: 50%;
-      background: #d8d8d8;
-      color: #888;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      font-weight: bold;
+      background: rgba(255,255,255,0.88);
+      color: #8b8b8b;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      font-weight: 800;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.08);
     }
 
-    .profile h1 {
+    .brand-meta h1 {
       font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
       margin-bottom: 4px;
-      text-transform: lowercase;
     }
 
-    .profile p {
-      font-size: 15px;
-      opacity: .95;
+    .brand-meta p {
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 500;
     }
 
-    .top-icons {
+    .actions-top {
       display: flex;
       gap: 14px;
-      font-size: 24px;
+      align-items: center;
+      font-size: 23px;
+      opacity: 0.95;
     }
 
-    .cards {
+    .stat-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 14px;
     }
 
-    .card {
-      background: #114fcf;
-      border-radius: 22px;
-      padding: 18px 16px;
-      min-height: 150px;
+    .stat-card {
+      background: linear-gradient(180deg, rgba(22,40,110,0.72), rgba(29,78,216,0.55));
+      border: 1px solid rgba(255,255,255,0.10);
+      backdrop-filter: blur(8px);
+      border-radius: 24px;
+      padding: 18px;
+      min-height: 168px;
       position: relative;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
     }
 
-    .card .label {
+    .stat-label {
       font-size: 15px;
-      opacity: .95;
-      margin-bottom: 14px;
+      font-weight: 500;
+      opacity: 0.95;
+      margin-bottom: 16px;
     }
 
-    .card .big {
-      font-size: 60px;
+    .stat-value {
+      font-size: 58px;
       line-height: 1;
-      font-weight: bold;
-      margin-bottom: 20px;
+      font-weight: 800;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
     }
 
-    .card .sub {
+    .stat-sub {
       font-size: 14px;
-      opacity: .95;
+      opacity: 0.95;
     }
 
-    .card .mini {
-      margin-top: 5px;
+    .stat-mini {
       font-size: 18px;
-      color: #ff7a7a;
+      margin-top: 6px;
+      font-weight: 700;
+      color: #fca5a5;
     }
 
-    .card .mini.white {
-      color: #fff;
+    .stat-mini.white {
+      color: var(--white);
     }
 
-    .go {
+    .go-badge {
       position: absolute;
       right: 16px;
       bottom: 16px;
-      width: 38px;
-      height: 38px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      background: #2ddc51;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: linear-gradient(180deg, #30e46c, #16a34a);
+      color: white;
+      display: grid;
+      place-items: center;
       font-size: 22px;
-      font-weight: bold;
-      box-shadow: 0 8px 18px rgba(45,220,81,.45);
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(34,197,94,0.42);
     }
 
-    .content {
-      background: #edf1f5;
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      min-height: 560px;
-      padding: 20px 14px 92px;
+    .main {
+      background: #eef3f9;
+      min-height: 590px;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+      padding: 18px 16px 96px;
     }
 
     .tabs {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
-      font-weight: bold;
+      gap: 8px;
       font-size: 16px;
-      margin-bottom: 18px;
+      font-weight: 800;
+      color: #1f2937;
+      margin: 4px 2px 18px;
       flex-wrap: wrap;
-      color: #222;
     }
 
     .tabs span {
@@ -163,117 +202,157 @@
     }
 
     .panel {
-      background: #fff;
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.06);
+      background: rgba(255,255,255,0.96);
+      border-radius: 26px;
+      padding: 18px;
+      box-shadow: 0 18px 45px rgba(15,23,42,0.07);
+      border: 1px solid rgba(15,23,42,0.04);
     }
 
-    .panel h2 {
+    .panel.hidden {
+      display: none;
+    }
+
+    .panel-title {
       font-size: 18px;
-      margin-bottom: 14px;
-      color: #1f2937;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .key-box {
+      width: 100%;
+      border-radius: 20px;
+      padding: 18px 16px;
+      margin-bottom: 16px;
+      text-align: center;
+      background: linear-gradient(180deg, #04122e, #071a43);
+      color: #22f06b;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+      word-break: break-word;
     }
 
     .field {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .field label {
       display: block;
       font-size: 14px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 6px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 8px;
     }
 
-    .field select, .field input {
+    .field select,
+    .field input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #d7dce3;
-      border-radius: 12px;
-      background: #f8fafc;
-      font-size: 14px;
+      border: 1px solid #dbe3ee;
+      background: #f9fbff;
+      border-radius: 16px;
+      padding: 15px 14px;
+      font-size: 15px;
+      color: #111827;
       outline: none;
     }
 
-    .key-box {
-      background: #07122b;
-      color: #00df57;
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      margin-bottom: 14px;
-      word-break: break-word;
+    .field select:focus,
+    .field input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.10);
     }
 
-    .actions {
+    .btn-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 10px;
+      gap: 12px;
+      margin-top: 6px;
     }
 
     button {
       border: none;
-      border-radius: 14px;
-      padding: 13px;
-      font-size: 14px;
-      font-weight: bold;
+      border-radius: 18px;
+      padding: 15px 16px;
+      font-size: 15px;
+      font-weight: 800;
       cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease;
     }
 
-    .btn-blue {
-      background: #0b63ff;
-      color: #fff;
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #2670ff, #1d4ed8);
+      color: white;
+      box-shadow: 0 12px 26px rgba(37,99,235,0.28);
     }
 
     .btn-dark {
-      background: #07122b;
-      color: #fff;
+      background: linear-gradient(180deg, #061635, #03102b);
+      color: white;
     }
 
-    .btn-green {
-      background: #12d44f;
-      color: #fff;
+    .btn-success {
       width: 100%;
-      margin-top: 10px;
+      margin-top: 12px;
+      background: linear-gradient(180deg, #25d366, #16a34a);
+      color: white;
+      box-shadow: 0 12px 24px rgba(34,197,94,0.22);
     }
 
     .list {
       display: grid;
-      gap: 10px;
+      gap: 12px;
     }
 
     .item {
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 12px;
+      background: #f8fbff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 14px;
     }
 
     .item .code {
-      font-weight: bold;
-      color: #111827;
       font-size: 14px;
-      margin-bottom: 6px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 8px;
       word-break: break-word;
     }
 
     .item .meta {
       font-size: 13px;
       color: #6b7280;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
     .empty {
       text-align: center;
       color: #6b7280;
-      padding: 18px 10px;
       font-size: 14px;
+      padding: 18px 8px;
+    }
+
+    .profile-box {
+      display: grid;
+      gap: 12px;
+    }
+
+    .profile-card {
+      border-radius: 18px;
+      background: #f8fbff;
+      border: 1px solid #e2e8f0;
+      padding: 16px;
+    }
+
+    .profile-card strong {
+      color: #111827;
     }
 
     .bottom-nav {
@@ -281,34 +360,43 @@
       left: 0;
       right: 0;
       bottom: 0;
-      height: 82px;
-      background: #fff;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(14px);
+      height: 84px;
       display: flex;
       justify-content: space-around;
       align-items: center;
-      border-top: 1px solid #ddd;
+      border-top: 1px solid rgba(15,23,42,0.06);
     }
 
     .nav-item {
       text-align: center;
-      color: #8c8c8c;
+      color: #8a93a3;
       font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
     }
 
     .nav-item .icon {
       display: block;
-      font-size: 23px;
-      margin-bottom: 4px;
+      font-size: 22px;
+      margin-bottom: 5px;
     }
 
     .nav-item.active {
-      color: #2d5bff;
-      font-weight: bold;
+      color: #2563eb;
     }
 
-    .hidden {
-      display: none;
+    @media (max-width: 430px) {
+      body {
+        padding: 0;
+      }
+
+      .phone {
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+      }
     }
   </style>
 </head>
@@ -316,50 +404,51 @@
   <div class="phone">
     <div class="top">
       <div class="topbar">
-        <div class="profile">
-          <div class="avatar">N</div>
-          <div>
-            <h1>nc xiter</h1>
-            <p>Pro</p>
+        <div class="brand-wrap">
+          <div class="avatar">K</div>
+          <div class="brand-meta">
+            <h1>Key Manager</h1>
+            <p>Premium</p>
           </div>
         </div>
-        <div class="top-icons">
+
+        <div class="actions-top">
           <span>⌕</span>
           <span>⌘</span>
         </div>
       </div>
 
-      <div class="cards">
-        <div class="card">
-          <div class="label">◫ Devices</div>
-          <div class="big" id="devicesCount">0</div>
-          <div class="sub">Expired devices</div>
-          <div class="mini" id="expiredDevicesCount">0</div>
-          <div class="go">➜</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label">◫ Devices</div>
+          <div class="stat-value" id="devicesCount">0</div>
+          <div class="stat-sub">Expired devices</div>
+          <div class="stat-mini" id="expiredDevicesCount">0</div>
+          <div class="go-badge">➜</div>
         </div>
 
-        <div class="card">
-          <div class="label">⛓ Keys</div>
-          <div class="big" id="keysCount">0</div>
-          <div class="sub">Packages</div>
-          <div class="mini white">4</div>
-          <div class="go">➜</div>
+        <div class="stat-card">
+          <div class="stat-label">⛓ Keys</div>
+          <div class="stat-value" id="keysCount">0</div>
+          <div class="stat-sub">Packages</div>
+          <div class="stat-mini white">4</div>
+          <div class="go-badge">➜</div>
         </div>
       </div>
     </div>
 
-    <div class="content">
+    <div class="main">
       <div class="tabs">
-        <span onclick="showView('home')">Create key</span>
+        <span onclick="showView('home')">Criar</span>
         <span onclick="showView('validas')">Válidas</span>
         <span onclick="showView('invalidas')">Inválidas</span>
-        <span onclick="showView('perfil')">Profile</span>
+        <span onclick="showView('perfil')">Perfil</span>
       </div>
 
       <div id="view-home" class="panel">
-        <h2>Criar licença</h2>
+        <div class="panel-title">Criar licença</div>
 
-        <div class="key-box" id="keyAtual">HG-TPIJUV</div>
+        <div class="key-box" id="keyAtual">HG-ZG00ZL</div>
 
         <div class="field">
           <label for="formato">Formato</label>
@@ -380,31 +469,34 @@
           </select>
         </div>
 
-        <div class="actions">
-          <button class="btn-blue" onclick="gerarPreview()">Gerar key</button>
+        <div class="btn-row">
+          <button class="btn-primary" onclick="gerarPreview()">Gerar key</button>
           <button class="btn-dark" onclick="copiarKey()">Copiar</button>
         </div>
 
-        <button class="btn-green" onclick="salvarKey()">Salvar key</button>
+        <button class="btn-success" onclick="salvarKey()">Salvar key</button>
       </div>
 
       <div id="view-validas" class="panel hidden">
-        <h2>Licenças válidas</h2>
+        <div class="panel-title">Licenças válidas</div>
         <div id="listaValidas" class="list"></div>
       </div>
 
       <div id="view-invalidas" class="panel hidden">
-        <h2>Licenças inválidas</h2>
+        <div class="panel-title">Licenças inválidas</div>
         <div id="listaInvalidas" class="list"></div>
       </div>
 
       <div id="view-perfil" class="panel hidden">
-        <h2>Perfil</h2>
-        <div class="item">
-          <div class="meta">
-            Nome: <strong>nc xiter</strong><br>
-            Plano: <strong>Pro</strong><br>
-            Status: <strong>Online</strong>
+        <div class="panel-title">Perfil</div>
+        <div class="profile-box">
+          <div class="profile-card">
+            <div style="line-height:1.8; color:#6b7280; font-size:14px;">
+              Nome: <strong>Key Manager</strong><br>
+              Plano: <strong>Premium</strong><br>
+              Status: <strong>Online</strong><br>
+              Sistema: <strong>Ativo</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -412,16 +504,20 @@
 
     <div class="bottom-nav">
       <div class="nav-item active" onclick="showView('home', this)">
-        <span class="icon">▦</span>Home
+        <span class="icon">▦</span>
+        Home
       </div>
       <div class="nav-item" onclick="showView('validas', this)">
-        <span class="icon">⛓</span>Válidas
+        <span class="icon">⛓</span>
+        Válidas
       </div>
       <div class="nav-item" onclick="showView('invalidas', this)">
-        <span class="icon">▣</span>Inválidas
+        <span class="icon">▣</span>
+        Inválidas
       </div>
       <div class="nav-item" onclick="showView('perfil', this)">
-        <span class="icon">◉</span>Profile
+        <span class="icon">◉</span>
+        Perfil
       </div>
     </div>
   </div>
@@ -460,11 +556,11 @@
     }
 
     function getKeys() {
-      return JSON.parse(localStorage.getItem("ncx_keys") || "[]");
+      return JSON.parse(localStorage.getItem("key_manager_keys") || "[]");
     }
 
     function setKeys(keys) {
-      localStorage.setItem("ncx_keys", JSON.stringify(keys));
+      localStorage.setItem("key_manager_keys", JSON.stringify(keys));
     }
 
     function salvarKey() {
@@ -493,7 +589,6 @@
     function separarKeys() {
       const agora = new Date();
       const keys = getKeys();
-
       const validas = [];
       const invalidas = [];
 
@@ -515,7 +610,6 @@
 
     function renderListas() {
       const { validas, invalidas } = separarKeys();
-
       const listaValidas = document.getElementById("listaValidas");
       const listaInvalidas = document.getElementById("listaInvalidas");
 
