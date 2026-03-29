@@ -19,9 +19,6 @@
       --shadow:0 24px 60px rgba(0,0,0,.22);
       --glass:rgba(255,255,255,.18);
       --glassBorder:rgba(255,255,255,.22);
-      --danger:#ef4444;
-      --success:#22c55e;
-      --warning:#f59e0b;
     }
 
     *{
@@ -85,6 +82,17 @@
       align-items:center;
       justify-content:center;
       padding:22px;
+    }
+
+    .login-wrap{
+      width:100%;
+      transition:opacity .7s ease, transform .7s ease;
+    }
+
+    .login-wrap.hide{
+      opacity:0;
+      transform:scale(.985);
+      pointer-events:none;
     }
 
     .login-card{
@@ -179,6 +187,16 @@
       color:#fff;
     }
 
+    .btn-danger{
+      background:linear-gradient(180deg,#ef4444,#dc2626);
+      color:#fff;
+    }
+
+    .btn-success{
+      background:linear-gradient(180deg,#22c55e,#16a34a);
+      color:#fff;
+    }
+
     .btn-row{
       display:grid;
       grid-template-columns:1fr 1fr;
@@ -206,6 +224,152 @@
       line-height:1.7;
     }
 
+    .welcome-overlay{
+      position:absolute;
+      inset:0;
+      z-index:6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:22px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .7s ease;
+    }
+
+    .welcome-overlay.show{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .welcome-card{
+      width:100%;
+      background:rgba(255,255,255,.16);
+      border:1px solid rgba(255,255,255,.22);
+      backdrop-filter:blur(18px);
+      border-radius:30px;
+      padding:28px 22px;
+      color:#fff;
+      transform:translateY(20px);
+      opacity:0;
+      box-shadow:0 18px 40px rgba(0,0,0,.16);
+      transition:transform 1s ease, opacity 1s ease;
+    }
+
+    .welcome-overlay.show .welcome-card{
+      transform:translateY(0);
+      opacity:1;
+    }
+
+    .welcome-top{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .welcome-avatar,
+    .avatar,
+    .mini-avatar{
+      border-radius:50%;
+      overflow:hidden;
+      position:relative;
+      background:rgba(255,255,255,.92);
+      color:#7a7a7a;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      flex-shrink:0;
+    }
+
+    .welcome-avatar{
+      width:78px;
+      height:78px;
+      font-size:34px;
+      border:3px solid rgba(255,255,255,.55);
+      box-shadow:0 8px 20px rgba(0,0,0,.18);
+    }
+
+    .avatar{
+      width:56px;
+      height:56px;
+      font-size:26px;
+    }
+
+    .mini-avatar{
+      width:52px;
+      height:52px;
+      font-size:22px;
+      border:1px solid #e5e7eb;
+      background:#f8fafc;
+    }
+
+    .welcome-avatar img,
+    .avatar img,
+    .mini-avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .welcome-avatar span,
+    .avatar span,
+    .mini-avatar span{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .welcome-small{
+      font-size:13px;
+      font-weight:700;
+      letter-spacing:.6px;
+      opacity:.92;
+      text-transform:uppercase;
+      margin-bottom:6px;
+    }
+
+    .welcome-user{
+      font-size:26px;
+      font-weight:900;
+      line-height:1.1;
+      text-transform:uppercase;
+    }
+
+    .welcome-panel{
+      margin-top:18px;
+      font-size:18px;
+      font-weight:800;
+      text-transform:uppercase;
+      line-height:1.4;
+    }
+
+    .progress{
+      margin-top:22px;
+      width:100%;
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.20);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .progress-bar{
+      width:0%;
+      height:100%;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
+      transition:width 5s linear;
+    }
+
+    .welcome-overlay.show .progress-bar{
+      width:100%;
+    }
+
     .panel-screen{
       height:100%;
       display:flex;
@@ -231,20 +395,6 @@
       align-items:center;
       gap:12px;
       min-width:0;
-    }
-
-    .avatar{
-      width:56px;
-      height:56px;
-      border-radius:50%;
-      background:rgba(255,255,255,.92);
-      color:#7a7a7a;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:26px;
-      font-weight:900;
-      flex-shrink:0;
     }
 
     .brand-text h2{
@@ -454,11 +604,23 @@
       padding:12px;
     }
 
+    .user-head{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-bottom:8px;
+    }
+
+    .user-main{
+      min-width:0;
+      flex:1;
+    }
+
     .user-item strong{
       display:block;
       font-size:14px;
       color:#111827;
-      margin-bottom:6px;
+      margin-bottom:4px;
       text-transform:uppercase;
     }
 
@@ -469,6 +631,13 @@
       text-transform:uppercase;
       line-height:1.5;
       word-break:break-word;
+    }
+
+    .user-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin-top:10px;
     }
 
     .bottom-nav{
@@ -512,31 +681,50 @@
 
     <div class="screen" id="loginScreen">
       <div class="login-screen">
-        <div class="login-card">
-          <div class="logo" id="loginLogo">D</div>
-          <h1>Login</h1>
-          <div class="subtitle">Acesso do painel principal.</div>
+        <div class="login-wrap" id="loginWrap">
+          <div class="login-card">
+            <div class="logo" id="loginLogo">D</div>
+            <h1>Login</h1>
+            <div class="subtitle">Acesso do painel principal.</div>
 
-          <div class="error-box" id="loginError"></div>
+            <div class="error-box" id="loginError"></div>
 
-          <div class="field">
-            <label for="username">Usuário</label>
-            <input id="username" type="text" placeholder="Digite seu usuário">
-          </div>
+            <div class="field">
+              <label for="username">Usuário</label>
+              <input id="username" type="text" placeholder="Digite seu usuário">
+            </div>
 
-          <div class="field">
-            <label for="password">Senha</label>
-            <input id="password" type="password" placeholder="Digite sua senha">
-          </div>
+            <div class="field">
+              <label for="password">Senha</label>
+              <input id="password" type="password" placeholder="Digite sua senha">
+            </div>
 
-          <button class="btn btn-primary" id="loginBtn">Entrar</button>
+            <button class="btn btn-primary" id="loginBtn">Entrar</button>
 
-          <div class="hint">
-            Login pelo Supabase.<br>
-            DEV vê tudo.<br>
-            HG/DRIP/MISTO entram direto no próprio painel.
+            <div class="hint">
+              Login pelo Supabase.<br>
+              DEV vê tudo.<br>
+              HG/DRIP/MISTO entram direto no próprio painel.
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="welcome-overlay" id="welcomeOverlay">
+      <div class="welcome-card">
+        <div class="welcome-top">
+          <div class="welcome-avatar">
+            <img id="welcomeAvatarImg" class="hidden" alt="Avatar">
+            <span id="welcomeAvatarLetter">D</span>
+          </div>
+          <div>
+            <div class="welcome-small">Bem-vindo</div>
+            <div class="welcome-user" id="welcomeUser">DEV</div>
+          </div>
+        </div>
+        <div class="welcome-panel" id="welcomePanel">Entrando em DEV MENU...</div>
+        <div class="progress"><div class="progress-bar"></div></div>
       </div>
     </div>
 
@@ -545,7 +733,10 @@
         <div class="top">
           <div class="topbar">
             <div class="brand">
-              <div class="avatar" id="mainAvatar">D</div>
+              <div class="avatar">
+                <img id="mainAvatarImg" class="hidden" alt="Avatar">
+                <span id="mainAvatarLetter">D</span>
+              </div>
               <div class="brand-text">
                 <h2 id="mainTitle">Development</h2>
                 <p id="mainSubtitle">Painel administrativo</p>
@@ -598,14 +789,16 @@
     const loginError = document.getElementById("loginError");
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
-    const mainAvatar = document.getElementById("mainAvatar");
     const baseBg = document.getElementById("baseBg");
     const tabsContainer = document.getElementById("tabsContainer");
     const bottomNav = document.getElementById("bottomNav");
     const tabContent = document.getElementById("tabContent");
+    const loginWrap = document.getElementById("loginWrap");
+    const welcomeOverlay = document.getElementById("welcomeOverlay");
 
     let currentUser = null;
     let currentTab = "hg";
+    let editingUserId = null;
 
     function showError(msg){
       loginError.style.display = "block";
@@ -632,6 +825,24 @@
     function isExpired(expiresAt){
       if (!expiresAt) return false;
       return new Date(expiresAt) <= new Date();
+    }
+
+    function setAvatar(imgId, letterId, avatar, fallback){
+      const img = document.getElementById(imgId);
+      const letter = document.getElementById(letterId);
+      if (!img || !letter) return;
+
+      letter.textContent = fallback;
+
+      if (avatar && avatar.trim() !== "") {
+        img.src = avatar;
+        img.classList.remove("hidden");
+        letter.classList.add("hidden");
+      } else {
+        img.src = "";
+        img.classList.add("hidden");
+        letter.classList.remove("hidden");
+      }
     }
 
     function applyTheme(type){
@@ -676,6 +887,18 @@
           <span class="icon">${tab.icon}</span>${tab.label}
         </div>
       `).join("");
+    }
+
+    function showWarning(msg){
+      const el = document.getElementById("mainWarning");
+      el.style.display = "block";
+      el.textContent = msg;
+    }
+
+    function clearWarning(){
+      const el = document.getElementById("mainWarning");
+      el.style.display = "none";
+      el.textContent = "";
     }
 
     function getPanelHtml(tabName){
@@ -727,7 +950,7 @@
         <div class="panel-title">DEV</div>
 
         <div class="panel-card">
-          <h3>Criar usuário</h3>
+          <h3>${editingUserId ? "EDITAR USUÁRIO" : "CRIAR USUÁRIO"}</h3>
 
           <div class="field">
             <label for="newUser">Usuário</label>
@@ -750,6 +973,11 @@
           </div>
 
           <div class="field">
+            <label for="newAvatar">Avatar URL</label>
+            <input id="newAvatar" placeholder="https://...">
+          </div>
+
+          <div class="field">
             <label for="newValidity">Validade</label>
             <select id="newValidity">
               <option value="1">1 DIA</option>
@@ -760,8 +988,8 @@
           </div>
 
           <div class="btn-row">
-            <button class="btn btn-primary" onclick="criarUsuario()">Criar</button>
-            <button class="btn btn-dark" onclick="carregarUsuarios()">Atualizar</button>
+            <button class="btn btn-primary" onclick="${editingUserId ? 'salvarEdicaoUsuario()' : 'criarUsuario()'}">${editingUserId ? "Salvar edição" : "Criar"}</button>
+            <button class="btn btn-dark" onclick="limparFormularioUsuario()">Limpar</button>
           </div>
         </div>
 
@@ -799,20 +1027,11 @@
       buildTabsForType(currentUser.type);
       tabContent.innerHTML = getPanelHtml(tabName);
       if (tabName === "dev" && currentUser.type === "DEV") {
-        setTimeout(carregarUsuarios, 100);
+        setTimeout(() => {
+          carregarUsuarios();
+          preencherFormularioEdicaoSeNecessario();
+        }, 100);
       }
-    }
-
-    function showWarning(msg){
-      const el = document.getElementById("mainWarning");
-      el.style.display = "block";
-      el.textContent = msg;
-    }
-
-    function clearWarning(){
-      const el = document.getElementById("mainWarning");
-      el.style.display = "none";
-      el.textContent = "";
     }
 
     async function loginUser(){
@@ -863,33 +1082,69 @@
       }
 
       currentUser = data;
-      mainAvatar.textContent = currentUser.username ? currentUser.username[0].toUpperCase() : "U";
-
       applyTheme(currentUser.type || "DEV");
       clearWarning();
+
+      setAvatar("welcomeAvatarImg", "welcomeAvatarLetter", currentUser.avatar || "", currentUser.username?.[0]?.toUpperCase() || "U");
+      setAvatar("mainAvatarImg", "mainAvatarLetter", currentUser.avatar || "", currentUser.username?.[0]?.toUpperCase() || "U");
+
+      document.getElementById("welcomeUser").textContent = currentUser.username.toUpperCase();
+      document.getElementById("welcomePanel").textContent = `ENTRANDO EM ${currentUser.type} MENU...`;
 
       if (currentUser.expires_at) {
         showWarning(`VALIDADE ATÉ ${formatDateBr(currentUser.expires_at)}`);
       }
 
-      loginScreen.classList.add("hidden");
-      panelScreen.classList.remove("hidden");
+      loginWrap.classList.add("hide");
 
-      currentTab = currentUser.type === "DEV"
-        ? "dev"
-        : currentUser.type === "HG"
-          ? "hg"
-          : currentUser.type === "DRIP"
-            ? "drip"
-            : "misto";
+      setTimeout(() => {
+        welcomeOverlay.classList.add("show");
+      }, 400);
 
-      setTab(currentTab);
+      setTimeout(() => {
+        loginScreen.classList.add("hidden");
+        panelScreen.classList.remove("hidden");
+        welcomeOverlay.classList.remove("show");
+
+        currentTab = currentUser.type === "DEV"
+          ? "dev"
+          : currentUser.type === "HG"
+            ? "hg"
+            : currentUser.type === "DRIP"
+              ? "drip"
+              : "misto";
+
+        setTab(currentTab);
+      }, 2200);
+    }
+
+    function limparFormularioUsuario(){
+      editingUserId = null;
+      if (currentTab !== "dev") return;
+      document.getElementById("newUser").value = "";
+      document.getElementById("newPass").value = "";
+      document.getElementById("newType").value = "HG";
+      document.getElementById("newAvatar").value = "";
+      document.getElementById("newValidity").value = "1";
+      setTab("dev");
+    }
+
+    function preencherFormularioEdicaoSeNecessario(){
+      if (!editingUserId) return;
+    }
+
+    function buildExpiresAt(validity){
+      if (validity === "permanente") return null;
+      const date = new Date();
+      date.setDate(date.getDate() + parseInt(validity, 10));
+      return date.toISOString();
     }
 
     async function criarUsuario(){
       const username = document.getElementById("newUser")?.value.trim();
       const password = document.getElementById("newPass")?.value.trim();
       const type = document.getElementById("newType")?.value;
+      const avatar = document.getElementById("newAvatar")?.value.trim();
       const validity = document.getElementById("newValidity")?.value;
 
       if (!username || !password) {
@@ -898,13 +1153,7 @@
       }
 
       const password_hash = await sha256(password);
-
-      let expires_at = null;
-      if (validity !== "permanente") {
-        const date = new Date();
-        date.setDate(date.getDate() + parseInt(validity, 10));
-        expires_at = date.toISOString();
-      }
+      const expires_at = buildExpiresAt(validity);
 
       const { error } = await db.from("users").insert([
         {
@@ -912,6 +1161,7 @@
           password: null,
           password_hash,
           type,
+          avatar: avatar || null,
           expires_at
         }
       ]);
@@ -922,10 +1172,100 @@
       }
 
       alert("USUÁRIO CRIADO!");
-      document.getElementById("newUser").value = "";
-      document.getElementById("newPass").value = "";
-      document.getElementById("newType").value = "HG";
-      document.getElementById("newValidity").value = "1";
+      limparFormularioUsuario();
+      carregarUsuarios();
+    }
+
+    async function editarUsuario(id){
+      const { data, error } = await db
+        .from("users")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
+
+      if (error || !data) {
+        alert("ERRO AO CARREGAR USUÁRIO.");
+        return;
+      }
+
+      editingUserId = id;
+      setTab("dev");
+
+      setTimeout(() => {
+        document.getElementById("newUser").value = data.username || "";
+        document.getElementById("newPass").value = "";
+        document.getElementById("newType").value = data.type || "HG";
+        document.getElementById("newAvatar").value = data.avatar || "";
+
+        if (!data.expires_at) {
+          document.getElementById("newValidity").value = "permanente";
+        } else {
+          const diffMs = new Date(data.expires_at) - new Date();
+          const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+          if (diffDays <= 1) document.getElementById("newValidity").value = "1";
+          else if (diffDays <= 7) document.getElementById("newValidity").value = "7";
+          else document.getElementById("newValidity").value = "30";
+        }
+      }, 100);
+    }
+
+    async function salvarEdicaoUsuario(){
+      if (!editingUserId) return;
+
+      const username = document.getElementById("newUser")?.value.trim();
+      const password = document.getElementById("newPass")?.value.trim();
+      const type = document.getElementById("newType")?.value;
+      const avatar = document.getElementById("newAvatar")?.value.trim();
+      const validity = document.getElementById("newValidity")?.value;
+
+      if (!username) {
+        alert("PREENCHA O USUÁRIO");
+        return;
+      }
+
+      const payload = {
+        username,
+        type,
+        avatar: avatar || null,
+        expires_at: buildExpiresAt(validity)
+      };
+
+      if (password) {
+        payload.password = null;
+        payload.password_hash = await sha256(password);
+      }
+
+      const { error } = await db
+        .from("users")
+        .update(payload)
+        .eq("id", editingUserId);
+
+      if (error) {
+        alert("ERRO AO EDITAR: " + error.message);
+        return;
+      }
+
+      alert("USUÁRIO EDITADO!");
+      editingUserId = null;
+      setTab("dev");
+      carregarUsuarios();
+    }
+
+    async function removerUsuario(id){
+      const ok = confirm("REMOVER ESTE USUÁRIO?");
+      if (!ok) return;
+
+      const { error } = await db
+        .from("users")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        alert("ERRO AO REMOVER: " + error.message);
+        return;
+      }
+
+      alert("USUÁRIO REMOVIDO!");
       carregarUsuarios();
     }
 
@@ -954,11 +1294,23 @@
         const expired = isExpired(u.expires_at);
         return `
           <div class="user-item">
-            <strong>${u.username}</strong>
-            <span>TIPO: ${u.type || "NÃO DEFINIDO"}</span>
+            <div class="user-head">
+              <div class="mini-avatar">
+                ${u.avatar ? `<img src="${u.avatar}" alt="Avatar">` : `<span>${u.username?.[0]?.toUpperCase() || "U"}</span>`}
+              </div>
+              <div class="user-main">
+                <strong>${u.username}</strong>
+                <span>TIPO: ${u.type || "NÃO DEFINIDO"}</span>
+              </div>
+            </div>
             <span>SENHA: •••••••</span>
             <span>VALIDADE: ${u.expires_at ? formatDateBr(u.expires_at) : "PERMANENTE"}</span>
             <span>STATUS: ${expired ? "EXPIRADO" : "ATIVO"}</span>
+            <span>AVATAR: ${u.avatar ? "DEFINIDO" : "NÃO DEFINIDO"}</span>
+            <div class="user-actions">
+              <button class="btn btn-dark" onclick="editarUsuario('${u.id}')">Editar</button>
+              <button class="btn btn-danger" onclick="removerUsuario('${u.id}')">Remover</button>
+            </div>
           </div>
         `;
       }).join("");
@@ -966,8 +1318,10 @@
 
     function logoutUser(){
       currentUser = null;
+      editingUserId = null;
       panelScreen.classList.add("hidden");
       loginScreen.classList.remove("hidden");
+      loginWrap.classList.remove("hide");
       document.getElementById("password").value = "";
       document.getElementById("username").value = "";
       clearError();
@@ -987,4 +1341,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
