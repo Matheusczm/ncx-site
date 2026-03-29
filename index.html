@@ -1,1344 +1,1174 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DevCore</title>
+  <title>Painéis de Teste</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg1:#07101f;
-      --bg2:#0c1630;
-      --theme1:#2563eb;
-      --theme2:#3b82f6;
-      --soft:#dbeafe;
-      --card:#ffffff;
+      --login1:#2563eb;
+      --login2:#3b82f6;
+      --bg:#f8fafc;
       --text:#111827;
       --muted:#6b7280;
       --line:#e5e7eb;
       --shadow:0 24px 60px rgba(0,0,0,.22);
       --glass:rgba(255,255,255,.18);
       --glassBorder:rgba(255,255,255,.22);
-    }
+      --tab-duration:220ms;
+      --theme1:#2563eb;
+      --theme2:#3b82f6;
+      --theme3:#93c5fd;
+      --soft:#dbeafe;
+      --success:#22c55e;
+      --success2:#16a34a;
+      --danger:#ef4444;
+      --danger2:#dc2626;
+      --warning:#f59e0b;
+      --warning2:#fbbf24;
+    }*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Inter",sans-serif;}
+
+body{
+  min-height:100vh;display:flex;justify-content:center;align-items:center;padding:0;overflow:hidden;
+  background:radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),linear-gradient(180deg,#07101f 0%, #0c1630 100%);
+}
+
+.phone{width:min(100vw,430px);min-height:100vh;overflow:hidden;position:relative;background:#fff;}
+
+@media (min-width:431px){
+  body{padding:18px;}
+  .phone{width:min(100vw - 24px,430px);min-height:844px;border-radius:32px;box-shadow:var(--shadow);}
+}
+
+.base-bg{position:absolute;inset:0;background:linear-gradient(180deg,var(--login1) 0%, var(--login2) 46%, #f8fafc 46%, #f8fafc 100%);z-index:1;transition:background .45s ease;}
+canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;image-rendering:pixelated;}
+.hidden{display:none!important;}
+
+.screen{position:relative;z-index:4;min-height:100vh;padding:clamp(18px,3vw,26px) clamp(14px,4vw,22px);}
+.login-wrap{display:flex;flex-direction:column;justify-content:center;min-height:100vh;transition:opacity .7s ease, transform .7s ease;}
+.login-wrap.hide{opacity:0;transform:scale(.985);pointer-events:none;}
+
+.login-card{background:rgba(255,255,255,.98);border-radius:28px;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.7);}
+.logo{width:84px;height:84px;border-radius:50%;background:linear-gradient(180deg,var(--login1),var(--login2));display:flex;align-items:center;justify-content:center;margin-bottom:16px;box-shadow:0 16px 35px rgba(37,99,235,.28);border:3px solid rgba(255,255,255,.8);color:#fff;font-size:34px;font-weight:900;}
+h1{font-size:28px;font-weight:900;color:var(--text);margin-bottom:8px;text-transform:uppercase;letter-spacing:-.5px;}
+.subtitle{color:var(--muted);font-size:14px;margin-bottom:18px;}
+
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:13px;font-weight:800;color:#1f2937;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px;}
+.field input,.field select{width:100%;border:1px solid var(--line);background:#f9fafb;border-radius:16px;padding:15px 14px;font-size:15px;color:var(--text);outline:none;transition:.18s ease;}
+.field input:focus,.field select:focus{border-color:#93c5fd;box-shadow:0 0 0 4px rgba(59,130,246,.10);}
+
+.btn{width:100%;border:none;border-radius:18px;padding:15px 16px;font-size:14px;font-weight:800;cursor:pointer;text-transform:uppercase;transition:transform .15s ease, opacity .15s ease, box-shadow .18s ease;}
+.btn:active,.nav-item:active,.tabs span:active,.logout-btn:active,.avatar:active,.qa-btn:active{transform:scale(.985);}
+.btn-login{background:linear-gradient(180deg,var(--login1),var(--login2));color:#fff;box-shadow:0 12px 26px rgba(37,99,235,.22);}
+.btn-primary{background:linear-gradient(180deg,var(--theme1),var(--theme2));color:#fff;box-shadow:0 12px 24px rgba(37,99,235,.18);}
+.btn-secondary{background:#111827;color:#fff;}
+.btn-success{background:linear-gradient(180deg,var(--success),var(--success2));color:#fff;}
+.btn-danger{background:linear-gradient(180deg,var(--danger),var(--danger2));color:#fff;}
+.btn-warning{background:linear-gradient(180deg,var(--warning),var(--warning2));color:#fff;}
+
+.error-box,.info-box{border-radius:14px;padding:12px 14px;font-size:13px;margin-bottom:14px;display:none;text-transform:uppercase;font-weight:700;white-space:pre-line;}
+.error-box{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;}
+.info-box{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.hint{margin-top:14px;color:#6b7280;font-size:12px;line-height:1.7;}
+
+.welcome-overlay{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;padding:22px;opacity:0;pointer-events:none;transition:opacity .7s ease;}
+.welcome-overlay.show{opacity:1;pointer-events:auto;}
+.welcome-card{width:100%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(18px);border-radius:30px;padding:28px 22px;color:#fff;transform:translateY(20px);opacity:0;box-shadow:0 18px 40px rgba(0,0,0,.16);transition:transform 1s ease, opacity 1s ease;}
+.welcome-overlay.show .welcome-card{transform:translateY(0);opacity:1;}
+.welcome-top{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.welcome-avatar{width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:#7a7a7a;font-size:34px;font-weight:900;border:3px solid rgba(255,255,255,.55);box-shadow:0 8px 20px rgba(0,0,0,.18);flex-shrink:0;overflow:hidden;position:relative;}
+.welcome-avatar img,.avatar-img,.mini-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+.welcome-avatar span,.avatar span,.mini-avatar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.welcome-small{font-size:13px;font-weight:700;letter-spacing:.6px;opacity:.92;text-transform:uppercase;margin-bottom:6px;}
+.welcome-user{font-size:26px;font-weight:900;line-height:1.1;text-transform:uppercase;}
+.welcome-panel{margin-top:18px;font-size:18px;font-weight:800;text-transform:uppercase;line-height:1.4;}
+.progress{margin-top:22px;width:100%;height:12px;border-radius:999px;background:rgba(255,255,255,.20);overflow:hidden;border:1px solid rgba(255,255,255,.12);}
+.progress-bar{width:0%;height:100%;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,.55));transition:width 5.5s linear;}
+.welcome-overlay.show .progress-bar{width:100%;}
+
+.app-screen{position:relative;z-index:5;min-height:100vh;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.top{padding:clamp(18px,4vw,22px) clamp(14px,4vw,20px) 10px;color:#fff;}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:12px;position:relative;}
+.brand{display:flex;align-items:center;gap:14px;min-width:0;}
+.avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.92);color:#8a8a8a;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;flex-shrink:0;cursor:pointer;overflow:hidden;position:relative;}
+.brand-text h2{font-size:18px;font-weight:900;line-height:1.1;margin-bottom:4px;text-transform:uppercase;letter-spacing:-.4px;}
+.brand-text p{font-size:14px;opacity:.94;font-weight:600;}
+.logout-btn{background:var(--glass);color:#fff;border:1px solid var(--glassBorder);border-radius:12px;padding:9px 12px;font-size:12px;font-weight:800;text-transform:uppercase;backdrop-filter:blur(8px);cursor:pointer;}
+
+.profile-popup{position:absolute;top:64px;left:0;width:230px;background:rgba(255,255,255,.98);color:#111827;border:1px solid rgba(15,23,42,.08);border-radius:18px;padding:12px;box-shadow:0 18px 45px rgba(15,23,42,.18);z-index:20;animation:popupIn .18s ease;transform-origin:top left;}
+.profile-popup.hidden{display:none !important;}
+.profile-popup.closing{animation:popupOut .16s ease both;}
+.profile-popup .popup-title{font-size:12px;font-weight:900;text-transform:uppercase;margin-bottom:10px;color:#111827;}
+.profile-popup .popup-line{font-size:12px;color:#6b7280;text-transform:uppercase;line-height:1.8;}
+.profile-popup .popup-line strong{color:#111827;}
+.profile-popup .popup-actions{margin-top:10px;display:grid;gap:8px;}
+@keyframes popupIn{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes popupOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-5px) scale(.98)}}
+
+.banner{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:12px 14px;margin-bottom:12px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+.warning-banner{background:linear-gradient(180deg,#fff7ed,#ffedd5);border:1px solid #fdba74;color:#9a3412;border-radius:16px;padding:11px 12px;margin-bottom:10px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.35px;line-height:1.5;}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,2.5vw,12px);margin-bottom:4px;}
+.card{background:linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.08));border-radius:22px;padding:16px 14px;min-height:clamp(120px,22vw,138px);border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);}
+.card .label{font-size:11px;opacity:.95;margin-bottom:14px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.card .value{font-size:42px;font-weight:900;line-height:1;margin-bottom:14px;letter-spacing:-1px;}
+.card .sub{font-size:11px;opacity:.95;text-transform:uppercase;font-weight:700;line-height:1.4;}
+
+.main{min-height:calc(100vh - 300px);background:var(--bg);border-top-left-radius:28px;border-top-right-radius:28px;padding:clamp(14px,3.5vw,18px) clamp(12px,4vw,16px) 84px;position:relative;z-index:2;overflow:auto;}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+.tabs.tabs-3{grid-template-columns:repeat(3,1fr);}
+.tabs span{text-align:center;font-size:12px;font-weight:900;color:#1f2937;padding:10px 4px;border-radius:14px;cursor:pointer;text-transform:uppercase;transition:background .18s ease, color .18s ease;}
+.tabs span.active-tab{background:var(--soft);color:var(--theme1);}
+
+.panel{background:rgba(255,255,255,.98);border-radius:26px;padding:18px;box-shadow:0 18px 45px rgba(15,23,42,.07);border:1px solid rgba(15,23,42,.04);overflow:visible;min-height:280px;transition:min-height .22s ease;}
+.panel.create-panel-active{min-height:560px;}
+.panel-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:16px;text-transform:uppercase;letter-spacing:-.4px;}
+
+.view-stack{position:relative;min-height:290px;}
+.view{width:100%;}
+.view.anim-enter-right{animation:slideInRight var(--tab-duration) ease both;}
+.view.anim-enter-left{animation:slideInLeft var(--tab-duration) ease both;}
+.view.anim-exit-left{animation:slideOutLeft var(--tab-duration) ease both;}
+.view.anim-exit-right{animation:slideOutRight var(--tab-duration) ease both;}
+.view.full-create-mode{animation:createExpand .28s ease both;}
+@keyframes slideInRight{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-26px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideOutLeft{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-16px)}}
+@keyframes slideOutRight{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(16px)}}
+@keyframes createExpand{from{opacity:.92;transform:scale(.97) translateY(12px)}to{opacity:1;transform:scale(1) translateY(0)}}
+
+.key-box{background:linear-gradient(180deg,#04122e,#071a43);color:#20ef66;padding:18px 16px;border-radius:20px;font-size:24px;font-weight:800;text-align:center;letter-spacing:1px;margin-bottom:16px;word-break:break-word;min-height:64px;display:flex;align-items:center;justify-content:center;transition:box-shadow .18s ease, transform .18s ease;}
+.key-box.glow{box-shadow:0 0 0 2px rgba(34,197,94,.12), 0 0 22px rgba(34,197,94,.22);transform:scale(1.01);}
+.key-box.warning-state{color:#ffb4b4;background:linear-gradient(180deg,#2a0a0a,#3b0f0f);}
+
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+.summary-card{border-radius:18px;background:#fff;border:1px solid #e5e7eb;padding:16px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.mini-box{background:#f8fafc;border:1px solid #e5e7eb;border-radius:16px;padding:12px;}
+.mini-box small{display:block;font-size:11px;text-transform:uppercase;color:#6b7280;margin-bottom:6px;font-weight:700;}
+.mini-box strong{font-size:13px;font-weight:800;word-break:break-word;text-transform:uppercase;color:#111827;}
+.section-card{border-radius:20px;background:#fff;border:1px solid #e5e7eb;padding:16px;}
+.section-title{font-size:16px;font-weight:900;color:#111827;margin-bottom:14px;text-transform:uppercase;}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.qa-btn{border:none;border-radius:16px;padding:14px 10px;font-size:11px;font-weight:900;text-transform:uppercase;cursor:pointer;color:#111827;background:#fff8e6;border:1px solid #fde68a;}
+.form-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+.list{display:grid;gap:12px;}
+.item{background:#f8fafc;border:1px solid #e5e7eb;border-radius:18px;padding:14px;box-shadow:0 6px 16px rgba(15,23,42,.04);animation:riseIn .24s ease both;}
+@keyframes riseIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.item .code{font-size:15px;font-weight:900;color:#111827;margin-bottom:8px;text-transform:uppercase;word-break:break-word;}
+.item .meta{font-size:13px;color:#6b7280;line-height:1.7;text-transform:uppercase;word-break:break-word;}
+.item-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.empty{text-align:center;color:#6b7280;font-size:14px;padding:18px 8px;text-transform:uppercase;font-weight:700;}
+
+.bottom-nav{position:absolute;left:0;right:0;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);height:84px;display:flex;justify-content:space-around;align-items:center;border-top:1px solid rgba(15,23,42,.06);}
+.nav-item{text-align:center;color:#8a93a3;font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;}
+.nav-item .icon{display:block;font-size:22px;margin-bottom:5px;}
+.nav-item.active{color:var(--theme1);}
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-      font-family:Arial, sans-serif;
-    }
-
-    body{
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),
-        linear-gradient(180deg,var(--bg1) 0%, var(--bg2) 100%);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:0;
-    }
-
-    .app{
-      width:min(100vw, 430px);
-      min-height:100vh;
-      height:100dvh;
-      background:#fff;
-      overflow:hidden;
-      position:relative;
-    }
-
-    @media (min-width:431px){
-      body{ padding:18px; }
-      .app{
-        width:min(100vw - 24px, 430px);
-        height:844px;
-        min-height:844px;
-        border-radius:32px;
-        box-shadow:var(--shadow);
-      }
-    }
-
-    .base-bg{
-      position:absolute;
-      inset:0;
-      background:linear-gradient(180deg,var(--theme1) 0%, var(--theme2) 42%, #f8fafc 42%, #f8fafc 100%);
-      z-index:1;
-      transition:background .25s ease;
-    }
-
-    .screen{
-      position:relative;
-      z-index:2;
-      height:100%;
-    }
-
-    .hidden{ display:none !important; }
-
-    .login-screen{
-      height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:22px;
-    }
-
-    .login-wrap{
-      width:100%;
-      transition:opacity .7s ease, transform .7s ease;
-    }
-
-    .login-wrap.hide{
-      opacity:0;
-      transform:scale(.985);
-      pointer-events:none;
-    }
-
-    .login-card{
-      width:100%;
-      background:rgba(255,255,255,.98);
-      border-radius:28px;
-      padding:22px;
-      box-shadow:0 20px 50px rgba(0,0,0,.12);
-      border:1px solid rgba(255,255,255,.7);
-    }
-
-    .logo{
-      width:84px;
-      height:84px;
-      border-radius:50%;
-      background:linear-gradient(180deg,var(--theme1),var(--theme2));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      margin-bottom:16px;
-      box-shadow:0 16px 35px rgba(37,99,235,.28);
-      border:3px solid rgba(255,255,255,.8);
-      color:#fff;
-      font-size:34px;
-      font-weight:900;
-    }
-
-    h1{
-      font-size:28px;
-      font-weight:900;
-      color:var(--text);
-      margin-bottom:8px;
-      text-transform:uppercase;
-      letter-spacing:-.5px;
-    }
-
-    .subtitle{
-      color:var(--muted);
-      font-size:14px;
-      margin-bottom:18px;
-    }
-
-    .field{ margin-bottom:14px; }
-
-    .field label{
-      display:block;
-      font-size:13px;
-      font-weight:800;
-      color:#1f2937;
-      margin-bottom:8px;
-      text-transform:uppercase;
-      letter-spacing:.4px;
-    }
-
-    .field input,
-    .field select{
-      width:100%;
-      border:1px solid var(--line);
-      background:#f9fafb;
-      border-radius:16px;
-      padding:15px 14px;
-      font-size:15px;
-      color:var(--text);
-      outline:none;
-    }
-
-    .field input:focus,
-    .field select:focus{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 4px rgba(59,130,246,.10);
-    }
-
-    .btn{
-      width:100%;
-      border:none;
-      border-radius:18px;
-      padding:15px 16px;
-      font-size:14px;
-      font-weight:800;
-      cursor:pointer;
-      text-transform:uppercase;
-    }
-
-    .btn-primary{
-      background:linear-gradient(180deg,var(--theme1),var(--theme2));
-      color:#fff;
-      box-shadow:0 12px 26px rgba(37,99,235,.22);
-    }
-
-    .btn-dark{
-      background:#111827;
-      color:#fff;
-    }
-
-    .btn-danger{
-      background:linear-gradient(180deg,#ef4444,#dc2626);
-      color:#fff;
-    }
-
-    .btn-success{
-      background:linear-gradient(180deg,#22c55e,#16a34a);
-      color:#fff;
-    }
-
-    .btn-row{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .error-box{
-      background:#fef2f2;
-      color:#b91c1c;
-      border:1px solid #fecaca;
-      border-radius:14px;
-      padding:12px 14px;
-      font-size:13px;
-      margin-bottom:14px;
-      display:none;
-      text-transform:uppercase;
-      font-weight:700;
-      white-space:pre-line;
-    }
-
-    .hint{
-      margin-top:14px;
-      color:#6b7280;
-      font-size:12px;
-      line-height:1.7;
-    }
-
-    .welcome-overlay{
-      position:absolute;
-      inset:0;
-      z-index:6;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:22px;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .7s ease;
-    }
-
-    .welcome-overlay.show{
-      opacity:1;
-      pointer-events:auto;
-    }
-
-    .welcome-card{
-      width:100%;
-      background:rgba(255,255,255,.16);
-      border:1px solid rgba(255,255,255,.22);
-      backdrop-filter:blur(18px);
-      border-radius:30px;
-      padding:28px 22px;
-      color:#fff;
-      transform:translateY(20px);
-      opacity:0;
-      box-shadow:0 18px 40px rgba(0,0,0,.16);
-      transition:transform 1s ease, opacity 1s ease;
-    }
-
-    .welcome-overlay.show .welcome-card{
-      transform:translateY(0);
-      opacity:1;
-    }
-
-    .welcome-top{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      margin-bottom:18px;
-    }
-
-    .welcome-avatar,
-    .avatar,
-    .mini-avatar{
-      border-radius:50%;
-      overflow:hidden;
-      position:relative;
-      background:rgba(255,255,255,.92);
-      color:#7a7a7a;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:900;
-      flex-shrink:0;
-    }
-
-    .welcome-avatar{
-      width:78px;
-      height:78px;
-      font-size:34px;
-      border:3px solid rgba(255,255,255,.55);
-      box-shadow:0 8px 20px rgba(0,0,0,.18);
-    }
-
-    .avatar{
-      width:56px;
-      height:56px;
-      font-size:26px;
-    }
-
-    .mini-avatar{
-      width:52px;
-      height:52px;
-      font-size:22px;
-      border:1px solid #e5e7eb;
-      background:#f8fafc;
-    }
-
-    .welcome-avatar img,
-    .avatar img,
-    .mini-avatar img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .welcome-avatar span,
-    .avatar span,
-    .mini-avatar span{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .welcome-small{
-      font-size:13px;
-      font-weight:700;
-      letter-spacing:.6px;
-      opacity:.92;
-      text-transform:uppercase;
-      margin-bottom:6px;
-    }
-
-    .welcome-user{
-      font-size:26px;
-      font-weight:900;
-      line-height:1.1;
-      text-transform:uppercase;
-    }
-
-    .welcome-panel{
-      margin-top:18px;
-      font-size:18px;
-      font-weight:800;
-      text-transform:uppercase;
-      line-height:1.4;
-    }
-
-    .progress{
-      margin-top:22px;
-      width:100%;
-      height:12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.20);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
-    }
-
-    .progress-bar{
-      width:0%;
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
-      transition:width 5s linear;
-    }
-
-    .welcome-overlay.show .progress-bar{
-      width:100%;
-    }
-
-    .panel-screen{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-    }
-
-    .top{
-      padding:18px 16px 10px;
-      color:#fff;
-      flex:0 0 auto;
-    }
-
-    .topbar{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      margin-bottom:12px;
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width:0;
-    }
-
-    .brand-text h2{
-      font-size:18px;
-      font-weight:900;
-      line-height:1.1;
-      margin-bottom:4px;
-      text-transform:uppercase;
-    }
-
-    .brand-text p{
-      font-size:14px;
-      opacity:.95;
-      font-weight:600;
-    }
-
-    .logout-btn{
-      background:var(--glass);
-      color:#fff;
-      border:1px solid var(--glassBorder);
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:12px;
-      font-weight:800;
-      text-transform:uppercase;
-      cursor:pointer;
-    }
-
-    .banner{
-      background:rgba(255,255,255,.16);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:18px;
-      padding:12px 14px;
-      margin-bottom:12px;
-      font-size:12px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.4px;
-    }
-
-    .warning{
-      background:#fff7ed;
-      color:#9a3412;
-      border:1px solid #fdba74;
-      border-radius:14px;
-      padding:10px 12px;
-      margin-bottom:12px;
-      font-size:12px;
-      font-weight:800;
-      text-transform:uppercase;
-      line-height:1.5;
-      display:none;
-    }
-
-    .stats{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .stat{
-      background:linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.08));
-      border-radius:20px;
-      padding:14px;
-      min-height:120px;
-      border:1px solid rgba(255,255,255,.08);
-    }
-
-    .stat .label{
-      font-size:11px;
-      opacity:.95;
-      margin-bottom:12px;
-      font-weight:800;
-      text-transform:uppercase;
-    }
-
-    .stat .value{
-      font-size:34px;
-      font-weight:900;
-      line-height:1;
-      margin-bottom:12px;
-    }
-
-    .stat .sub{
-      font-size:11px;
-      opacity:.95;
-      text-transform:uppercase;
-      font-weight:700;
-    }
-
-    .main{
-      flex:1 1 auto;
-      min-height:0;
-      background:#f8fafc;
-      border-top-left-radius:28px;
-      border-top-right-radius:28px;
-      padding:14px 14px 84px;
-      overflow-y:auto;
-      overflow-x:hidden;
-    }
-
-    .tabs{
-      display:grid;
-      gap:8px;
-      margin-bottom:16px;
-    }
-
-    .tabs button{
-      border:none;
-      background:#eef2f7;
-      color:#1f2937;
-      border-radius:14px;
-      padding:10px 6px;
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      cursor:pointer;
-    }
-
-    .tabs button.active{
-      background:var(--soft);
-      color:var(--theme1);
-    }
-
-    .panel{
-      background:#fff;
-      border:1px solid #e5e7eb;
-      border-radius:22px;
-      padding:16px;
-      box-shadow:0 18px 45px rgba(15,23,42,.07);
-    }
-
-    .panel-title{
-      font-size:18px;
-      font-weight:900;
-      color:var(--text);
-      margin-bottom:14px;
-      text-transform:uppercase;
-    }
-
-    .panel-card{
-      background:#f8fafc;
-      border:1px solid #e5e7eb;
-      border-radius:18px;
-      padding:14px;
-      margin-bottom:12px;
-    }
-
-    .panel-card:last-child{
-      margin-bottom:0;
-    }
-
-    .panel-card h3{
-      font-size:15px;
-      font-weight:900;
-      color:#111827;
-      margin-bottom:8px;
-      text-transform:uppercase;
-    }
-
-    .panel-card p{
-      font-size:13px;
-      color:#6b7280;
-      line-height:1.6;
-      text-transform:uppercase;
-    }
-
-    .profile-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-    }
-
-    .mini-box{
-      background:#f8fafc;
-      border:1px solid #e5e7eb;
-      border-radius:16px;
-      padding:12px;
-    }
-
-    .mini-box small{
-      display:block;
-      font-size:10px;
-      color:#6b7280;
-      margin-bottom:6px;
-      text-transform:uppercase;
-      font-weight:700;
-    }
-
-    .mini-box strong{
-      font-size:13px;
-      color:#111827;
-      text-transform:uppercase;
-      word-break:break-word;
-    }
-
-    .user-list{
-      display:grid;
-      gap:10px;
-      margin-top:10px;
-    }
-
-    .user-item{
-      background:#fff;
-      border:1px solid #e5e7eb;
-      border-radius:16px;
-      padding:12px;
-    }
-
-    .user-head{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      margin-bottom:8px;
-    }
-
-    .user-main{
-      min-width:0;
-      flex:1;
-    }
-
-    .user-item strong{
-      display:block;
-      font-size:14px;
-      color:#111827;
-      margin-bottom:4px;
-      text-transform:uppercase;
-    }
-
-    .user-item span{
-      display:block;
-      font-size:12px;
-      color:#6b7280;
-      text-transform:uppercase;
-      line-height:1.5;
-      word-break:break-word;
-    }
-
-    .user-actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:8px;
-      margin-top:10px;
-    }
-
-    .bottom-nav{
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:0;
-      background:rgba(255,255,255,.96);
-      backdrop-filter:blur(14px);
-      height:74px;
-      display:flex;
-      justify-content:space-around;
-      align-items:center;
-      border-top:1px solid rgba(15,23,42,.06);
-      z-index:3;
-    }
-
-    .nav-item{
-      text-align:center;
-      color:#8a93a3;
-      font-size:10px;
-      font-weight:800;
-      cursor:pointer;
-      text-transform:uppercase;
-    }
-
-    .nav-item .icon{
-      display:block;
-      font-size:18px;
-      margin-bottom:4px;
-    }
-
-    .nav-item.active{
-      color:var(--theme1);
-    }
   </style>
 </head>
 <body>
-  <div class="app">
+  <div class="phone" id="phone">
     <div class="base-bg" id="baseBg"></div>
+    <canvas id="virusCanvas"></canvas><div class="screen" id="loginScreen">
+  <div class="login-wrap" id="loginWrap">
+    <div class="login-card">
+      <div class="logo">K</div>
+      <h1>Login</h1>
+      <div class="subtitle">Acesso aos 4 painéis de teste.</div>
+      <div class="error-box" id="loginError">Usuário ou senha inválidos</div>
+      <div class="info-box" id="loginInfo"></div>
 
-    <div class="screen" id="loginScreen">
-      <div class="login-screen">
-        <div class="login-wrap" id="loginWrap">
-          <div class="login-card">
-            <div class="logo" id="loginLogo">D</div>
-            <h1>Login</h1>
-            <div class="subtitle">Acesso do painel principal.</div>
+      <div class="field">
+        <label for="username">Usuário</label>
+        <input type="text" id="username" placeholder="Digite seu usuário">
+      </div>
 
-            <div class="error-box" id="loginError"></div>
+      <div class="field">
+        <label for="password">Senha</label>
+        <input type="password" id="password" placeholder="Digite sua senha">
+      </div>
 
-            <div class="field">
-              <label for="username">Usuário</label>
-              <input id="username" type="text" placeholder="Digite seu usuário">
-            </div>
+      <button class="btn btn-login" onclick="fazerLogin()">Entrar</button>
 
-            <div class="field">
-              <label for="password">Senha</label>
-              <input id="password" type="password" placeholder="Digite sua senha">
-            </div>
+      <div class="hint">
+        DEV real no banco.<br>
+        Usuários HG/DRIP/MISTO também podem logar pelo banco.<br>
+        Contas antigas locais continuam funcionando se existirem.
+      </div>
+    </div>
+  </div>
+</div>
 
-            <button class="btn btn-primary" id="loginBtn">Entrar</button>
+<div class="welcome-overlay" id="welcomeOverlay">
+  <div class="welcome-card">
+    <div class="welcome-top">
+      <div class="welcome-avatar" id="welcomeAvatar">
+        <img id="welcomeAvatarImg" class="hidden" alt="Avatar">
+        <span id="welcomeAvatarLetter">H</span>
+      </div>
+      <div>
+        <div class="welcome-small">Bem-vindo</div>
+        <div class="welcome-user" id="welcomeUser">HG</div>
+      </div>
+    </div>
+    <div class="welcome-panel" id="welcomePanel">Entrando no painel...</div>
+    <div class="progress"><div class="progress-bar"></div></div>
+  </div>
+</div>
 
-            <div class="hint">
-              Login pelo Supabase.<br>
-              DEV vê tudo.<br>
-              HG/DRIP/MISTO entram direto no próprio painel.
-            </div>
-          </div>
+<div class="app-screen hidden" id="appScreen">
+  <div class="top">
+    <div class="topbar">
+      <div class="brand">
+        <div class="avatar" id="mainAvatar" onclick="toggleProfilePopup()">
+          <img id="mainAvatarImg" class="avatar-img hidden" alt="Avatar">
+          <span id="mainAvatarLetter">H</span>
+        </div>
+        <div class="brand-text">
+          <h2 id="mainTitle">HG</h2>
+          <p id="mainSubtitle">Painel ativo</p>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logout()">Sair</button>
+
+      <div class="profile-popup hidden" id="profilePopup">
+        <div class="popup-title">Perfil</div>
+        <div class="popup-line">Resumo da sessão: <strong>ATIVA</strong></div>
+        <div class="popup-line">Usuário: <strong id="popupUser">-</strong></div>
+        <div class="popup-line">Status: <strong id="popupStatus">ONLINE</strong></div>
+        <div class="popup-actions">
+          <button class="btn btn-secondary" onclick="closeProfilePopup()">Fechar</button>
         </div>
       </div>
     </div>
 
-    <div class="welcome-overlay" id="welcomeOverlay">
-      <div class="welcome-card">
-        <div class="welcome-top">
-          <div class="welcome-avatar">
-            <img id="welcomeAvatarImg" class="hidden" alt="Avatar">
-            <span id="welcomeAvatarLetter">D</span>
-          </div>
-          <div>
-            <div class="welcome-small">Bem-vindo</div>
-            <div class="welcome-user" id="welcomeUser">DEV</div>
-          </div>
-        </div>
-        <div class="welcome-panel" id="welcomePanel">Entrando em DEV MENU...</div>
-        <div class="progress"><div class="progress-bar"></div></div>
+    <div class="banner" id="mainBanner">Painel do cliente</div>
+    <div class="warning-banner hidden" id="accessWarning"></div>
+
+    <div class="stats">
+      <div class="card">
+        <div class="label" id="statLabel1">Códigos válidos</div>
+        <div class="value" id="statValue1">0</div>
+        <div class="sub" id="statSub1">Ativos</div>
       </div>
-    </div>
-
-    <div class="screen hidden" id="panelScreen">
-      <div class="panel-screen">
-        <div class="top">
-          <div class="topbar">
-            <div class="brand">
-              <div class="avatar">
-                <img id="mainAvatarImg" class="hidden" alt="Avatar">
-                <span id="mainAvatarLetter">D</span>
-              </div>
-              <div class="brand-text">
-                <h2 id="mainTitle">Development</h2>
-                <p id="mainSubtitle">Painel administrativo</p>
-              </div>
-            </div>
-            <button class="logout-btn" id="logoutBtn">Sair</button>
-          </div>
-
-          <div class="banner" id="mainBanner">Modo desenvolvedor • painel principal</div>
-          <div class="warning" id="mainWarning"></div>
-
-          <div class="stats">
-            <div class="stat">
-              <div class="label">Sessão</div>
-              <div class="value">ON</div>
-              <div class="sub" id="sessionTypeText">Status atual</div>
-            </div>
-            <div class="stat">
-              <div class="label">Painéis</div>
-              <div class="value" id="panelsCount">4</div>
-              <div class="sub" id="panelsLabel">HG, DRIP, MISTO, DEV</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="main">
-          <div class="tabs" id="tabsContainer"></div>
-          <div class="panel" id="tabContent"></div>
-        </div>
-
-        <div class="bottom-nav" id="bottomNav"></div>
+      <div class="card">
+        <div class="label" id="statLabel2">Códigos inválidos</div>
+        <div class="value" id="statValue2">0</div>
+        <div class="sub" id="statSub2">Expirados</div>
       </div>
     </div>
   </div>
 
-  <script>
+  <div class="main">
+    <div class="tabs" id="mainTabs"></div>
+    <div class="panel" id="mainPanel">
+      <div class="view-stack" id="viewStack"></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav" id="bottomNav"></div>
+</div>
+
+  </div>  <script>
     const SUPABASE_URL = "https://iwhldffataeqmpntprvk.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wYhrdDe0bM-H3QqmcMwXRQ_RGb_u5ok";
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const TYPE_THEMES = {
-      DEV: { c1:"#f59e0b", c2:"#fbbf24", soft:"#fef3c7", title:"Development", subtitle:"Painel administrativo", banner:"Modo desenvolvedor • painel principal", panels:4, logo:"D" },
-      HG: { c1:"#d62828", c2:"#ef4444", soft:"#fee2e2", title:"HG Menu", subtitle:"Painel do cliente", banner:"Acesso HG ativo", panels:1, logo:"H" },
-      DRIP: { c1:"#6d28d9", c2:"#8b5cf6", soft:"#ede9fe", title:"DRIP Menu", subtitle:"Painel do cliente", banner:"Acesso DRIP ativo", panels:1, logo:"D" },
-      MISTO: { c1:"#d81b60", c2:"#8e24aa", soft:"#fce7f3", title:"MISTO Menu", subtitle:"Painel do cliente", banner:"Acesso MISTO ativo", panels:1, logo:"M" }
+    const LEGACY_DEV_STORAGE = "painel_teste_usuarios_final_v1";
+    let animFrame = null;
+    let currentUser = null;
+    let currentView = "";
+    let currentPreview = "";
+    let editingUserId = null;
+    let uploadedAvatarBase64 = "";
+
+    const THEMES = {
+      hg: { color: "#ef4444", badge: "H", title: "HG", panel: "Entrando em HG...", c1:"#d62828", c2:"#ef4444", soft:"#fee2e2" },
+      drip: { color: "#8b5cf6", badge: "D", title: "DRIP", panel: "Entrando em DRIP...", c1:"#6d28d9", c2:"#8b5cf6", soft:"#ede9fe" },
+      misto: { color: "#c026d3", badge: "M", title: "MISTO", panel: "Entrando em MISTO...", c1:"#d81b60", c2:"#8e24aa", soft:"#fce7f3" },
+      dev: { color: "#fbbf24", badge: "D", title: "DEV", panel: "Entrando em DEVELOPMENT...", c1:"#f59e0b", c2:"#fbbf24", soft:"#fef3c7" }
     };
 
-    const loginScreen = document.getElementById("loginScreen");
-    const panelScreen = document.getElementById("panelScreen");
-    const loginError = document.getElementById("loginError");
-    const loginBtn = document.getElementById("loginBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const baseBg = document.getElementById("baseBg");
-    const tabsContainer = document.getElementById("tabsContainer");
-    const bottomNav = document.getElementById("bottomNav");
-    const tabContent = document.getElementById("tabContent");
-    const loginWrap = document.getElementById("loginWrap");
-    const welcomeOverlay = document.getElementById("welcomeOverlay");
+    function normalize(value){ return (value || "").trim().toLowerCase(); }
 
-    let currentUser = null;
-    let currentTab = "hg";
-    let editingUserId = null;
-
-    function showError(msg){
-      loginError.style.display = "block";
-      loginError.textContent = msg;
+    function setTheme(themeKey){
+      const t = THEMES[themeKey] || THEMES.hg;
+      const root = document.documentElement;
+      root.style.setProperty("--theme1", t.c1);
+      root.style.setProperty("--theme2", t.c2);
+      root.style.setProperty("--theme3", t.color);
+      root.style.setProperty("--soft", t.soft);
     }
 
-    function clearError(){
-      loginError.style.display = "none";
-      loginError.textContent = "";
+    function showLoginError(msg){
+      const error = document.getElementById("loginError");
+      const info = document.getElementById("loginInfo");
+      info.style.display = "none";
+      error.textContent = msg;
+      error.style.display = "block";
     }
 
-    async function sha256(text) {
+    function showLoginInfo(msg){
+      const error = document.getElementById("loginError");
+      const info = document.getElementById("loginInfo");
+      error.style.display = "none";
+      info.textContent = msg;
+      info.style.display = "block";
+    }
+
+    function clearLoginMessages(){
+      document.getElementById("loginError").style.display = "none";
+      document.getElementById("loginInfo").style.display = "none";
+    }
+
+    async function sha256(text){
       const data = new TextEncoder().encode(text);
       const hashBuffer = await crypto.subtle.digest("SHA-256", data);
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
     }
 
-    function formatDateBr(dateValue){
-      if (!dateValue) return "NÃO DEFINIDA";
-      return new Date(dateValue).toLocaleString("pt-BR");
+    function hexToRgb(hex){
+      const clean = hex.replace("#", "");
+      const bigint = parseInt(clean, 16);
+      return { r:(bigint>>16)&255, g:(bigint>>8)&255, b:bigint&255 };
     }
 
-    function isExpired(expiresAt){
-      if (!expiresAt) return false;
-      return new Date(expiresAt) <= new Date();
+    function mixColor(a,b,t){
+      return { r: Math.round(a.r + (b.r-a.r)*t), g: Math.round(a.g + (b.g-a.g)*t), b: Math.round(a.b + (b.b-a.b)*t) };
     }
 
-    function setAvatar(imgId, letterId, avatar, fallback){
-      const img = document.getElementById(imgId);
-      const letter = document.getElementById(letterId);
-      if (!img || !letter) return;
+    function ease(t){ return t*t*(3-2*t); }
 
-      letter.textContent = fallback;
+    function makeVirusAnimation(finalHex){
+      const canvas = document.getElementById("virusCanvas");
+      const ctx = canvas.getContext("2d", { alpha: true });
+      const phone = document.getElementById("phone");
+      const baseBg = document.getElementById("baseBg");
 
-      if (avatar && avatar.trim() !== "") {
-        img.src = avatar;
-        img.classList.remove("hidden");
-        letter.classList.add("hidden");
-      } else {
-        img.src = "";
-        img.classList.add("hidden");
-        letter.classList.remove("hidden");
-      }
-    }
+      if (animFrame) cancelAnimationFrame(animFrame);
 
-    function applyTheme(type){
-      const theme = TYPE_THEMES[type] || TYPE_THEMES.DEV;
-      document.documentElement.style.setProperty("--theme1", theme.c1);
-      document.documentElement.style.setProperty("--theme2", theme.c2);
-      document.documentElement.style.setProperty("--soft", theme.soft);
-      baseBg.style.background = `linear-gradient(180deg, ${theme.c1} 0%, ${theme.c2} 42%, #f8fafc 42%, #f8fafc 100%)`;
-      document.getElementById("loginLogo").textContent = theme.logo;
-      document.getElementById("mainTitle").textContent = theme.title;
-      document.getElementById("mainSubtitle").textContent = theme.subtitle;
-      document.getElementById("mainBanner").textContent = theme.banner;
-      document.getElementById("panelsCount").textContent = theme.panels;
-      document.getElementById("panelsLabel").textContent = type === "DEV" ? "HG, DRIP, MISTO, DEV" : `${type} VISÍVEL`;
-      document.getElementById("sessionTypeText").textContent = `TIPO ${type}`;
-    }
+      const rect = phone.getBoundingClientRect();
+      const internalScale = 0.28;
+      const iw = Math.max(90, Math.floor(rect.width * internalScale));
+      const ih = Math.max(180, Math.floor(rect.height * internalScale));
 
-    function getAllowedTabs(type){
-      if (type === "DEV") {
-        return [
-          { key:"hg", label:"HG", icon:"H" },
-          { key:"drip", label:"DRIP", icon:"D" },
-          { key:"misto", label:"MISTO", icon:"M" },
-          { key:"dev", label:"DEV", icon:"⚙" }
-        ];
-      }
-      if (type === "HG") return [{ key:"hg", label:"HG", icon:"H" }];
-      if (type === "DRIP") return [{ key:"drip", label:"DRIP", icon:"D" }];
-      if (type === "MISTO") return [{ key:"misto", label:"MISTO", icon:"M" }];
-      return [{ key:"hg", label:"HG", icon:"H" }];
-    }
+      canvas.width = iw;
+      canvas.height = ih;
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
 
-    function buildTabsForType(type){
-      const tabs = getAllowedTabs(type);
-      tabsContainer.style.gridTemplateColumns = `repeat(${tabs.length},1fr)`;
-      tabsContainer.innerHTML = tabs.map(tab => `
-        <button class="${tab.key === currentTab ? 'active' : ''}" onclick="setTab('${tab.key}')">${tab.label}</button>
-      `).join("");
+      const startColor = hexToRgb("#2563eb");
+      const final = hexToRgb(finalHex);
+      const centerX = Math.floor(iw / 2);
+      const centerY = Math.floor(ih / 2);
+      const noise = new Float32Array(iw * ih);
+      const delayMap = new Float32Array(iw * ih);
 
-      bottomNav.innerHTML = tabs.map(tab => `
-        <div class="nav-item ${tab.key === currentTab ? 'active' : ''}" onclick="setTab('${tab.key}')">
-          <span class="icon">${tab.icon}</span>${tab.label}
-        </div>
-      `).join("");
-    }
-
-    function showWarning(msg){
-      const el = document.getElementById("mainWarning");
-      el.style.display = "block";
-      el.textContent = msg;
-    }
-
-    function clearWarning(){
-      const el = document.getElementById("mainWarning");
-      el.style.display = "none";
-      el.textContent = "";
-    }
-
-    function getPanelHtml(tabName){
-      const commonType = currentUser?.type || "DEV";
-
-      if (tabName === "hg") {
-        return `
-          <div class="panel-title">HG</div>
-          <div class="panel-card">
-            <h3>HG MENU</h3>
-            <p>PAINEL HG ATIVO.</p>
-          </div>
-          <div class="panel-card">
-            <h3>STATUS</h3>
-            <p>USUÁRIO: ${currentUser.username}<br>TIPO: ${commonType}</p>
-          </div>
-        `;
+      for (let y = 0; y < ih; y++) {
+        for (let x = 0; x < iw; x++) {
+          const dx = x - centerX;
+          const dy = y - centerY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const angle = Math.atan2(dy, dx);
+          const wave = Math.sin(angle * 6) * 0.9 + Math.cos(angle * 11) * 0.45 + Math.sin((x + y) * 0.12) * 0.25;
+          const i = y * iw + x;
+          noise[i] = Math.random() * 0.55;
+          delayMap[i] = dist * 0.055 + wave * 0.35 + noise[i];
+        }
       }
 
-      if (tabName === "drip") {
-        return `
-          <div class="panel-title">DRIP</div>
-          <div class="panel-card">
-            <h3>DRIP MENU</h3>
-            <p>PAINEL DRIP ATIVO.</p>
-          </div>
-          <div class="panel-card">
-            <h3>STATUS</h3>
-            <p>USUÁRIO: ${currentUser.username}<br>TIPO: ${commonType}</p>
-          </div>
-        `;
+      const img = ctx.createImageData(iw, ih);
+      const data = img.data;
+      const start = performance.now();
+      const total = 5600;
+
+      function draw(now) {
+        const elapsed = now - start;
+        const master = Math.min(elapsed / total, 1);
+
+        if (master > 0.32) baseBg.style.background = `linear-gradient(180deg, ${finalHex} 0%, ${finalHex} 100%)`;
+
+        let completeCount = 0;
+        for (let y = 0; y < ih; y++) {
+          for (let x = 0; x < iw; x++) {
+            const i = y * iw + x;
+            const threshold = delayMap[i];
+            let t = (master * 8.2) - threshold;
+            t = Math.max(0, Math.min(1, t));
+            const smooth = ease(t);
+            if (smooth >= 0.999) completeCount++;
+            const c = mixColor(startColor, final, smooth);
+            const di = i * 4;
+            data[di] = c.r;
+            data[di + 1] = c.g;
+            data[di + 2] = c.b;
+            data[di + 3] = 255;
+          }
+        }
+
+        ctx.putImageData(img, 0, 0);
+
+        if (master < 1 && completeCount < iw * ih) {
+          animFrame = requestAnimationFrame(draw);
+        } else {
+          ctx.clearRect(0, 0, iw, ih);
+          baseBg.style.background = `linear-gradient(180deg, ${finalHex} 0%, ${finalHex} 100%)`;
+        }
       }
 
-      if (tabName === "misto") {
-        return `
-          <div class="panel-title">MISTO</div>
-          <div class="panel-card">
-            <h3>MISTO MENU</h3>
-            <p>PAINEL MISTO ATIVO.</p>
-          </div>
-          <div class="panel-card">
-            <h3>STATUS</h3>
-            <p>USUÁRIO: ${currentUser.username}<br>TIPO: ${commonType}</p>
-          </div>
-        `;
+      animFrame = requestAnimationFrame(draw);
+    }
+
+    function getLegacyUsers(){
+      const raw = localStorage.getItem(LEGACY_DEV_STORAGE);
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch { return []; }
+    }
+
+    async function accountExpiresAt(account){
+      if (!account) return null;
+      if (account.expires_at) return new Date(account.expires_at);
+      if (account.validity === "permanente") return null;
+      if (account.createdAt && account.validity) {
+        const created = new Date(account.createdAt);
+        const exp = new Date(created);
+        exp.setDate(created.getDate() + parseInt(account.validity, 10));
+        return exp;
       }
+      return null;
+    }
 
-      return `
-        <div class="panel-title">DEV</div>
+    async function getAccountState(account){
+      if (!account) return "deleted";
+      if (account.manualDisabled || account.is_disabled) return "disabled";
+      const expires = await accountExpiresAt(account);
+      if (!expires) return "active";
+      const now = new Date();
+      const deleteAfter = new Date(expires);
+      deleteAfter.setDate(deleteAfter.getDate() + 1);
+      if (account.id && now > deleteAfter && !String(account.id).includes("legacy_")) {
+        try { await supa.from("users").delete().eq("id", account.id); } catch {}
+        return "deleted";
+      }
+      if (now > expires) return "expired";
+      return "active";
+    }
 
-        <div class="panel-card">
-          <h3>${editingUserId ? "EDITAR USUÁRIO" : "CRIAR USUÁRIO"}</h3>
+    function pulseKeyBox(){
+      const keyBox = document.getElementById("keyPreview");
+      if (!keyBox) return;
+      keyBox.classList.remove("glow");
+      void keyBox.offsetWidth;
+      keyBox.classList.add("glow");
+      setTimeout(() => keyBox.classList.remove("glow"), 260);
+    }
 
-          <div class="field">
-            <label for="newUser">Usuário</label>
-            <input id="newUser" placeholder="Digite o usuário">
-          </div>
+    function doGenerateCode(mode){
+      if (mode === "DRIP") return Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let r = "";
+      for (let i = 0; i < 6; i++) r += chars[Math.floor(Math.random() * chars.length)];
+      return "HG-" + r;
+    }
 
-          <div class="field">
-            <label for="newPass">Senha</label>
-            <input id="newPass" type="password" placeholder="Digite a senha">
-          </div>
+    function getCodesStorageKey(){
+      if (!currentUser) return "codes_default";
+      return "codes_" + normalize(currentUser.username || currentUser.userCode) + "_" + currentUser.panelType.toLowerCase();
+    }
 
-          <div class="field">
-            <label for="newType">Tipo</label>
-            <select id="newType">
+    function getCodes(){
+      const raw = localStorage.getItem(getCodesStorageKey());
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch { return []; }
+    }
+
+    function setCodes(codes){ localStorage.setItem(getCodesStorageKey(), JSON.stringify(codes)); }
+
+    function separateCodes(){
+      const now = new Date();
+      const codes = getCodes();
+      let changed = false;
+      codes.forEach(c => {
+        if (c.status === "valid" && !c.permanent && c.expiresAt && new Date(c.expiresAt) <= now) {
+          c.status = "invalid";
+          c.reason = "EXPIRADO";
+          changed = true;
+        }
+      });
+      if (changed) setCodes(codes);
+      return { valid: codes.filter(c => c.status === "valid"), invalid: codes.filter(c => c.status === "invalid") };
+    }
+
+    function fmtDate(iso){ if (!iso) return "PERMANENTE"; return new Date(iso).toLocaleString("pt-BR"); }
+    function fmtDuration(v){ return v === "permanente" ? "PERMANENTE" : v + " DIAS"; }
+    function canGenerate(){ return currentUser && currentUser.accessState === "active"; }
+
+    function buildUserViews(){
+      return {
+        criar: `
+          <div class="panel-title">Criar código</div>
+          <div class="field ${currentUser.panelType === "MIX" ? "" : "hidden"}">
+            <label for="generatorMode">Gerador</label>
+            <select id="generatorMode" onchange="clearPreview(); updateCreateView()">
               <option value="HG">HG</option>
               <option value="DRIP">DRIP</option>
-              <option value="MISTO">MISTO</option>
-              <option value="DEV">DEV</option>
             </select>
           </div>
-
+          <div class="key-box" id="keyPreview"></div>
           <div class="field">
-            <label for="newAvatar">Avatar URL</label>
-            <input id="newAvatar" placeholder="https://...">
+            <label for="codeDuration">Duração</label>
+            <select id="codeDuration">${buildDurationOptions()}</select>
           </div>
-
-          <div class="field">
-            <label for="newValidity">Validade</label>
-            <select id="newValidity">
-              <option value="1">1 DIA</option>
-              <option value="7">7 DIAS</option>
-              <option value="30">30 DIAS</option>
-              <option value="permanente">PERMANENTE</option>
-            </select>
-          </div>
-
           <div class="btn-row">
-            <button class="btn btn-primary" onclick="${editingUserId ? 'salvarEdicaoUsuario()' : 'criarUsuario()'}">${editingUserId ? "Salvar edição" : "Criar"}</button>
-            <button class="btn btn-dark" onclick="limparFormularioUsuario()">Limpar</button>
+            <button class="btn btn-primary" onclick="generateCode()">Gerar</button>
+            <button class="btn btn-secondary" onclick="copyCode()">Copiar</button>
           </div>
-        </div>
-
-        <div class="panel-card">
-          <h3>Usuários do banco</h3>
-          <div id="listaUsers" class="user-list">Carregando...</div>
-        </div>
-
-        <div class="panel-card">
-          <h3>Perfil DEV</h3>
-          <div class="profile-grid">
-            <div class="mini-box">
-              <small>Usuário</small>
-              <strong>${currentUser.username}</strong>
-            </div>
-            <div class="mini-box">
-              <small>Tipo</small>
-              <strong>${currentUser.type}</strong>
-            </div>
-            <div class="mini-box">
-              <small>Status</small>
-              <strong>ONLINE</strong>
-            </div>
-            <div class="mini-box">
-              <small>Banco</small>
-              <strong>SUPABASE</strong>
+          <div style="margin-top:10px"><button class="btn btn-success" onclick="saveCode()">Salvar código</button></div>
+        `,
+        validas: `
+          <div class="panel-title">Códigos válidos</div>
+          <div class="field"><input type="text" id="searchValid" placeholder="Buscar código..." oninput="renderCodesLists()"></div>
+          <div class="list" id="validList"></div>
+        `,
+        invalidas: `
+          <div class="panel-title">Códigos inválidos</div>
+          <div class="field"><input type="text" id="searchInvalid" placeholder="Buscar código..." oninput="renderCodesLists()"></div>
+          <div class="list" id="invalidList"></div>
+        `,
+        perfil: `
+          <div class="panel-title">Perfil</div>
+          <div style="display:flex;justify-content:center;margin-bottom:14px;">
+            <div class="avatar" style="width:72px;height:72px;cursor:default;">
+              <img id="profileAvatarImg" class="avatar-img hidden" alt="Avatar">
+              <span id="profileAvatarLetter">${currentUser.avatarBadge}</span>
             </div>
           </div>
-        </div>
-      `;
-    }
-
-    function setTab(tabName){
-      currentTab = tabName;
-      buildTabsForType(currentUser.type);
-      tabContent.innerHTML = getPanelHtml(tabName);
-      if (tabName === "dev" && currentUser.type === "DEV") {
-        setTimeout(() => {
-          carregarUsuarios();
-          preencherFormularioEdicaoSeNecessario();
-        }, 100);
-      }
-    }
-
-    async function loginUser(){
-      clearError();
-
-      const username = document.getElementById("username").value.trim().toLowerCase();
-      const password = document.getElementById("password").value;
-
-      if (!username || !password) {
-        showError("PREENCHA USUÁRIO E SENHA");
-        return;
-      }
-
-      loginBtn.disabled = true;
-      loginBtn.textContent = "Entrando...";
-
-      const { data, error } = await db
-        .from("users")
-        .select("*")
-        .eq("username", username)
-        .maybeSingle();
-
-      loginBtn.disabled = false;
-      loginBtn.textContent = "Entrar";
-
-      if (error) {
-        showError("ERRO AO CONECTAR NO SUPABASE");
-        return;
-      }
-
-      if (!data) {
-        showError("LOGIN INVÁLIDO");
-        return;
-      }
-
-      const inputHash = await sha256(password);
-      const legacyOk = data.password && data.password === password;
-      const hashOk = data.password_hash && data.password_hash === inputHash;
-
-      if (!legacyOk && !hashOk) {
-        showError("LOGIN INVÁLIDO");
-        return;
-      }
-
-      if (isExpired(data.expires_at)) {
-        showError("ACESSO EXPIRADO");
-        return;
-      }
-
-      currentUser = data;
-      applyTheme(currentUser.type || "DEV");
-      clearWarning();
-
-      setAvatar("welcomeAvatarImg", "welcomeAvatarLetter", currentUser.avatar || "", currentUser.username?.[0]?.toUpperCase() || "U");
-      setAvatar("mainAvatarImg", "mainAvatarLetter", currentUser.avatar || "", currentUser.username?.[0]?.toUpperCase() || "U");
-
-      document.getElementById("welcomeUser").textContent = currentUser.username.toUpperCase();
-      document.getElementById("welcomePanel").textContent = `ENTRANDO EM ${currentUser.type} MENU...`;
-
-      if (currentUser.expires_at) {
-        showWarning(`VALIDADE ATÉ ${formatDateBr(currentUser.expires_at)}`);
-      }
-
-      loginWrap.classList.add("hide");
-
-      setTimeout(() => {
-        welcomeOverlay.classList.add("show");
-      }, 400);
-
-      setTimeout(() => {
-        loginScreen.classList.add("hidden");
-        panelScreen.classList.remove("hidden");
-        welcomeOverlay.classList.remove("show");
-
-        currentTab = currentUser.type === "DEV"
-          ? "dev"
-          : currentUser.type === "HG"
-            ? "hg"
-            : currentUser.type === "DRIP"
-              ? "drip"
-              : "misto";
-
-        setTab(currentTab);
-      }, 2200);
-    }
-
-    function limparFormularioUsuario(){
-      editingUserId = null;
-      if (currentTab !== "dev") return;
-      document.getElementById("newUser").value = "";
-      document.getElementById("newPass").value = "";
-      document.getElementById("newType").value = "HG";
-      document.getElementById("newAvatar").value = "";
-      document.getElementById("newValidity").value = "1";
-      setTab("dev");
-    }
-
-    function preencherFormularioEdicaoSeNecessario(){
-      if (!editingUserId) return;
-    }
-
-    function buildExpiresAt(validity){
-      if (validity === "permanente") return null;
-      const date = new Date();
-      date.setDate(date.getDate() + parseInt(validity, 10));
-      return date.toISOString();
-    }
-
-    async function criarUsuario(){
-      const username = document.getElementById("newUser")?.value.trim();
-      const password = document.getElementById("newPass")?.value.trim();
-      const type = document.getElementById("newType")?.value;
-      const avatar = document.getElementById("newAvatar")?.value.trim();
-      const validity = document.getElementById("newValidity")?.value;
-
-      if (!username || !password) {
-        alert("PREENCHA TUDO");
-        return;
-      }
-
-      const password_hash = await sha256(password);
-      const expires_at = buildExpiresAt(validity);
-
-      const { error } = await db.from("users").insert([
-        {
-          username,
-          password: null,
-          password_hash,
-          type,
-          avatar: avatar || null,
-          expires_at
-        }
-      ]);
-
-      if (error) {
-        alert("ERRO: " + error.message);
-        return;
-      }
-
-      alert("USUÁRIO CRIADO!");
-      limparFormularioUsuario();
-      carregarUsuarios();
-    }
-
-    async function editarUsuario(id){
-      const { data, error } = await db
-        .from("users")
-        .select("*")
-        .eq("id", id)
-        .maybeSingle();
-
-      if (error || !data) {
-        alert("ERRO AO CARREGAR USUÁRIO.");
-        return;
-      }
-
-      editingUserId = id;
-      setTab("dev");
-
-      setTimeout(() => {
-        document.getElementById("newUser").value = data.username || "";
-        document.getElementById("newPass").value = "";
-        document.getElementById("newType").value = data.type || "HG";
-        document.getElementById("newAvatar").value = data.avatar || "";
-
-        if (!data.expires_at) {
-          document.getElementById("newValidity").value = "permanente";
-        } else {
-          const diffMs = new Date(data.expires_at) - new Date();
-          const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-          if (diffDays <= 1) document.getElementById("newValidity").value = "1";
-          else if (diffDays <= 7) document.getElementById("newValidity").value = "7";
-          else document.getElementById("newValidity").value = "30";
-        }
-      }, 100);
-    }
-
-    async function salvarEdicaoUsuario(){
-      if (!editingUserId) return;
-
-      const username = document.getElementById("newUser")?.value.trim();
-      const password = document.getElementById("newPass")?.value.trim();
-      const type = document.getElementById("newType")?.value;
-      const avatar = document.getElementById("newAvatar")?.value.trim();
-      const validity = document.getElementById("newValidity")?.value;
-
-      if (!username) {
-        alert("PREENCHA O USUÁRIO");
-        return;
-      }
-
-      const payload = {
-        username,
-        type,
-        avatar: avatar || null,
-        expires_at: buildExpiresAt(validity)
+          <div class="summary-card">
+            <div class="summary-grid">
+              <div class="mini-box"><small>Resumo</small><strong>ATIVA</strong></div>
+              <div class="mini-box"><small>Usuário</small><strong>${(currentUser.username || currentUser.userCode).toUpperCase()}</strong></div>
+              <div class="mini-box"><small>Status</small><strong>${currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO"}</strong></div>
+            </div>
+          </div>
+        `
       };
-
-      if (password) {
-        payload.password = null;
-        payload.password_hash = await sha256(password);
-      }
-
-      const { error } = await db
-        .from("users")
-        .update(payload)
-        .eq("id", editingUserId);
-
-      if (error) {
-        alert("ERRO AO EDITAR: " + error.message);
-        return;
-      }
-
-      alert("USUÁRIO EDITADO!");
-      editingUserId = null;
-      setTab("dev");
-      carregarUsuarios();
     }
 
-    async function removerUsuario(id){
-      const ok = confirm("REMOVER ESTE USUÁRIO?");
-      if (!ok) return;
-
-      const { error } = await db
-        .from("users")
-        .delete()
-        .eq("id", id);
-
-      if (error) {
-        alert("ERRO AO REMOVER: " + error.message);
-        return;
-      }
-
-      alert("USUÁRIO REMOVIDO!");
-      carregarUsuarios();
-    }
-
-    async function carregarUsuarios(){
-      const lista = document.getElementById("listaUsers");
-      if (!lista) return;
-
-      lista.innerHTML = "Carregando...";
-
-      const { data, error } = await db
-        .from("users")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        lista.innerHTML = "<div class='user-item'><span>ERRO AO CARREGAR</span></div>";
-        return;
-      }
-
-      if (!data || !data.length) {
-        lista.innerHTML = "<div class='user-item'><span>NENHUM USUÁRIO</span></div>";
-        return;
-      }
-
-      lista.innerHTML = data.map(u => {
-        const expired = isExpired(u.expires_at);
-        return `
-          <div class="user-item">
-            <div class="user-head">
-              <div class="mini-avatar">
-                ${u.avatar ? `<img src="${u.avatar}" alt="Avatar">` : `<span>${u.username?.[0]?.toUpperCase() || "U"}</span>`}
-              </div>
-              <div class="user-main">
-                <strong>${u.username}</strong>
-                <span>TIPO: ${u.type || "NÃO DEFINIDO"}</span>
-              </div>
-            </div>
-            <span>SENHA: •••••••</span>
-            <span>VALIDADE: ${u.expires_at ? formatDateBr(u.expires_at) : "PERMANENTE"}</span>
-            <span>STATUS: ${expired ? "EXPIRADO" : "ATIVO"}</span>
-            <span>AVATAR: ${u.avatar ? "DEFINIDO" : "NÃO DEFINIDO"}</span>
-            <div class="user-actions">
-              <button class="btn btn-dark" onclick="editarUsuario('${u.id}')">Editar</button>
-              <button class="btn btn-danger" onclick="removerUsuario('${u.id}')">Remover</button>
+    function buildDevViews(){
+      return {
+        usuarios: `
+          <div class="panel-title">Usuários cadastrados</div>
+          <div class="field"><input type="text" id="searchUsers" placeholder="Buscar usuário..." oninput="renderDevUsers()"></div>
+          <div class="list" id="usersList"></div>
+        `,
+        perfil: `
+          <div class="panel-title">Perfil</div>
+          <div class="summary-card">
+            <div class="summary-grid">
+              <div class="mini-box"><small>Admin</small><strong>DEV</strong></div>
+              <div class="mini-box"><small>Status</small><strong>ONLINE</strong></div>
+              <div class="mini-box"><small>Painel</small><strong>DEVELOPMENT</strong></div>
             </div>
           </div>
-        `;
-      }).join("");
+        `,
+        novo: `
+          <div class="panel-title">${editingUserId ? "Editar usuário" : "Novo usuário"}</div>
+          <div class="field"><label for="newUsername">Nome de usuário</label><input type="text" id="newUsername" placeholder="Ex: cliente01"></div>
+          <div class="field"><label for="newPassword">Senha</label><input type="password" id="newPassword" placeholder="${editingUserId ? "Deixe vazio para manter" : "Ex: cliente01"}"></div>
+          <div class="field"><label for="newType">Tipo de painel</label>
+            <select id="newType"><option value="HG">HG</option><option value="DRIP">DRIP</option><option value="MIX">MIX</option><option value="DEV">DEV</option></select>
+          </div>
+          <div class="field"><label for="newValidity">Validade</label>
+            <select id="newValidity"><option value="1">1 DIA</option><option value="7">7 DIAS</option><option value="30">30 DIAS</option><option value="permanente">PERMANENTE</option></select>
+          </div>
+          <div class="field"><label for="newAvatarFile">Foto de perfil</label><input type="file" id="newAvatarFile" accept="image/*" onchange="handleAvatarUpload(event)"></div>
+          <div class="field"><label>Prévia</label>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div id="avatarPreviewBox" style="width:64px;height:64px;border-radius:50%;overflow:hidden;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;position:relative;">
+                <img id="avatarPreviewImg" style="width:100%;height:100%;object-fit:cover;display:none;" alt="Prévia">
+                <span id="avatarPreviewLetter" style="font-weight:800;color:#9ca3af;">IMG</span>
+              </div>
+              <button type="button" class="btn btn-secondary" style="width:auto;padding:12px 16px;" onclick="clearAvatarFile()">Remover</button>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="saveDevUser()">${editingUserId ? "Salvar edição" : "Salvar"}</button>
+            <button class="btn btn-secondary" onclick="clearDevForm()">Limpar</button>
+          </div>
+        `
+      };
     }
 
-    function logoutUser(){
-      currentUser = null;
+    function buildDurationOptions(){
+      const mode = getCurrentGeneratorMode();
+      if (mode === "DRIP") return `<option value="1">1 DIA</option><option value="7">7 DIAS</option><option value="30">30 DIAS</option>`;
+      return `<option value="1">1 DIA</option><option value="7">7 DIAS</option><option value="10">10 DIAS</option><option value="30">30 DIAS</option><option value="permanente">PERMANENTE</option>`;
+    }
+
+    function getCurrentGeneratorMode(){
+      if (!currentUser) return "HG";
+      if (currentUser.panelType === "MIX") {
+        const el = document.getElementById("generatorMode");
+        return el ? el.value : "HG";
+      }
+      return currentUser.panelType;
+    }
+
+    function buildTabsAndNav(){
+      const tabs = document.getElementById("mainTabs");
+      const nav = document.getElementById("bottomNav");
+      if (currentUser.isDev) {
+        tabs.className = "tabs tabs-3";
+        tabs.innerHTML = `<span id="tab-usuarios" class="active-tab" onclick="showMainView('usuarios')">Usuários</span><span id="tab-perfil" onclick="showMainView('perfil')">Perfil</span><span id="tab-novo" onclick="showMainView('novo')">Novo</span>`;
+        nav.innerHTML = `<div class="nav-item active" id="nav-usuarios" onclick="showMainView('usuarios')"><span class="icon">☰</span>Usuários</div><div class="nav-item" id="nav-perfil" onclick="showMainView('perfil')"><span class="icon">◉</span>Perfil</div><div class="nav-item" id="nav-novo" onclick="showMainView('novo')"><span class="icon">＋</span>Novo</div>`;
+      } else {
+        tabs.className = "tabs";
+        tabs.innerHTML = `<span id="tab-criar" class="active-tab" onclick="showMainView('criar')">Criar</span><span id="tab-validas" onclick="showMainView('validas')">Válidas</span><span id="tab-invalidas" onclick="showMainView('invalidas')">Inválidas</span><span id="tab-perfil" onclick="showMainView('perfil')">Perfil</span>`;
+        nav.innerHTML = `<div class="nav-item active" id="nav-criar" onclick="showMainView('criar')"><span class="icon">＋</span>Criar</div><div class="nav-item" id="nav-validas" onclick="showMainView('validas')"><span class="icon">☰</span>Válidas</div><div class="nav-item" id="nav-invalidas" onclick="showMainView('invalidas')"><span class="icon">⌕</span>Inválidas</div><div class="nav-item" id="nav-perfil" onclick="showMainView('perfil')"><span class="icon">◉</span>Perfil</div>`;
+      }
+    }
+
+    function clearTabsNav(keys){
+      keys.forEach(k => {
+        document.getElementById("tab-" + k)?.classList.remove("active-tab");
+        document.getElementById("nav-" + k)?.classList.remove("active");
+      });
+    }
+
+    function instantShowView(view){
+      const stack = document.getElementById("viewStack");
+      const views = currentUser.isDev ? buildDevViews() : buildUserViews();
+      stack.innerHTML = Object.keys(views).map(k => `<div id="view-${k}" class="view hidden">${views[k]}</div>`).join("");
+      document.getElementById("view-" + view).classList.remove("hidden");
+      currentView = view;
+      clearTabsNav(Object.keys(views));
+      document.getElementById("tab-" + view)?.classList.add("active-tab");
+      document.getElementById("nav-" + view)?.classList.add("active");
+      const panel = document.getElementById("mainPanel");
+      panel.classList.remove("create-panel-active");
+      if (currentUser.isDev && view === "novo") panel.classList.add("create-panel-active");
+      if (currentUser.isDev) {
+        renderDevUsers();
+        if (view === "novo") fillDevFormIfEditing();
+      } else {
+        renderCodesLists();
+        updateCreateView();
+      }
+      updateHeader();
+    }
+
+    function showMainView(view){
+      if (view === currentView) return;
+      const views = currentUser.isDev ? ["usuarios","perfil","novo"] : ["criar","validas","invalidas","perfil"];
+      const currentEl = document.getElementById("view-" + currentView);
+      const nextEl = document.getElementById("view-" + view);
+      const forward = views.indexOf(view) > views.indexOf(currentView);
+      currentEl.classList.remove("hidden","anim-enter-right","anim-enter-left","anim-exit-left","anim-exit-right","full-create-mode");
+      nextEl.classList.remove("hidden","anim-enter-right","anim-enter-left","anim-exit-left","anim-exit-right","full-create-mode");
+      currentEl.classList.add(forward ? "anim-exit-left" : "anim-exit-right");
+      nextEl.classList.add(forward ? "anim-enter-right" : "anim-enter-left");
+      nextEl.classList.remove("hidden");
+      setTimeout(() => {
+        currentEl.classList.add("hidden");
+        currentEl.classList.remove("anim-exit-left","anim-exit-right");
+        nextEl.classList.remove("anim-enter-right","anim-enter-left");
+        const panel = document.getElementById("mainPanel");
+        panel.classList.remove("create-panel-active");
+        if (currentUser.isDev && view === "novo") {
+          panel.classList.add("create-panel-active");
+          nextEl.classList.add("full-create-mode");
+        }
+      }, 220);
+      currentView = view;
+      clearTabsNav(views);
+      document.getElementById("tab-" + view)?.classList.add("active-tab");
+      document.getElementById("nav-" + view)?.classList.add("active");
+      if (currentUser.isDev) {
+        renderDevUsers();
+        if (view === "novo") setTimeout(fillDevFormIfEditing, 50);
+      } else {
+        renderCodesLists();
+        updateCreateView();
+      }
+      updateHeader();
+    }
+
+    function setAvatarVisual(imgEl, letterEl, avatar, letter){
+      if (!imgEl || !letterEl) return;
+      letterEl.textContent = letter;
+      if (avatar && avatar.trim() !== "") {
+        imgEl.src = avatar;
+        imgEl.classList.remove("hidden");
+        letterEl.classList.add("hidden");
+      } else {
+        imgEl.src = "";
+        imgEl.classList.add("hidden");
+        letterEl.classList.remove("hidden");
+      }
+    }
+
+    function updateHeader(){
+      const userLabel = (currentUser.username || currentUser.userCode).toUpperCase();
+      document.getElementById("mainTitle").textContent = currentUser.title;
+      document.getElementById("mainSubtitle").textContent = currentUser.isDev ? "Painel administrativo" : "Painel ativo";
+      document.getElementById("popupUser").textContent = userLabel;
+      document.getElementById("popupStatus").textContent = currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO";
+      document.getElementById("mainBanner").textContent = currentUser.isDev ? "Modo desenvolvedor • acesso restrito" : (currentUser.panelType === "MIX" ? "Painel misto do cliente" : "Painel do cliente");
+
+      setAvatarVisual(document.getElementById("mainAvatarImg"), document.getElementById("mainAvatarLetter"), currentUser.avatar || "", currentUser.avatarBadge);
+      setAvatarVisual(document.getElementById("profileAvatarImg"), document.getElementById("profileAvatarLetter"), currentUser.avatar || "", currentUser.avatarBadge);
+
+      if (currentUser.isDev) {
+        const list = window.__cachedDevUsers || [];
+        const hg = list.filter(u => u.type === "HG").length;
+        const drip = list.filter(u => u.type === "DRIP").length;
+        const mix = list.filter(u => u.type === "MIX").length;
+        const dev = list.filter(u => u.type === "DEV").length;
+        const typeCount = (hg?1:0) + (drip?1:0) + (mix?1:0) + (dev?1:0);
+        document.getElementById("statLabel1").textContent = "Usuários";
+        document.getElementById("statValue1").textContent = list.length;
+        document.getElementById("statSub1").textContent = "Contas cadastradas";
+        document.getElementById("statLabel2").textContent = "Tipos";
+        document.getElementById("statValue2").textContent = typeCount;
+        document.getElementById("statSub2").textContent = "HG, DRIP, MIX e DEV";
+      } else {
+        const lists = separateCodes();
+        document.getElementById("statLabel1").textContent = "Códigos válidos";
+        document.getElementById("statValue1").textContent = lists.valid.length;
+        document.getElementById("statSub1").textContent = "Ativos";
+        document.getElementById("statLabel2").textContent = "Códigos inválidos";
+        document.getElementById("statValue2").textContent = lists.invalid.length;
+        document.getElementById("statSub2").textContent = "Expirados";
+      }
+
+      const warning = document.getElementById("accessWarning");
+      warning.classList.add("hidden");
+      if (!currentUser.isDev && currentUser.accessState === "expired") {
+        warning.innerHTML = "ACESSO EXPIRADO<br>VOCÊ NÃO PODE GERAR CÓDIGOS<br>ESSA CONTA SERÁ REMOVIDA EM 1 DIA";
+        warning.classList.remove("hidden");
+      }
+      if (!currentUser.isDev && currentUser.accessState === "disabled") {
+        warning.innerHTML = "ACESSO DESATIVADO<br>ESTA CONTA FOI DESABILITADA PELO ADMIN<br>ENTRE EM CONTATO PARA MAIS INFORMAÇÕES";
+        warning.classList.remove("hidden");
+      }
+    }
+
+    function updateCreateView(){
+      if (currentUser.isDev) return;
+      const keyPreview = document.getElementById("keyPreview");
+      if (!keyPreview) return;
+      const duration = document.getElementById("codeDuration");
+      if (duration) duration.innerHTML = buildDurationOptions();
+      if (!currentPreview) keyPreview.textContent = "";
+    }
+
+    function clearPreview(){
+      currentPreview = "";
+      const keyBox = document.getElementById("keyPreview");
+      if (keyBox) { keyBox.classList.remove("warning-state","glow"); keyBox.textContent = ""; }
+    }
+
+    function generateCode(){
+      const keyBox = document.getElementById("keyPreview");
+      if (!canGenerate()) {
+        keyBox.classList.add("warning-state");
+        keyBox.textContent = currentUser.accessState === "disabled" ? "ACESSO DESATIVADO" : "ACESSO EXPIRADO";
+        pulseKeyBox();
+        return;
+      }
+      const mode = getCurrentGeneratorMode();
+      currentPreview = doGenerateCode(mode);
+      keyBox.classList.remove("warning-state");
+      keyBox.textContent = currentPreview;
+      pulseKeyBox();
+    }
+
+    function copyCode(){
+      if (!currentPreview) { alert("GERE UM CÓDIGO PRIMEIRO."); return; }
+      navigator.clipboard.writeText(currentPreview).then(() => alert("CÓDIGO COPIADO."));
+    }
+
+    function saveCode(){
+      const keyBox = document.getElementById("keyPreview");
+      if (!canGenerate()) {
+        keyBox.classList.add("warning-state");
+        keyBox.textContent = currentUser.accessState === "disabled" ? "ACESSO DESATIVADO" : "ACESSO EXPIRADO";
+        pulseKeyBox();
+        return;
+      }
+      if (!currentPreview) { alert("GERE UM CÓDIGO PRIMEIRO."); return; }
+      const duration = document.getElementById("codeDuration").value;
+      const mode = getCurrentGeneratorMode();
+      const now = new Date();
+      let expiresAt = null;
+      let permanent = false;
+      if (duration === "permanente") permanent = true;
+      else { const dt = new Date(); dt.setDate(now.getDate() + parseInt(duration, 10)); expiresAt = dt.toISOString(); }
+      const codes = getCodes();
+      codes.push({ id: Date.now().toString() + Math.random().toString(36).slice(2,7), mode, code: currentPreview, duration, createdAt: now.toISOString(), expiresAt, permanent, status: "valid", reason: "" });
+      setCodes(codes);
+      clearPreview();
+      updateHeader();
+      renderCodesLists();
+      alert("CÓDIGO SALVO.");
+    }
+
+    function renderCodesLists(){
+      if (currentUser.isDev) return;
+      const lists = separateCodes();
+      const validWrap = document.getElementById("validList");
+      const invalidWrap = document.getElementById("invalidList");
+      if (!validWrap || !invalidWrap) return;
+      const validTerm = normalize(document.getElementById("searchValid")?.value || "");
+      const invalidTerm = normalize(document.getElementById("searchInvalid")?.value || "");
+      const validItems = lists.valid.filter(c => !validTerm || c.code.toLowerCase().includes(validTerm) || c.mode.toLowerCase().includes(validTerm));
+      const invalidItems = lists.invalid.filter(c => !invalidTerm || c.code.toLowerCase().includes(invalidTerm) || (c.reason || "").toLowerCase().includes(invalidTerm));
+      validWrap.innerHTML = validItems.length ? validItems.map(c => `<div class="item"><div class="code">${c.code}</div><div class="meta">GERADOR: ${c.mode}<br>DURAÇÃO: ${fmtDuration(c.duration)}<br>CRIADO EM: ${fmtDate(c.createdAt)}<br>VALIDADE: ${c.permanent ? "PERMANENTE" : fmtDate(c.expiresAt)}<br>STATUS: VÁLIDO</div><div class="item-actions"><button class="btn btn-danger" onclick="disableCode('${c.id}')">Desativar</button><button class="btn btn-secondary" onclick="navigator.clipboard.writeText('${c.code}')">Copiar</button></div></div>`).join("") : `<div class="empty">Nenhum código válido.</div>`;
+      invalidWrap.innerHTML = invalidItems.length ? invalidItems.map(c => `<div class="item"><div class="code">${c.code}</div><div class="meta">GERADOR: ${c.mode}<br>DURAÇÃO: ${fmtDuration(c.duration)}<br>CRIADO EM: ${fmtDate(c.createdAt)}<br>VALIDADE: ${c.permanent ? "PERMANENTE" : fmtDate(c.expiresAt)}<br>STATUS: INVÁLIDO<br>MOTIVO: ${c.reason || "NÃO DEFINIDO"}</div></div>`).join("") : `<div class="empty">Nenhum código inválido.</div>`;
+    }
+
+    function disableCode(id){
+      const codes = getCodes();
+      const item = codes.find(c => c.id === id);
+      if (!item) return;
+      item.status = "invalid";
+      item.reason = "DESATIVADO MANUALMENTE";
+      setCodes(codes);
+      updateHeader();
+      renderCodesLists();
+    }
+
+    function updateAvatarPreview(src) {
+      const img = document.getElementById("avatarPreviewImg");
+      const letter = document.getElementById("avatarPreviewLetter");
+      if (!img || !letter) return;
+      if (src) { img.src = src; img.style.display = "block"; letter.style.display = "none"; }
+      else { img.src = ""; img.style.display = "none"; letter.style.display = "block"; }
+    }
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) { alert("SELECIONE UMA IMAGEM."); event.target.value = ""; return; }
+      const reader = new FileReader();
+      reader.onload = function(e) { uploadedAvatarBase64 = e.target.result || ""; updateAvatarPreview(uploadedAvatarBase64); };
+      reader.readAsDataURL(file);
+    }
+
+    function clearAvatarFile() {
+      uploadedAvatarBase64 = "";
+      const input = document.getElementById("newAvatarFile");
+      if (input) input.value = "";
+      updateAvatarPreview("");
+    }
+
+    async function fetchDbUsers(){
+      const { data, error } = await supa.from("users").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    }
+
+    async function renderDevUsers(){
+      if (!currentUser.isDev) return;
+      const list = document.getElementById("usersList");
+      if (!list) return;
+      list.innerHTML = `<div class="empty">Carregando...</div>`;
+      try {
+        let users = await fetchDbUsers();
+        users = await Promise.all(users.map(async u => ({ ...u, accessState: await getAccountState(u) })));
+        users = users.filter(u => u.accessState !== "deleted");
+        window.__cachedDevUsers = users;
+        const term = normalize(document.getElementById("searchUsers")?.value || "");
+        if (term) users = users.filter(u => normalize(u.username).includes(term) || normalize(u.type).includes(term) || normalize(u.validity || "").includes(term));
+        list.innerHTML = users.length ? users.map(user => {
+          const expAt = user.expires_at ? new Date(user.expires_at) : null;
+          const stateText = user.accessState === "active" ? "ATIVA" : user.accessState === "expired" ? "EXPIRADA" : "DESATIVADA";
+          const avatarTxt = user.avatar ? "IMAGEM SALVA" : "NÃO DEFINIDO";
+          return `<div class="item"><div class="code">${user.username}</div><div class="meta">SENHA: •••••••<br>PAINEL: ${user.type}<br>VALIDADE: ${expAt ? fmtDate(expAt.toISOString()) : "PERMANENTE"}<br>STATUS: ${stateText}<br>CRIADA EM: ${user.created_at ? fmtDate(user.created_at) : "-"}<br>AVATAR: ${avatarTxt}</div><div class="item-actions"><button class="btn btn-secondary" onclick="editDevUser('${user.id}')">Editar</button><button class="btn ${user.is_disabled ? 'btn-success' : 'btn-warning'}" onclick="toggleDisableDevUser('${user.id}', ${user.is_disabled ? 'true':'false'})">${user.is_disabled ? 'Reativar' : 'Desativar'}</button></div><div class="item-actions"><button class="btn btn-danger" onclick="removeDevUser('${user.id}')">Remover</button><button class="btn btn-primary" onclick="renewDevUser('${user.id}')">Renovar</button></div></div>`;
+        }).join("") : `<div class="empty">Nenhum usuário encontrado.</div>`;
+      } catch (e) {
+        list.innerHTML = `<div class="empty">Erro ao carregar usuários.</div>`;
+      }
+      updateHeader();
+    }
+
+    function clearDevForm(){
       editingUserId = null;
-      panelScreen.classList.add("hidden");
-      loginScreen.classList.remove("hidden");
-      loginWrap.classList.remove("hide");
+      ["newUsername","newPassword"].forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+      if (document.getElementById("newType")) document.getElementById("newType").value = "HG";
+      if (document.getElementById("newValidity")) document.getElementById("newValidity").value = "1";
+      clearAvatarFile();
+      if (currentUser?.isDev && currentView === "novo") instantShowView("novo");
+    }
+
+    function fillDevFormIfEditing(){
+      if (!editingUserId) return;
+      const item = window.__editingSnapshot;
+      if (!item) return;
+      document.getElementById("newUsername").value = item.username || "";
+      document.getElementById("newPassword").value = "";
+      document.getElementById("newType").value = item.type || "HG";
+      document.getElementById("newValidity").value = item.expires_at ? (Math.ceil((new Date(item.expires_at) - new Date()) / 86400000) <= 1 ? "1" : Math.ceil((new Date(item.expires_at) - new Date()) / 86400000) <= 7 ? "7" : "30") : "permanente";
+      uploadedAvatarBase64 = item.avatar || "";
+      updateAvatarPreview(uploadedAvatarBase64);
+    }
+
+    async function saveDevUser(){
+      const username = document.getElementById("newUsername")?.value.trim();
+      const password = document.getElementById("newPassword")?.value.trim();
+      const type = document.getElementById("newType")?.value;
+      const validity = document.getElementById("newValidity")?.value;
+      const avatar = uploadedAvatarBase64 || "";
+      if (!username) { alert("PREENCHA NOME."); return; }
+      const payload = { username, type, avatar: avatar || null, expires_at: validity === "permanente" ? null : new Date(Date.now() + parseInt(validity,10)*86400000).toISOString() };
+      if (password) payload.password_hash = await sha256(password);
+      try {
+        if (editingUserId) {
+          const { error } = await supa.from("users").update(payload).eq("id", editingUserId);
+          if (error) throw error;
+          alert("USUÁRIO EDITADO.");
+        } else {
+          if (!password) { alert("PREENCHA A SENHA."); return; }
+          const { error } = await supa.from("users").insert({ ...payload, password: null, is_disabled:false, created_at:new Date().toISOString() });
+          if (error) throw error;
+          alert("USUÁRIO ADICIONADO.");
+        }
+        editingUserId = null;
+        window.__editingSnapshot = null;
+        clearDevForm();
+        renderDevUsers();
+      } catch (e) {
+        alert("ERRO: " + (e.message || "Falha ao salvar"));
+      }
+    }
+
+    async function editDevUser(id){
+      try {
+        const { data, error } = await supa.from("users").select("*").eq("id", id).maybeSingle();
+        if (error || !data) throw error || new Error("Usuário não encontrado");
+        editingUserId = id;
+        window.__editingSnapshot = data;
+        showMainView("novo");
+      } catch (e) {
+        alert("Erro ao carregar usuário.");
+      }
+    }
+
+    async function removeDevUser(id){
+      if (!confirm("REMOVER ESTE USUÁRIO?")) return;
+      try {
+        const { error } = await supa.from("users").delete().eq("id", id);
+        if (error) throw error;
+        if (editingUserId === id) clearDevForm();
+        renderDevUsers();
+        alert("USUÁRIO REMOVIDO.");
+      } catch (e) {
+        alert("Erro ao remover usuário.");
+      }
+    }
+
+    async function toggleDisableDevUser(id, currentDisabled){
+      try {
+        const { error } = await supa.from("users").update({ is_disabled: !currentDisabled }).eq("id", id);
+        if (error) throw error;
+        renderDevUsers();
+        alert(!currentDisabled ? "CONTA DESATIVADA." : "CONTA REATIVADA.");
+      } catch (e) {
+        alert("Erro ao atualizar conta.");
+      }
+    }
+
+    async function renewDevUser(id){
+      try {
+        const { error } = await supa.from("users").update({ created_at: new Date().toISOString(), expires_at: new Date(Date.now() + 86400000).toISOString(), is_disabled: false }).eq("id", id);
+        if (error) throw error;
+        renderDevUsers();
+        alert("CONTA RENOVADA PARA 1 DIA.");
+      } catch (e) {
+        alert("Erro ao renovar conta.");
+      }
+    }
+
+    function toggleProfilePopup(){
+      const popup = document.getElementById("profilePopup");
+      if (popup.classList.contains("hidden")) { popup.classList.remove("hidden"); popup.classList.remove("closing"); }
+      else closeProfilePopup();
+    }
+
+    function closeProfilePopup(force){
+      const popup = document.getElementById("profilePopup");
+      if (force) { popup.classList.add("hidden"); popup.classList.remove("closing"); return; }
+      popup.classList.remove("hidden");
+      popup.classList.add("closing");
+      setTimeout(() => { popup.classList.add("hidden"); popup.classList.remove("closing"); }, 150);
+    }
+
+    function openApp(themeKey, account){
+      setTheme(themeKey);
+      currentUser = account;
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("appScreen").classList.remove("hidden");
+      closeProfilePopup(true);
+      buildTabsAndNav();
+      instantShowView(currentUser.isDev ? "usuarios" : "criar");
+      updateHeader();
+    }
+
+    function finalizarLogin(themeKey, account){
+      document.getElementById("welcomeOverlay").classList.remove("show");
+      openApp(themeKey, account);
+    }
+
+    function createCurrentUserFromDb(row){
+      const type = row.type === "DEV" ? "DEV" : row.type === "DRIP" ? "DRIP" : row.type === "MIX" || row.type === "MISTO" ? "MIX" : "HG";
+      const themeKey = type === "DEV" ? "dev" : type === "DRIP" ? "drip" : type === "MIX" ? "misto" : "hg";
+      const statePromise = getAccountState(row);
+      return statePromise.then(state => ({
+        themeKey,
+        user: {
+          isDev: type === "DEV",
+          userCode: row.username,
+          username: row.username,
+          title: type === "MIX" ? "MISTO" : type,
+          panelType: type,
+          avatarBadge: type === "HG" ? "H" : type === "DRIP" ? "D" : type === "DEV" ? "D" : "M",
+          avatar: row.avatar || "",
+          accessState: state,
+          id: row.id,
+          type: type,
+          expires_at: row.expires_at,
+          is_disabled: row.is_disabled
+        }
+      }));
+    }
+
+    async function tryLegacyLogin(username, password){
+      if (["hg","drip","misto","dev"].includes(username) && password === username) {
+        const theme = username;
+        return {
+          themeKey: theme,
+          user: {
+            isDev: theme === "dev",
+            userCode: theme,
+            username: theme,
+            title: theme === "hg" ? "HG" : theme === "drip" ? "DRIP" : theme === "dev" ? "Development" : "MISTO",
+            panelType: theme === "misto" ? "MIX" : theme.toUpperCase(),
+            avatarBadge: theme === "hg" ? "H" : theme === "drip" ? "D" : theme === "dev" ? "D" : "M",
+            avatar: "",
+            accessState: "active",
+            type: theme === "misto" ? "MIX" : theme.toUpperCase()
+          }
+        };
+      }
+
+      const users = getLegacyUsers();
+      const match = users.find(u => normalize(u.username) === username && normalize(u.password) === password);
+      if (!match) return null;
+      const state = await getAccountState(match);
+      const type = match.type === "DEV" ? "DEV" : match.type === "DRIP" ? "DRIP" : match.type === "MIX" ? "MIX" : "HG";
+      return {
+        themeKey: type === "DEV" ? "dev" : type === "DRIP" ? "drip" : type === "MIX" ? "misto" : "hg",
+        user: {
+          isDev: type === "DEV",
+          userCode: match.username,
+          username: match.username,
+          title: type === "MIX" ? "MISTO" : type === "DEV" ? "Development" : type,
+          panelType: type,
+          avatarBadge: type === "HG" ? "H" : type === "DRIP" ? "D" : type === "DEV" ? "D" : "M",
+          avatar: match.avatar || "",
+          accessState: state,
+          id: `legacy_${match.id}`,
+          type
+        }
+      };
+    }
+
+    async function fazerLogin(){
+      clearLoginMessages();
+      const username = normalize(document.getElementById("username").value);
+      const password = document.getElementById("password").value.trim();
+      if (!username || !password) { showLoginError("PREENCHA USUÁRIO E SENHA"); return; }
+      showLoginInfo("Verificando acesso...");
+
+      try {
+        const { data, error } = await supa.from("users").select("*").eq("username", username).maybeSingle();
+        if (!error && data) {
+          const hash = await sha256(password);
+          const legacyOk = data.password && normalize(data.password) === normalize(password);
+          const hashOk = data.password_hash && data.password_hash === hash;
+          if (legacyOk || hashOk) {
+            const result = await createCurrentUserFromDb(data);
+            if (result.user.accessState === "expired") { showLoginError("ACESSO EXPIRADO"); return; }
+            if (result.user.accessState === "disabled") { showLoginError("ACESSO DESATIVADO"); return; }
+            const theme = THEMES[result.themeKey];
+            const panelName = result.user.panelType === "MIX" ? "MISTO MENU" : result.user.panelType + " MENU";
+            document.getElementById("welcomeUser").textContent = result.user.username.toUpperCase();
+            document.getElementById("welcomePanel").textContent = "ENTRANDO EM " + panelName + "...";
+            setAvatarVisual(document.getElementById("welcomeAvatarImg"), document.getElementById("welcomeAvatarLetter"), result.user.avatar || "", result.user.avatarBadge);
+            document.getElementById("loginWrap").classList.add("hide");
+            setTimeout(() => document.getElementById("welcomeOverlay").classList.add("show"), 500);
+            setTimeout(() => makeVirusAnimation(theme.color), 260);
+            setTimeout(() => finalizarLogin(result.themeKey, result.user), 5800);
+            return;
+          }
+        }
+      } catch (e) {
+        // continua para fallback
+      }
+
+      const legacy = await tryLegacyLogin(username, normalize(password));
+      if (!legacy) { showLoginError("USUÁRIO OU SENHA INVÁLIDOS"); return; }
+      if (legacy.user.accessState === "expired") { showLoginError("ACESSO EXPIRADO"); return; }
+      if (legacy.user.accessState === "disabled") { showLoginError("ACESSO DESATIVADO"); return; }
+
+      const theme = THEMES[legacy.themeKey];
+      const panelName = legacy.user.panelType === "MIX" ? "MISTO MENU" : legacy.user.panelType + " MENU";
+      document.getElementById("welcomeUser").textContent = legacy.user.username.toUpperCase();
+      document.getElementById("welcomePanel").textContent = "ENTRANDO EM " + panelName + "...";
+      setAvatarVisual(document.getElementById("welcomeAvatarImg"), document.getElementById("welcomeAvatarLetter"), legacy.user.avatar || "", legacy.user.avatarBadge);
+      document.getElementById("loginWrap").classList.add("hide");
+      setTimeout(() => document.getElementById("welcomeOverlay").classList.add("show"), 500);
+      setTimeout(() => makeVirusAnimation(theme.color), 260);
+      setTimeout(() => finalizarLogin(legacy.themeKey, legacy.user), 5800);
+    }
+
+    function logout(){
+      document.getElementById("appScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("loginWrap").classList.remove("hide");
+      document.getElementById("welcomeOverlay").classList.remove("show");
       document.getElementById("password").value = "";
       document.getElementById("username").value = "";
-      clearError();
-      clearWarning();
-      applyTheme("DEV");
+      clearLoginMessages();
+      clearDevForm();
+      closeProfilePopup(true);
+      currentUser = null;
+      currentPreview = "";
+      currentView = "";
+      editingUserId = null;
+      window.__editingSnapshot = null;
+      setTheme("hg");
+      document.getElementById("baseBg").style.background = "linear-gradient(180deg,#2563eb 0%, #3b82f6 46%, #f8fafc 46%, #f8fafc 100%)";
+      const canvas = document.getElementById("virusCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    loginBtn.addEventListener("click", loginUser);
-    logoutBtn.addEventListener("click", logoutUser);
-
-    document.getElementById("username").addEventListener("keydown", e => {
-      if (e.key === "Enter") loginUser();
+    document.getElementById("username").addEventListener("keydown", e => { if (e.key === "Enter") fazerLogin(); });
+    document.getElementById("password").addEventListener("keydown", e => { if (e.key === "Enter") fazerLogin(); });
+    window.addEventListener("resize", () => {
+      const canvas = document.getElementById("virusCanvas");
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     });
-
-    document.getElementById("password").addEventListener("keydown", e => {
-      if (e.key === "Enter") loginUser();
-    });
-  </script>
-</body>
+  </script></body>
 </html>
