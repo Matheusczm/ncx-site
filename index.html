@@ -9,18 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
-      --c1:#d62828;
-      --c2:#ef4444;
-      --c3:#f87171;
+      --c1:#2563eb;
+      --c2:#3b82f6;
+      --c3:#60a5fa;
       --bg:#eef3f8;
       --panel:#ffffff;
       --text:#111827;
       --muted:#6b7280;
       --green:#22c55e;
       --green2:#16a34a;
-      --dark:#06142f;
       --line:#dbe4ee;
       --shadow:0 24px 60px rgba(0,0,0,.28);
+      --softActive:#dbeafe;
     }
 
     *{
@@ -46,7 +46,7 @@
       width:390px;
       max-width:100%;
       min-height:100vh;
-      background:linear-gradient(180deg,var(--c1) 0%, var(--c2) 18%, var(--c3) 34%, var(--bg) 34%, var(--bg) 100%);
+      background:linear-gradient(180deg,var(--c1) 0%, var(--c2) 20%, var(--c3) 40%, var(--bg) 40%, var(--bg) 100%);
       border-radius:32px;
       overflow:hidden;
       box-shadow:var(--shadow);
@@ -64,15 +64,14 @@
       display:flex;
       flex-direction:column;
       justify-content:center;
-      gap:18px;
       min-height:100vh;
       background:
-        radial-gradient(circle at top, rgba(255,255,255,.08), transparent 28%),
-        linear-gradient(180deg,var(--c1) 0%, var(--c2) 45%, #edf2f7 45%, #edf2f7 100%);
+        radial-gradient(circle at top, rgba(255,255,255,.10), transparent 30%),
+        linear-gradient(180deg,#2563eb 0%, #3b82f6 45%, #edf2f7 45%, #edf2f7 100%);
     }
 
     .login-card{
-      background:rgba(255,255,255,.96);
+      background:rgba(255,255,255,.97);
       border-radius:28px;
       padding:22px;
       box-shadow:0 20px 50px rgba(0,0,0,.14);
@@ -82,7 +81,7 @@
       width:72px;
       height:72px;
       border-radius:22px;
-      background:linear-gradient(180deg,var(--c1),var(--c2));
+      background:linear-gradient(180deg,#2563eb,#3b82f6);
       color:#fff;
       display:flex;
       align-items:center;
@@ -97,6 +96,7 @@
       font-weight:800;
       color:#111827;
       margin-bottom:8px;
+      text-transform:uppercase;
     }
 
     .login-card p{
@@ -115,6 +115,7 @@
       font-weight:700;
       color:#1f2937;
       margin-bottom:8px;
+      text-transform:uppercase;
     }
 
     .field input,
@@ -131,11 +132,10 @@
 
     .field input:focus,
     .field select:focus{
-      border-color:#fca5a5;
-      box-shadow:0 0 0 4px rgba(239,68,68,.10);
+      border-color:#93c5fd;
+      box-shadow:0 0 0 4px rgba(59,130,246,.10);
     }
 
-    .login-btn,
     button{
       border:none;
       border-radius:18px;
@@ -147,17 +147,11 @@
 
     .login-btn{
       width:100%;
-      background:linear-gradient(180deg,var(--c1),var(--c2));
+      background:linear-gradient(180deg,#2563eb,#3b82f6);
       color:#fff;
-      box-shadow:0 12px 26px rgba(220,38,38,.24);
+      box-shadow:0 12px 26px rgba(37,99,235,.24);
       margin-top:4px;
-    }
-
-    .login-hint{
-      margin-top:14px;
-      font-size:12px;
-      line-height:1.6;
-      color:#6b7280;
+      text-transform:uppercase;
     }
 
     .error-box{
@@ -169,10 +163,11 @@
       font-size:13px;
       margin-bottom:14px;
       display:none;
+      text-transform:uppercase;
     }
 
     .top{
-      padding:24px 20px 18px;
+      padding:24px 20px 10px;
       color:#fff;
     }
 
@@ -210,7 +205,7 @@
       font-weight:800;
       line-height:1.1;
       margin-bottom:4px;
-      text-transform:lowercase;
+      text-transform:uppercase;
     }
 
     .brand-text p{
@@ -221,7 +216,7 @@
 
     .top-icons{
       display:flex;
-      gap:14px;
+      gap:12px;
       font-size:22px;
       flex-shrink:0;
       align-items:center;
@@ -235,6 +230,7 @@
       padding:8px 10px;
       font-size:12px;
       font-weight:700;
+      text-transform:uppercase;
     }
 
     .search-bar{
@@ -246,7 +242,7 @@
       display:flex;
       align-items:center;
       gap:10px;
-      margin-bottom:18px;
+      margin-bottom:16px;
     }
 
     .search-bar input{
@@ -259,20 +255,21 @@
     }
 
     .search-bar input::placeholder{
-      color:rgba(255,255,255,.85);
+      color:rgba(255,255,255,.88);
     }
 
     .stats{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:14px;
+      margin-bottom:6px;
     }
 
     .card{
-      background:linear-gradient(180deg, rgba(80,10,10,.35), rgba(0,0,0,.10));
+      background:linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.10));
       border-radius:24px;
       padding:18px;
-      min-height:165px;
+      min-height:150px;
       position:relative;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
       border:1px solid rgba(255,255,255,.08);
@@ -282,26 +279,29 @@
       font-size:15px;
       opacity:.95;
       margin-bottom:16px;
+      font-weight:700;
+      text-transform:uppercase;
     }
 
     .card .value{
-      font-size:58px;
+      font-size:52px;
       font-weight:800;
       line-height:1;
-      margin-bottom:24px;
+      margin-bottom:18px;
       letter-spacing:-2px;
     }
 
     .card .sub{
       font-size:14px;
       opacity:.95;
+      text-transform:uppercase;
     }
 
     .card .mini{
       margin-top:6px;
       font-size:18px;
       font-weight:700;
-      color:#fecaca;
+      color:#fde68a;
     }
 
     .card .mini.white{
@@ -326,11 +326,13 @@
     }
 
     .main{
-      min-height:calc(100vh - 300px);
+      min-height:calc(100vh - 320px);
       background:var(--bg);
       border-top-left-radius:28px;
       border-top-right-radius:28px;
       padding:18px 16px 96px;
+      position:relative;
+      z-index:2;
     }
 
     .tabs{
@@ -342,16 +344,17 @@
 
     .tabs span{
       text-align:center;
-      font-size:14px;
+      font-size:13px;
       font-weight:800;
       color:#1f2937;
       padding:10px 4px;
       border-radius:14px;
       cursor:pointer;
+      text-transform:uppercase;
     }
 
     .tabs span.active-tab{
-      background:#fde2e2;
+      background:var(--softActive);
       color:var(--c1);
     }
 
@@ -368,6 +371,7 @@
       font-weight:800;
       color:#111827;
       margin-bottom:16px;
+      text-transform:uppercase;
     }
 
     .key-box{
@@ -393,12 +397,14 @@
     .btn-primary{
       background:linear-gradient(180deg,var(--c1),var(--c2));
       color:#fff;
-      box-shadow:0 12px 26px rgba(220,38,38,.24);
+      box-shadow:0 12px 26px rgba(37,99,235,.20);
+      text-transform:uppercase;
     }
 
     .btn-dark{
       background:linear-gradient(180deg,#061635,#03102b);
       color:#fff;
+      text-transform:uppercase;
     }
 
     .btn-success{
@@ -407,6 +413,7 @@
       background:linear-gradient(180deg,#25d366,#16a34a);
       color:#fff;
       box-shadow:0 12px 24px rgba(34,197,94,.20);
+      text-transform:uppercase;
     }
 
     .list-search{
@@ -437,6 +444,7 @@
       font-size:13px;
       color:var(--muted);
       line-height:1.6;
+      text-transform:uppercase;
     }
 
     .empty{
@@ -444,6 +452,7 @@
       color:var(--muted);
       font-size:14px;
       padding:18px 8px;
+      text-transform:uppercase;
     }
 
     .profile-card{
@@ -454,6 +463,7 @@
       line-height:1.8;
       color:#6b7280;
       font-size:14px;
+      text-transform:uppercase;
     }
 
     .profile-card strong{
@@ -480,6 +490,7 @@
       font-size:12px;
       font-weight:700;
       cursor:pointer;
+      text-transform:uppercase;
     }
 
     .nav-item .icon{
@@ -502,31 +513,23 @@
   <div class="phone">
     <div id="loginScreen" class="screen login-screen">
       <div class="login-card">
-        <div class="login-logo" id="loginLogo">K</div>
-        <h1 id="loginTitle">Key Manager</h1>
-        <p>Entre com seu usuário e senha para acessar o painel.</p>
+        <div class="login-logo">K</div>
+        <h1>KEY MANAGER</h1>
+        <p>Acesso ao painel.</p>
 
-        <div class="error-box" id="loginError">Usuário ou senha inválidos.</div>
-
-        <div class="field">
-          <label for="username">Usuário</label>
-          <input type="text" id="username" placeholder="Digite o usuário">
-        </div>
+        <div class="error-box" id="loginError">USUÁRIO OU SENHA INVÁLIDOS</div>
 
         <div class="field">
-          <label for="password">Senha</label>
-          <input type="password" id="password" placeholder="Digite a senha">
+          <label for="username">USUÁRIO</label>
+          <input type="text" id="username" placeholder="Digite seu usuário">
         </div>
 
-        <button class="login-btn" onclick="fazerLogin()">Entrar</button>
-
-        <div class="login-hint">
-          Perfis configurados no sistema:<br>
-          Nc HG / HG<br>
-          Sx HG / HG<br>
-          Nc Drip / Drip<br>
-          Sx Drip / Drip
+        <div class="field">
+          <label for="password">SENHA</label>
+          <input type="password" id="password" placeholder="Digite sua senha">
         </div>
+
+        <button class="login-btn" onclick="fazerLogin()">ENTRAR</button>
       </div>
     </div>
 
@@ -536,14 +539,14 @@
           <div class="brand">
             <div class="avatar" id="avatarLetter">H</div>
             <div class="brand-text">
-              <h1 id="panelName">hg menu</h1>
-              <p id="panelPlan">Premium</p>
+              <h1 id="panelName">HG MENU</h1>
+              <p id="panelSub">Acesso HG</p>
             </div>
           </div>
 
           <div class="top-icons">
             <span>⌕</span>
-            <button class="logout-btn" onclick="logout()">Sair</button>
+            <button class="logout-btn" onclick="logout()">SAIR</button>
           </div>
         </div>
 
@@ -554,56 +557,52 @@
 
         <div class="stats">
           <div class="card">
-            <div class="label">◫ Devices</div>
-            <div class="value" id="devicesCount">0</div>
-            <div class="sub">Expired devices</div>
-            <div class="mini" id="expiredDevicesCount">0</div>
-            <div class="go">➜</div>
+            <div class="label">KEYS ATIVAS</div>
+            <div class="value" id="keysCount">0</div>
+            <div class="sub">Licenças em uso</div>
           </div>
 
           <div class="card">
-            <div class="label">⛓ Keys</div>
-            <div class="value" id="keysCount">0</div>
-            <div class="sub">Packages</div>
-            <div class="mini white">4</div>
-            <div class="go">➜</div>
+            <div class="label">KEYS EXPIRADAS</div>
+            <div class="value" id="expiredCount">0</div>
+            <div class="sub">Licenças vencidas</div>
           </div>
         </div>
       </div>
 
       <div class="main">
         <div class="tabs">
-          <span id="tab-home" class="active-tab" onclick="showView('home')">Criar</span>
-          <span id="tab-validas" onclick="showView('validas')">Válidas</span>
-          <span id="tab-invalidas" onclick="showView('invalidas')">Inválidas</span>
-          <span id="tab-perfil" onclick="showView('perfil')">Perfil</span>
+          <span id="tab-home" class="active-tab" onclick="showView('home')">CRIAR</span>
+          <span id="tab-validas" onclick="showView('validas')">VÁLIDAS</span>
+          <span id="tab-invalidas" onclick="showView('invalidas')">INVÁLIDAS</span>
+          <span id="tab-perfil" onclick="showView('perfil')">PERFIL</span>
         </div>
 
         <div id="view-home" class="panel">
-          <div class="panel-title">Criar licença</div>
+          <div class="panel-title">CRIAR LICENÇA</div>
 
           <div class="key-box" id="keyAtual">HG-ABCDEF</div>
 
           <div class="field">
-            <label for="dias">Dias</label>
+            <label for="dias">DURAÇÃO</label>
             <select id="dias">
-              <option value="1">1 dia</option>
-              <option value="7">7 dias</option>
-              <option value="10">10 dias</option>
-              <option value="30">30 dias</option>
+              <option value="1">1 DIA</option>
+              <option value="7">7 DIAS</option>
+              <option value="10">10 DIAS</option>
+              <option value="30">30 DIAS</option>
             </select>
           </div>
 
           <div class="btn-row">
-            <button class="btn-primary" onclick="gerarPreview()">Gerar key</button>
-            <button class="btn-dark" onclick="copiarKey()">Copiar</button>
+            <button class="btn-primary" onclick="gerarPreview()">GERAR KEY</button>
+            <button class="btn-dark" onclick="copiarKey()">COPIAR</button>
           </div>
 
-          <button class="btn-success" onclick="salvarKey()">Salvar key</button>
+          <button class="btn-success" onclick="salvarKey()">SALVAR KEY</button>
         </div>
 
         <div id="view-validas" class="panel hidden">
-          <div class="panel-title">Licenças válidas</div>
+          <div class="panel-title">LICENÇAS VÁLIDAS</div>
           <div class="field list-search">
             <input type="text" id="searchValidas" placeholder="Buscar nas válidas..." oninput="renderListas()">
           </div>
@@ -611,7 +610,7 @@
         </div>
 
         <div id="view-invalidas" class="panel hidden">
-          <div class="panel-title">Licenças inválidas</div>
+          <div class="panel-title">LICENÇAS INVÁLIDAS</div>
           <div class="field list-search">
             <input type="text" id="searchInvalidas" placeholder="Buscar nas inválidas..." oninput="renderListas()">
           </div>
@@ -619,29 +618,29 @@
         </div>
 
         <div id="view-perfil" class="panel hidden">
-          <div class="panel-title">Perfil</div>
+          <div class="panel-title">PERFIL</div>
           <div class="profile-card">
-            Usuário: <strong id="profileUser">-</strong><br>
-            Nome do painel: <strong id="profilePanel">-</strong><br>
-            Tipo: <strong id="profileType">-</strong><br>
-            Status: <strong>Online</strong><br>
-            Sistema: <strong>Ativo</strong>
+            USUÁRIO: <strong id="profileUser">-</strong><br>
+            PAINEL: <strong id="profilePanel">-</strong><br>
+            ACESSO: <strong id="profileType">-</strong><br>
+            STATUS: <strong>ONLINE</strong><br>
+            SISTEMA: <strong>ATIVO</strong>
           </div>
         </div>
       </div>
 
       <div class="bottom-nav">
         <div class="nav-item active" id="nav-home" onclick="showView('home')">
-          <span class="icon">▦</span>Home
+          <span class="icon">▦</span>HOME
         </div>
         <div class="nav-item" id="nav-validas" onclick="showView('validas')">
-          <span class="icon">⛓</span>Válidas
+          <span class="icon">⛓</span>VÁLIDAS
         </div>
         <div class="nav-item" id="nav-invalidas" onclick="showView('invalidas')">
-          <span class="icon">▣</span>Inválidas
+          <span class="icon">▣</span>INVÁLIDAS
         </div>
         <div class="nav-item" id="nav-perfil" onclick="showView('perfil')">
-          <span class="icon">◉</span>Perfil
+          <span class="icon">◉</span>PERFIL
         </div>
       </div>
     </div>
@@ -651,12 +650,7 @@
     let previewKey = "";
     let currentProfile = null;
 
-    const USERS = [
-      { username: "Nc HG", password: "HG", theme: "hg", panelName: "hg menu", keyType: "hg", profileType: "HG" },
-      { username: "Sx HG", password: "HG", theme: "hg", panelName: "hg menu", keyType: "hg", profileType: "HG" },
-      { username: "Nc Drip", password: "Drip", theme: "drip", panelName: "drip cliente", keyType: "numeric", profileType: "Drip" },
-      { username: "Sx Drip", password: "Drip", theme: "drip", panelName: "drip cliente", keyType: "numeric", profileType: "Drip" }
-    ];
+    const USERS = ["nc xiter", "sx cheats"];
 
     function normalize(value) {
       return value.trim().toLowerCase();
@@ -669,16 +663,23 @@
         root.style.setProperty("--c1", "#6d28d9");
         root.style.setProperty("--c2", "#8b5cf6");
         root.style.setProperty("--c3", "#a78bfa");
-      } else {
+        root.style.setProperty("--softActive", "#ede9fe");
+      } else if (theme === "hg") {
         root.style.setProperty("--c1", "#d62828");
         root.style.setProperty("--c2", "#ef4444");
         root.style.setProperty("--c3", "#f87171");
+        root.style.setProperty("--softActive", "#fee2e2");
+      } else {
+        root.style.setProperty("--c1", "#2563eb");
+        root.style.setProperty("--c2", "#3b82f6");
+        root.style.setProperty("--c3", "#60a5fa");
+        root.style.setProperty("--softActive", "#dbeafe");
       }
     }
 
     function getStorageKey() {
-      if (!currentProfile) return "panel_keys_default";
-      return "panel_keys_" + normalize(currentProfile.username).replace(/\s+/g, "_");
+      if (!currentProfile) return "km_default";
+      return "km_" + normalize(currentProfile.username).replace(/\s+/g, "_") + "_" + currentProfile.type.toLowerCase();
     }
 
     function letras(qtd) {
@@ -701,12 +702,7 @@
 
     function criarKey() {
       if (!currentProfile) return "HG-" + letras(6);
-
-      if (currentProfile.keyType === "numeric") {
-        return numeros(10);
-      }
-
-      return "HG-" + letras(6);
+      return currentProfile.type === "DRIP" ? numeros(10) : "HG-" + letras(6);
     }
 
     function gerarPreview() {
@@ -717,7 +713,7 @@
     function copiarKey() {
       const key = document.getElementById("keyAtual").textContent;
       navigator.clipboard.writeText(key).then(() => {
-        alert("Key copiada: " + key);
+        alert("KEY COPIADA: " + key);
       });
     }
 
@@ -747,7 +743,7 @@
 
       setKeys(keys);
       atualizarTudo();
-      alert("Key salva com sucesso.");
+      alert("KEY SALVA COM SUCESSO.");
       gerarPreview();
     }
 
@@ -800,16 +796,16 @@
       listaInvalidas.innerHTML = "";
 
       if (!validasFiltradas.length) {
-        listaValidas.innerHTML = '<div class="empty">Nenhuma licença válida encontrada.</div>';
+        listaValidas.innerHTML = '<div class="empty">NENHUMA LICENÇA VÁLIDA ENCONTRADA.</div>';
       } else {
         validasFiltradas.forEach(k => {
           listaValidas.innerHTML += `
             <div class="item">
               <div class="code">${k.code}</div>
               <div class="meta">
-                Dias: ${k.dias}<br>
-                Criada em: ${formatarData(k.criadaEm)}<br>
-                Expira em: ${formatarData(k.expiraEm)}
+                DURAÇÃO: ${k.dias} DIAS<br>
+                CRIADA EM: ${formatarData(k.criadaEm)}<br>
+                EXPIRA EM: ${formatarData(k.expiraEm)}
               </div>
             </div>
           `;
@@ -817,16 +813,16 @@
       }
 
       if (!invalidasFiltradas.length) {
-        listaInvalidas.innerHTML = '<div class="empty">Nenhuma licença inválida encontrada.</div>';
+        listaInvalidas.innerHTML = '<div class="empty">NENHUMA LICENÇA INVÁLIDA ENCONTRADA.</div>';
       } else {
         invalidasFiltradas.forEach(k => {
           listaInvalidas.innerHTML += `
             <div class="item">
               <div class="code">${k.code}</div>
               <div class="meta">
-                Dias: ${k.dias}<br>
-                Criada em: ${formatarData(k.criadaEm)}<br>
-                Expirada em: ${formatarData(k.expiraEm)}
+                DURAÇÃO: ${k.dias} DIAS<br>
+                CRIADA EM: ${formatarData(k.criadaEm)}<br>
+                EXPIRADA EM: ${formatarData(k.expiraEm)}
               </div>
             </div>
           `;
@@ -837,8 +833,7 @@
     function atualizarCards() {
       const { validas, invalidas } = separarKeys();
       document.getElementById("keysCount").textContent = validas.length;
-      document.getElementById("expiredDevicesCount").textContent = invalidas.length;
-      document.getElementById("devicesCount").textContent = 0;
+      document.getElementById("expiredCount").textContent = invalidas.length;
     }
 
     function atualizarTudo() {
@@ -873,13 +868,11 @@
       setTheme(profile.theme);
 
       document.getElementById("panelName").textContent = profile.panelName;
-      document.getElementById("panelPlan").textContent = profile.profileType;
-      document.getElementById("profileUser").textContent = profile.username;
+      document.getElementById("panelSub").textContent = profile.subTitle;
+      document.getElementById("profileUser").textContent = profile.username.toUpperCase();
       document.getElementById("profilePanel").textContent = profile.panelName;
-      document.getElementById("profileType").textContent = profile.profileType;
-      document.getElementById("avatarLetter").textContent = profile.theme === "drip" ? "D" : "H";
-      document.getElementById("loginLogo").textContent = profile.theme === "drip" ? "D" : "H";
-      document.getElementById("loginTitle").textContent = profile.theme === "drip" ? "Drip Cliente" : "HG Menu";
+      document.getElementById("profileType").textContent = profile.type;
+      document.getElementById("avatarLetter").textContent = profile.type === "DRIP" ? "D" : "H";
 
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appScreen").classList.remove("hidden");
@@ -887,42 +880,57 @@
       gerarPreview();
       atualizarTudo();
       showView("home");
-      localStorage.setItem("current_profile_demo", JSON.stringify(profile));
+      localStorage.setItem("km_profile", JSON.stringify(profile));
     }
 
     function fazerLogin() {
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
+      const username = normalize(document.getElementById("username").value);
+      const password = document.getElementById("password").value.trim();
       const error = document.getElementById("loginError");
 
-      const profile = USERS.find(user =>
-        normalize(user.username) === normalize(username) &&
-        user.password === password
-      );
+      const userOk = USERS.includes(username);
+      const passOk = password === "HG" || password === "Drip";
 
-      if (!profile) {
+      if (!userOk || !passOk) {
         error.style.display = "block";
         return;
       }
 
       error.style.display = "none";
+
+      const profile = password === "Drip"
+        ? {
+            username: username,
+            type: "DRIP",
+            theme: "drip",
+            panelName: "DRIP CLIENTE",
+            subTitle: "Acesso DRIP"
+          }
+        : {
+            username: username,
+            type: "HG",
+            theme: "hg",
+            panelName: "HG MENU",
+            subTitle: "Acesso HG"
+          };
+
       abrirPainel(profile);
     }
 
     function logout() {
       currentProfile = null;
-      localStorage.removeItem("current_profile_demo");
+      localStorage.removeItem("km_profile");
       document.getElementById("appScreen").classList.add("hidden");
       document.getElementById("loginScreen").classList.remove("hidden");
       document.getElementById("password").value = "";
       document.getElementById("globalSearch").value = "";
       document.getElementById("searchValidas").value = "";
       document.getElementById("searchInvalidas").value = "";
-      setTheme("hg");
+      setTheme("login");
     }
 
     function restaurarSessao() {
-      const raw = localStorage.getItem("current_profile_demo");
+      const raw = localStorage.getItem("km_profile");
       if (!raw) return;
       try {
         const profile = JSON.parse(raw);
@@ -930,12 +938,13 @@
       } catch (e) {}
     }
 
-    setTheme("hg");
+    setTheme("login");
     restaurarSessao();
+
     if (!currentProfile) {
       document.getElementById("loginScreen").classList.remove("hidden");
       document.getElementById("appScreen").classList.add("hidden");
     }
   </script>
 </body>
-</html>
+            </html>
