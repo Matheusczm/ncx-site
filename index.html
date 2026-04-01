@@ -3,59 +3,204 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Teste Supabase</title>
+  <title>Painel DEV + Supabase</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    :root{
+      --bg:#0b1220;
+      --card:#111827;
+      --muted:#9ca3af;
+      --line:#1f2937;
+      --text:#f9fafb;
+      --blue:#2563eb;
+      --yellow:#fbbf24;
+      --red:#ef4444;
+      --green:#22c55e;
+    }
+    *{box-sizing:border-box;font-family:Arial,sans-serif}
     body{
-      font-family: Arial, sans-serif;
-      background:#111827;
-      color:white;
-      padding:20px;
+      margin:0;
+      background:linear-gradient(180deg,#07101f 0%, #0c1630 100%);
+      color:var(--text);
+      min-height:100dvh;
     }
-    input,button{
+    .app{
       width:100%;
-      padding:12px;
-      margin-top:10px;
-      border-radius:10px;
-      border:none;
-      font-size:16px;
+      max-width:420px;
+      margin:0 auto;
+      min-height:100dvh;
+      background:#0b1220;
     }
+    .wrap{padding:16px}
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:14px;
+    }
+    h1,h2,h3{margin:0 0 12px}
+    .muted{color:var(--muted);font-size:13px}
+    .row{display:grid;gap:10px}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    input,select,button{
+      width:100%;
+      border-radius:14px;
+      border:1px solid var(--line);
+      padding:13px 12px;
+      font-size:15px;
+    }
+    input,select{background:#0f172a;color:var(--text)}
     button{
-      background:#2563eb;
+      border:none;
       color:white;
-      font-weight:bold;
+      font-weight:700;
+      cursor:pointer;
     }
-    pre{
-      background:#000;
+    .btn-blue{background:var(--blue)}
+    .btn-yellow{background:var(--yellow);color:#111827}
+    .btn-red{background:var(--red)}
+    .btn-green{background:var(--green)}
+    .item{
+      background:#0f172a;
+      border:1px solid var(--line);
+      border-radius:16px;
       padding:12px;
-      border-radius:10px;
-      margin-top:16px;
+      margin-bottom:10px;
+    }
+    .item-title{font-weight:800;font-size:16px;margin-bottom:8px}
+    .item-meta{font-size:13px;color:var(--muted);line-height:1.6}
+    .top{
+      background:linear-gradient(180deg,#fbbf24,#f59e0b);
+      color:#111827;
+      padding:18px 16px;
+      border-bottom-left-radius:24px;
+      border-bottom-right-radius:24px;
+    }
+    .badge{
+      display:inline-block;
+      background:rgba(255,255,255,.35);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:12px;
+      margin-top:8px;
+    }
+    .hidden{display:none!important}
+    .log{
       white-space:pre-wrap;
-      word-break:break-word;
+      background:#020617;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      font-size:13px;
+      color:#d1d5db;
     }
   </style>
 </head>
 <body>
-  <h2>Teste de conexão Supabase</h2>
+  <div class="app">
+    <div id="loginScreen" class="wrap">
+      <div class="card">
+        <h1>Login</h1>
+        <div class="muted">DEV fica no HTML. Outros usuários vêm do Supabase.</div>
+      </div>
 
-  <input id="username" placeholder="Usuário">
-  <input id="password" type="password" placeholder="Senha">
-  <button onclick="testarLogin()">Testar login</button>
+      <div class="card row">
+        <input id="username" placeholder="Usuário">
+        <input id="password" type="password" placeholder="Senha">
+        <button class="btn-blue" onclick="fazerLogin()">Entrar</button>
+      </div>
 
-  <pre id="log">Aguardando teste...</pre>
+      <div id="loginLog" class="log">Aguardando login...</div>
+    </div>
+
+    <div id="devScreen" class="hidden">
+      <div class="top">
+        <h2>DEVELOPMENT</h2>
+        <div>Painel administrativo</div>
+        <div class="badge">Modo desenvolvedor • acesso restrito</div>
+      </div>
+
+      <div class="wrap">
+        <div class="card row-2">
+          <div>
+            <div class="muted">Usuários</div>
+            <h2 id="totalUsers">0</h2>
+          </div>
+          <div>
+            <div class="muted">Tipos</div>
+            <h2 id="totalTypes">0</h2>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Novo usuário</h3>
+          <div class="row">
+            <input id="newUsername" placeholder="Nome de usuário">
+            <input id="newPassword" type="password" placeholder="Senha">
+            <select id="newType">
+              <option value="HG">HG</option>
+              <option value="DRIP">DRIP</option>
+              <option value="MIX">MIX</option>
+            </select>
+            <select id="newValidity">
+              <option value="1">1 dia</option>
+              <option value="7">7 dias</option>
+              <option value="30">30 dias</option>
+              <option value="permanente">Permanente</option>
+            </select>
+            <button class="btn-yellow" onclick="criarUsuario()">Salvar no banco</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Usuários reais do banco</h3>
+          <div class="row">
+            <input id="searchUsers" placeholder="Buscar usuário..." oninput="carregarUsuarios()">
+          </div>
+          <div id="usersList" style="margin-top:12px"></div>
+        </div>
+
+        <div class="card">
+          <button class="btn-red" onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="clientScreen" class="hidden">
+      <div class="top">
+        <h2 id="clientTitle">PAINEL</h2>
+        <div id="clientUser">Usuário</div>
+        <div class="badge" id="clientType">TIPO</div>
+      </div>
+      <div class="wrap">
+        <div class="card">
+          <h3>Login OK</h3>
+          <div class="muted">Seu usuário foi validado pelo banco.</div>
+        </div>
+        <div class="card">
+          <button class="btn-red" onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://iwhldffataeqmpntprvk.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wYhrdDe0bM-H3QqmcMwXRQ_RGb_u5ok";
-
-    const log = (msg) => {
-      document.getElementById("log").textContent += "\\n" + msg;
-    };
-
-    document.getElementById("log").textContent =
-      "Página carregou. Iniciando cliente Supabase...";
-
     const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const DEV_USER = "dev";
+    const DEV_PASS = "NcX!Dev#4827$Z";
+
+    function logLogin(msg){
+      document.getElementById("loginLog").textContent = msg;
+    }
+
+    function normalize(v){
+      return (v || "").trim().toLowerCase();
+    }
 
     async function sha256(text){
       const data = new TextEncoder().encode(text);
@@ -65,15 +210,23 @@
         .join("");
     }
 
-    async function testarLogin(){
+    async function fazerLogin(){
+      const username = normalize(document.getElementById("username").value);
+      const password = document.getElementById("password").value.trim();
+
+      if(!username || !password){
+        logLogin("Preencha usuário e senha.");
+        return;
+      }
+
+      if(username === DEV_USER && password === DEV_PASS){
+        logLogin("Login DEV OK.");
+        abrirDev();
+        return;
+      }
+
       try{
-        document.getElementById("log").textContent = "Testando conexão...";
-
-        const username = document.getElementById("username").value.trim().toLowerCase();
-        const password = document.getElementById("password").value.trim();
-
-        log("Usuário digitado: " + username);
-
+        logLogin("Verificando no banco...");
         const { data, error } = await supa
           .from("users")
           .select("*")
@@ -81,42 +234,206 @@
           .maybeSingle();
 
         if(error){
-          log("ERRO SUPABASE:");
-          log(JSON.stringify(error, null, 2));
+          logLogin("Erro Supabase:\n" + JSON.stringify(error, null, 2));
           return;
         }
 
         if(!data){
-          log("Nenhum usuário encontrado no banco.");
+          logLogin("Usuário não encontrado.");
           return;
         }
 
-        log("Usuário encontrado no banco.");
-        log("Tipo: " + data.type);
-
         const hash = await sha256(password);
-        log("Hash gerado da senha digitada.");
+        const legacyOk = data.password && normalize(data.password) === normalize(password);
+        const hashOk = data.password_hash && data.password_hash === hash;
 
-        if(data.password_hash !== hash){
-          log("Senha incorreta.");
+        if(!legacyOk && !hashOk){
+          logLogin("Senha incorreta.");
           return;
         }
 
         if(data.is_disabled){
-          log("Conta desativada.");
+          logLogin("Conta desativada.");
           return;
         }
 
         if(data.expires_at && new Date() > new Date(data.expires_at)){
-          log("Conta expirada.");
+          logLogin("Conta expirada.");
           return;
         }
 
-        log("LOGIN OK.");
+        abrirCliente(data);
       }catch(e){
-        log("ERRO GERAL:");
-        log(String(e));
+        logLogin("Erro geral:\n" + String(e));
       }
+    }
+
+    function abrirDev(){
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("clientScreen").classList.add("hidden");
+      document.getElementById("devScreen").classList.remove("hidden");
+      carregarUsuarios();
+    }
+
+    function abrirCliente(user){
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("devScreen").classList.add("hidden");
+      document.getElementById("clientScreen").classList.remove("hidden");
+
+      const type = user.type === "MIX" ? "MISTO" : user.type;
+      document.getElementById("clientTitle").textContent = type + " MENU";
+      document.getElementById("clientUser").textContent = user.username.toUpperCase();
+      document.getElementById("clientType").textContent = type;
+    }
+
+    async function carregarUsuarios(){
+      const usersList = document.getElementById("usersList");
+      usersList.innerHTML = "Carregando...";
+
+      try{
+        const { data, error } = await supa
+          .from("users")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if(error){
+          usersList.innerHTML = `<div class="item">Erro ao carregar usuários.</div>`;
+          return;
+        }
+
+        let users = (data || []).filter(u => normalize(u.username) !== DEV_USER);
+
+        const term = normalize(document.getElementById("searchUsers").value);
+        if(term){
+          users = users.filter(u =>
+            normalize(u.username).includes(term) ||
+            normalize(u.type).includes(term)
+          );
+        }
+
+        document.getElementById("totalUsers").textContent = users.length;
+        const hg = users.some(u => u.type === "HG");
+        const drip = users.some(u => u.type === "DRIP");
+        const mix = users.some(u => u.type === "MIX" || u.type === "MISTO");
+        document.getElementById("totalTypes").textContent =
+          (hg ? 1 : 0) + (drip ? 1 : 0) + (mix ? 1 : 0) + 1;
+
+        if(!users.length){
+          usersList.innerHTML = `<div class="item">Nenhum usuário encontrado.</div>`;
+          return;
+        }
+
+        usersList.innerHTML = users.map(user => {
+          const status = user.is_disabled
+            ? "DESATIVADA"
+            : (user.expires_at && new Date() > new Date(user.expires_at) ? "EXPIRADA" : "ATIVA");
+
+          const validade = user.expires_at
+            ? new Date(user.expires_at).toLocaleString("pt-BR")
+            : "PERMANENTE";
+
+          return `
+            <div class="item">
+              <div class="item-title">${user.username}</div>
+              <div class="item-meta">
+                PAINEL: ${user.type}<br>
+                STATUS: ${status}<br>
+                VALIDADE: ${validade}
+              </div>
+              <div class="row-2" style="margin-top:12px">
+                <button class="${user.is_disabled ? "btn-green" : "btn-yellow"}" onclick="toggleUsuario('${user.id}', ${user.is_disabled ? "true" : "false"})">
+                  ${user.is_disabled ? "Reativar" : "Desativar"}
+                </button>
+                <button class="btn-red" onclick="removerUsuario('${user.id}')">Remover</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }catch(e){
+        usersList.innerHTML = `<div class="item">Erro geral ao carregar.</div>`;
+      }
+    }
+
+    async function criarUsuario(){
+      const username = document.getElementById("newUsername").value.trim();
+      const password = document.getElementById("newPassword").value.trim();
+      const type = document.getElementById("newType").value;
+      const validity = document.getElementById("newValidity").value;
+
+      if(!username || !password){
+        alert("Preencha nome e senha.");
+        return;
+      }
+
+      if(normalize(username) === DEV_USER){
+        alert("A conta DEV fica somente no HTML.");
+        return;
+      }
+
+      let expiresAt = null;
+      if(validity !== "permanente"){
+        expiresAt = new Date(Date.now() + parseInt(validity, 10) * 86400000).toISOString();
+      }
+
+      try{
+        const password_hash = await sha256(password);
+
+        const { error } = await supa.from("users").insert({
+          username,
+          password: null,
+          password_hash,
+          type,
+          avatar: null,
+          expires_at: expiresAt,
+          is_disabled: false,
+          created_at: new Date().toISOString()
+        });
+
+        if(error){
+          alert("Erro ao salvar: " + error.message);
+          return;
+        }
+
+        document.getElementById("newUsername").value = "";
+        document.getElementById("newPassword").value = "";
+        document.getElementById("newType").value = "HG";
+        document.getElementById("newValidity").value = "1";
+
+        alert("Usuário criado no banco.");
+        carregarUsuarios();
+      }catch(e){
+        alert("Erro geral ao criar usuário.");
+      }
+    }
+
+    async function removerUsuario(id){
+      if(!confirm("Remover este usuário?")) return;
+
+      const { error } = await supa.from("users").delete().eq("id", id);
+      if(error){
+        alert("Erro ao remover.");
+        return;
+      }
+
+      carregarUsuarios();
+    }
+
+    async function toggleUsuario(id, atual){
+      const { error } = await supa
+        .from("users")
+        .update({ is_disabled: !atual })
+        .eq("id", id);
+
+      if(error){
+        alert("Erro ao atualizar.");
+        return;
+      }
+
+      carregarUsuarios();
+    }
+
+    function logout(){
+      location.reload();
     }
   </script>
 </body>
