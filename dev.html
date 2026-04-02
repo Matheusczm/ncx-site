@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KeySync DEV - Keys</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{
+      --bg1:#07101f;
+      --bg2:#0c1630;
+      --card:#09152d;
+      --line:rgba(255,255,255,.08);
+      --text:#ffffff;
+      --muted:#c8d4ea;
+      --yellow1:#fbbf24;
+      --yellow2:#f59e0b;
+      --green:#22c55e;
+      --red:#ef4444;
+      --blue:#12e7ff;
+      --blue2:#2aa8ff;
+      --shadow:0 20px 60px rgba(0,0,0,.22);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+      font-family:Arial,sans-serif;
+    }
+
+    body{
+      min-height:100dvh;
+      background:
+        radial-gradient(circle at top left, rgba(18,231,255,.06), transparent 25%),
+        radial-gradient(circle at top right, rgba(245,158,11,.06), transparent 20%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--text);
+    }
+
+    .app{
+      width:100%;
+      max-width:430px;
+      min-height:100dvh;
+      margin:0 auto;
+    }
+
+    .screen{
+      min-height:100dvh;
+    }
+
+    .hidden{display:none!important;}
+
+    .login-wrap{
+      min-height:100dvh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px 18px;
+    }
+
+    .card{
+      width:100%;
+      background:rgba(8,19,44,.92);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:24px 18px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.02),
+        0 0 50px rgba(245,158,11,.08);
+    }
+
+    .title{
+      text-align:center;
+      font-size:24px;
+      font-weight:900;
+      margin-bottom:8px;
+    }
+
+    .sub{
+      text-align:center;
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:22px;
+    }
+
+    .field{
+      margin-bottom:14px;
+    }
+
+    .field label{
+      display:block;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom:8px;
+      text-transform:uppercase;
+      color:#d8e4ff;
+    }
+
+    .field input,
+    .field select{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      padding:15px 14px;
+      background:#f8fafc;
+      color:#111827;
+      font-size:15px;
+      border:1px solid #e5e7eb;
+    }
+
+    .field input:focus,
+    .field select:focus{
+      border-color:#fbbf24;
+      box-shadow:0 0 0 4px rgba(251,191,36,.15);
+    }
+
+    .btn{
+      width:100%;
+      min-height:56px;
+      border:none;
+      border-radius:18px;
+      padding:0 14px;
+      font-size:14px;
+      font-weight:900;
+      text-transform:uppercase;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      transition:transform .14s ease;
+    }
+
+    .btn:active,
+    .logout-btn:active,
+    .tab:active{
+      transform:scale(.985);
+    }
+
+    .btn-login{
+      background:linear-gradient(180deg,var(--yellow1),var(--yellow2));
+      color:#111827;
+      margin-top:8px;
+    }
+
+    .btn-yellow{
+      background:linear-gradient(180deg,var(--yellow1),var(--yellow2));
+      color:#111827;
+    }
+
+    .btn-green{
+      background:linear-gradient(180deg,#22c55e,#16a34a);
+      color:#fff;
+    }
+
+    .btn-red{
+      background:linear-gradient(180deg,#ef4444,#dc2626);
+      color:#fff;
+    }
+
+    .btn-blue{
+      background:linear-gradient(180deg,var(--blue),var(--blue2));
+      color:#07111f;
+    }
+
+    .log{
+      margin-top:14px;
+      border-radius:14px;
+      background:#fffaf0;
+      border:1px solid #f6d98b;
+      padding:12px;
+      font-size:13px;
+      color:#5b4a1a;
+      min-height:44px;
+      white-space:pre-wrap;
+      line-height:1.5;
+    }
+
+    .top{
+      background:linear-gradient(180deg,var(--yellow1),var(--yellow2));
+      color:#111827;
+      padding:20px 18px 42px;
+      border-bottom-left-radius:28px;
+      border-bottom-right-radius:28px;
+      box-shadow:var(--shadow);
+      position:relative;
+      z-index:1;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .avatar{
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      background:#fff6d6;
+      color:#7a6b3e;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+      font-weight:900;
+      flex-shrink:0;
+    }
+
+    .brand-text h2{
+      font-size:18px;
+      font-weight:900;
+      text-transform:uppercase;
+      line-height:1.1;
+      margin-bottom:4px;
+    }
+
+    .brand-text p{
+      font-size:13px;
+      font-weight:700;
+      opacity:.95;
+    }
+
+    .logout-btn{
+      border:none;
+      background:rgba(255,255,255,.18);
+      color:#fff;
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:14px;
+      padding:10px 14px;
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      cursor:pointer;
+    }
+
+    .banner{
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:18px;
+      padding:13px 14px;
+      margin-bottom:12px;
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .stat-card{
+      background:linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.06));
+      border-radius:22px;
+      padding:16px 14px;
+      min-height:128px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .stat-card .label{
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+
+    .stat-card .value{
+      font-size:44px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:14px;
+    }
+
+    .stat-card .sub{
+      text-align:left;
+      margin:0;
+      color:#111827;
+      opacity:.9;
+      font-size:11px;
+      font-weight:800;
+      text-transform:uppercase;
+    }
+
+    .main{
+      background:#f3f4f6;
+      margin-top:-30px;
+      border-top-left-radius:28px;
+      border-top-right-radius:28px;
+      min-height:calc(100dvh - 255px);
+      padding:16px 14px 90px;
+      color:#111827;
+      position:relative;
+      z-index:2;
+    }
+
+    .tabs{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin-bottom:18px;
+    }
+
+    .tab{
+      border:none;
+      background:transparent;
+      border-radius:16px;
+      padding:12px 6px;
+      text-align:center;
+      font-size:12px;
+      font-weight:900;
+      text-transform:uppercase;
+      color:#111827;
+      cursor:pointer;
+    }
+
+    .tab.active{
+      background:#fff4cc;
+      color:#8a6500;
+    }
+
+    .panel{
+      background:#fff;
+      border-radius:26px;
+      padding:18px;
+      border:1px solid #ececec;
+      box-shadow:0 16px 36px rgba(15,23,42,.06);
+    }
+
+    .panel-title{
+      font-size:18px;
+      font-weight:900;
+      text-transform:uppercase;
+      color:#111827;
+      margin-bottom:16px;
+    }
+
+    .list{
+      display:grid;
+      gap:12px;
+    }
+
+    .item{
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .item .code{
+      font-size:15px;
+      font-weight:900;
+      color:#111827;
+      margin-bottom:8px;
+      word-break:break-word;
+    }
+
+    .item .meta{
+      font-size:13px;
+      color:#6b7280;
+      line-height:1.7;
+      text-transform:uppercase;
+      word-break:break-word;
+    }
+
+    .item-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .empty{
+      text-align:center;
+      color:#6b7280;
+      font-size:14px;
+      padding:18px 8px;
+      text-transform:uppercase;
+      font-weight:800;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="screen" id="loginScreen">
+      <div class="login-wrap">
+        <div class="card">
+          <div class="title">DEV LOGIN</div>
+          <div class="sub">Painel separado para criação e controle de keys</div>
+
+          <div class="field">
+            <label>Usuário</label>
+            <input id="devUser" placeholder="Digite o usuário">
+          </div>
+
+          <div class="field">
+            <label>Senha</label>
+            <input id="devPass" type="password" placeholder="Digite a senha">
+          </div>
+
+          <button class="btn btn-login" onclick="loginDev()">Entrar</button>
+          <div class="log" id="loginLog">Aguardando login DEV...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen hidden" id="devScreen">
+      <div class="top">
+        <div class="topbar">
+          <div class="brand">
+            <div class="avatar">D</div>
+            <div class="brand-text">
+              <h2>DEV PANEL</h2>
+              <p>Painel administrativo</p>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="logoutDev()">Sair</button>
+        </div>
+
+        <div class="banner">Gerenciamento de keys de acesso</div>
+
+        <div class="stats">
+          <div class="stat-card">
+            <div class="label">Keys</div>
+            <div class="value" id="totalKeys">0</div>
+            <div class="sub">Total cadastradas</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Usadas</div>
+            <div class="value" id="usedKeys">0</div>
+            <div class="sub">Já utilizadas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="tabs">
+          <button class="tab active" onclick="showTab('criar', this)">Criar</button>
+          <button class="tab" onclick="showTab('keys', this)">Keys</button>
+          <button class="tab" onclick="showTab('usadas', this)">Usadas</button>
+        </div>
+
+        <div class="panel" id="panel-criar">
+          <div class="panel-title">Criar key</div>
+
+          <div class="field">
+            <label>Painel liberado</label>
+            <select id="keyPanel">
+              <option value="HG">HG</option>
+              <option value="DRIP">DRIP</option>
+              <option value="KING">KING</option>
+              <option value="MIX">MIX</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Dias</label>
+            <input id="keyDays" type="number" placeholder="Digite os dias">
+          </div>
+
+          <div class="field">
+            <label>Permanente</label>
+            <select id="keyPermanent" onchange="toggleDays()">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </div>
+
+          <button class="btn btn-yellow" onclick="criarKey()">Gerar e salvar</button>
+          <div class="log" id="devLog">Aguardando criação de key...</div>
+        </div>
+
+        <div class="panel hidden" id="panel-keys">
+          <div class="panel-title">Todas as keys</div>
+          <div class="list" id="allKeysList"></div>
+        </div>
+
+        <div class="panel hidden" id="panel-usadas">
+          <div class="panel-title">Keys utilizadas</div>
+          <div class="list" id="usedKeysList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://iwhldffataeqmpntprvk.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_wYhrdDe0bM-H3QqmcMwXRQ_RGb_u5ok";
+    const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const DEV_USER = "dev";
+    const DEV_PASS = "NcX!Dev#4827$Z";
+
+    function logLogin(msg){
+      document.getElementById("loginLog").textContent = msg;
+    }
+
+    function logDev(msg){
+      document.getElementById("devLog").textContent = msg;
+    }
+
+    function loginDev(){
+      const user = document.getElementById("devUser").value.trim().toLowerCase();
+      const pass = document.getElementById("devPass").value.trim();
+
+      if(user === DEV_USER && pass === DEV_PASS){
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("devScreen").classList.remove("hidden");
+        carregarKeys();
+        return;
+      }
+
+      logLogin("Usuário ou senha DEV inválidos.");
+    }
+
+    function logoutDev(){
+      document.getElementById("devUser").value = "";
+      document.getElementById("devPass").value = "";
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("devScreen").classList.add("hidden");
+      logLogin("Aguardando login DEV...");
+    }
+
+    function toggleDays(){
+      const isPermanent = document.getElementById("keyPermanent").value === "true";
+      const days = document.getElementById("keyDays");
+      days.disabled = isPermanent;
+      if(isPermanent) days.value = "";
+    }
+
+    function gerarKeySync(){
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let code = "";
+      for(let i = 0; i < 6; i++){
+        code += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return "KEY-SYNC-" + code;
+    }
+
+    async function criarKey(){
+      const panel = document.getElementById("keyPanel").value;
+      const isPermanent = document.getElementById("keyPermanent").value === "true";
+      const daysValue = document.getElementById("keyDays").value.trim();
+
+      if(!isPermanent && (!daysValue || Number(daysValue) <= 0)){
+        logDev("Digite os dias da key.");
+        return;
+      }
+
+      const durationDays = isPermanent ? null : Number(daysValue);
+      const code = gerarKeySync();
+
+      try{
+        const { error } = await supa.from("access_keys").insert({
+          code,
+          type: panel,
+          panel_type: panel,
+          duration_days: durationDays,
+          is_permanent: isPermanent,
+          is_used: false,
+          is_disabled: false,
+          used_by: null,
+          created_at: new Date().toISOString()
+        });
+
+        if(error){
+          logDev("Erro ao salvar key:\n" + error.message);
+          return;
+        }
+
+        logDev(
+          "Key criada com sucesso!\n" +
+          "Código: " + code + "\n" +
+          "Painel: " + panel + "\n" +
+          "Duração: " + (isPermanent ? "PERMANENTE" : durationDays + " DIAS")
+        );
+
+        document.getElementById("keyPanel").value = "HG";
+        document.getElementById("keyDays").value = "";
+        document.getElementById("keyPermanent").value = "false";
+        toggleDays();
+        carregarKeys();
+
+      }catch(e){
+        logDev("Erro geral:\n" + String(e));
+      }
+    }
+
+    async function toggleKeyDisable(id, atual){
+      const { error } = await supa
+        .from("access_keys")
+        .update({ is_disabled: !atual })
+        .eq("id", id);
+
+      if(error){
+        logDev("Erro ao atualizar key:\n" + error.message);
+        return;
+      }
+
+      logDev(!atual ? "Key desativada com sucesso." : "Key reativada com sucesso.");
+      carregarKeys();
+    }
+
+    async function removeKey(id){
+      const ok = confirm("Remover esta key?");
+      if(!ok) return;
+
+      const { error } = await supa
+        .from("access_keys")
+        .delete()
+        .eq("id", id);
+
+      if(error){
+        logDev("Erro ao remover key:\n" + error.message);
+        return;
+      }
+
+      logDev("Key removida com sucesso.");
+      carregarKeys();
+    }
+
+    async function carregarKeys(){
+      const allWrap = document.getElementById("allKeysList");
+      const usedWrap = document.getElementById("usedKeysList");
+
+      allWrap.innerHTML = `<div class="empty">Carregando...</div>`;
+      usedWrap.innerHTML = `<div class="empty">Carregando...</div>`;
+
+      try{
+        const { data, error } = await supa
+          .from("access_keys")
+          .select("*")
+          .order("created_at", { ascending:false });
+
+        if(error){
+          allWrap.innerHTML = `<div class="empty">Erro ao carregar keys.</div>`;
+          usedWrap.innerHTML = `<div class="empty">Erro ao carregar keys.</div>`;
+          return;
+        }
+
+        const keys = data || [];
+        const used = keys.filter(k => k.is_used);
+
+        document.getElementById("totalKeys").textContent = keys.length;
+        document.getElementById("usedKeys").textContent = used.length;
+
+        allWrap.innerHTML = keys.length ? keys.map(k => {
+          const statusText = k.is_disabled ? "DESATIVADA" : (k.is_used ? "UTILIZADA" : "ATIVA");
+
+          return `
+            <div class="item">
+              <div class="code">${k.code}</div>
+              <div class="meta">
+                PAINEL: ${k.panel_type || k.type || "-"}<br>
+                DURAÇÃO: ${k.is_permanent ? "PERMANENTE" : (k.duration_days ? k.duration_days + " DIAS" : "-")}<br>
+                STATUS: ${statusText}<br>
+                USADA POR: ${k.used_by || "-"}<br>
+                CRIADA EM: ${k.created_at ? new Date(k.created_at).toLocaleString("pt-BR") : "-"}
+              </div>
+              <div class="item-actions">
+                <button class="btn ${k.is_disabled ? "btn-green" : "btn-yellow"}" onclick="toggleKeyDisable('${k.id}', ${k.is_disabled ? "true" : "false"})">
+                  ${k.is_disabled ? "Reativar" : "Desativar"}
+                </button>
+                <button class="btn btn-red" onclick="removeKey('${k.id}')">Remover</button>
+              </div>
+            </div>
+          `;
+        }).join("") : `<div class="empty">Nenhuma key cadastrada.</div>`;
+
+        usedWrap.innerHTML = used.length ? used.map(k => `
+          <div class="item">
+            <div class="code">${k.code}</div>
+            <div class="meta">
+              PAINEL: ${k.panel_type || k.type || "-"}<br>
+              DURAÇÃO: ${k.is_permanent ? "PERMANENTE" : (k.duration_days ? k.duration_days + " DIAS" : "-")}<br>
+              STATUS: ${k.is_disabled ? "DESATIVADA" : "UTILIZADA"}<br>
+              USADA POR: ${k.used_by || "-"}<br>
+              CRIADA EM: ${k.created_at ? new Date(k.created_at).toLocaleString("pt-BR") : "-"}
+            </div>
+            <div class="item-actions">
+              <button class="btn ${k.is_disabled ? "btn-green" : "btn-yellow"}" onclick="toggleKeyDisable('${k.id}', ${k.is_disabled ? "true" : "false"})">
+                ${k.is_disabled ? "Reativar" : "Desativar"}
+              </button>
+              <button class="btn btn-red" onclick="removeKey('${k.id}')">Remover</button>
+            </div>
+          </div>
+        `).join("") : `<div class="empty">Nenhuma key utilizada.</div>`;
+
+      }catch(e){
+        allWrap.innerHTML = `<div class="empty">Erro geral ao carregar.</div>`;
+        usedWrap.innerHTML = `<div class="empty">Erro geral ao carregar.</div>`;
+      }
+    }
+
+    function showTab(name, el){
+      document.querySelectorAll(".panel").forEach(p => p.classList.add("hidden"));
+      document.getElementById("panel-" + name).classList.remove("hidden");
+
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      el.classList.add("active");
+    }
+
+    toggleDays();
+  </script>
+</body>
+</html>
