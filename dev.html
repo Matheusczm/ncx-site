@@ -9,7 +9,6 @@
     :root{
       --bg1:#07101f;
       --bg2:#0c1630;
-      --card:#09152d;
       --line:rgba(255,255,255,.08);
       --text:#ffffff;
       --muted:#c8d4ea;
@@ -159,11 +158,6 @@
     .btn-red{
       background:linear-gradient(180deg,#ef4444,#dc2626);
       color:#fff;
-    }
-
-    .btn-blue{
-      background:linear-gradient(180deg,var(--blue),var(--blue2));
-      color:#07111f;
     }
 
     .log{
@@ -578,6 +572,7 @@
 
         if(error){
           logDev("Erro ao salvar key:\n" + error.message);
+          console.error(error);
           return;
         }
 
@@ -592,44 +587,58 @@
         document.getElementById("keyDays").value = "";
         document.getElementById("keyPermanent").value = "false";
         toggleDays();
-        carregarKeys();
-
+        await carregarKeys();
       }catch(e){
         logDev("Erro geral:\n" + String(e));
+        console.error(e);
       }
     }
 
     async function toggleKeyDisable(id, atual){
-      const { error } = await supa
-        .from("access_keys")
-        .update({ is_disabled: !atual })
-        .eq("id", id);
+      try{
+        const { data, error } = await supa
+          .from("access_keys")
+          .update({ is_disabled: !atual })
+          .eq("id", id)
+          .select();
 
-      if(error){
-        logDev("Erro ao atualizar key:\n" + error.message);
-        return;
+        if(error){
+          logDev("Erro ao atualizar key:\n" + error.message);
+          console.error(error);
+          return;
+        }
+
+        console.log("UPDATE OK:", data);
+        logDev(!atual ? "Key desativada com sucesso." : "Key reativada com sucesso.");
+        await carregarKeys();
+      }catch(e){
+        logDev("Erro geral ao atualizar key:\n" + String(e));
+        console.error(e);
       }
-
-      logDev(!atual ? "Key desativada com sucesso." : "Key reativada com sucesso.");
-      carregarKeys();
     }
 
     async function removeKey(id){
       const ok = confirm("Remover esta key?");
       if(!ok) return;
 
-      const { error } = await supa
-        .from("access_keys")
-        .delete()
-        .eq("id", id);
+      try{
+        const { error } = await supa
+          .from("access_keys")
+          .delete()
+          .eq("id", id);
 
-      if(error){
-        logDev("Erro ao remover key:\n" + error.message);
-        return;
+        if(error){
+          logDev("Erro ao remover key:\n" + error.message);
+          console.error(error);
+          return;
+        }
+
+        logDev("Key removida com sucesso.");
+        await carregarKeys();
+      }catch(e){
+        logDev("Erro geral ao remover key:\n" + String(e));
+        console.error(e);
       }
-
-      logDev("Key removida com sucesso.");
-      carregarKeys();
     }
 
     async function carregarKeys(){
@@ -648,6 +657,7 @@
         if(error){
           allWrap.innerHTML = `<div class="empty">Erro ao carregar keys.</div>`;
           usedWrap.innerHTML = `<div class="empty">Erro ao carregar keys.</div>`;
+          console.error(error);
           return;
         }
 
@@ -658,7 +668,9 @@
         document.getElementById("usedKeys").textContent = used.length;
 
         allWrap.innerHTML = keys.length ? keys.map(k => {
-          const statusText = k.is_disabled ? "DESATIVADA" : (k.is_used ? "UTILIZADA" : "ATIVA");
+          const statusText = k.is_disabled
+            ? "DESATIVADA"
+            : (k.is_used ? "UTILIZADA" : "ATIVA");
 
           return `
             <div class="item">
@@ -671,7 +683,8 @@
                 CRIADA EM: ${k.created_at ? new Date(k.created_at).toLocaleString("pt-BR") : "-"}
               </div>
               <div class="item-actions">
-                <button class="btn ${k.is_disabled ? "btn-green" : "btn-yellow"}" onclick="toggleKeyDisable('${k.id}', ${k.is_disabled ? "true" : "false"})">
+                <button class="btn ${k.is_disabled ? "btn-green" : "btn-yellow"}"
+                  onclick="toggleKeyDisable('${k.id}', ${k.is_disabled ? "true" : "false"})">
                   ${k.is_disabled ? "Reativar" : "Desativar"}
                 </button>
                 <button class="btn btn-red" onclick="removeKey('${k.id}')">Remover</button>
@@ -691,17 +704,18 @@
               CRIADA EM: ${k.created_at ? new Date(k.created_at).toLocaleString("pt-BR") : "-"}
             </div>
             <div class="item-actions">
-              <button class="btn ${k.is_disabled ? "btn-green" : "btn-yellow"}" onclick="toggleKeyDisable('${k.id}', ${k.is_disabled ? "true" : "false"})">
+              <button class="btn ${k.is_disabled ? "btn-green" : "btn-yellow"}"
+                onclick="toggleKeyDisable('${k.id}', ${k.is_disabled ? "true" : "false"})">
                 ${k.is_disabled ? "Reativar" : "Desativar"}
               </button>
               <button class="btn btn-red" onclick="removeKey('${k.id}')">Remover</button>
             </div>
           </div>
         `).join("") : `<div class="empty">Nenhuma key utilizada.</div>`;
-
       }catch(e){
         allWrap.innerHTML = `<div class="empty">Erro geral ao carregar.</div>`;
         usedWrap.innerHTML = `<div class="empty">Erro geral ao carregar.</div>`;
+        console.error(e);
       }
     }
 
