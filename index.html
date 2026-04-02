@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>NCX App Final</title>
+  <title>KeySync App</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,24 +12,30 @@
     :root{
       --login1:#2563eb;
       --login2:#3b82f6;
-      --bg:#f8fafc;
+
+      --bg:#f4f7fb;
+      --card:#ffffff;
       --text:#111827;
       --muted:#6b7280;
       --line:#e5e7eb;
-      --shadow:0 24px 60px rgba(0,0,0,.22);
-      --glass:rgba(255,255,255,.18);
-      --glassBorder:rgba(255,255,255,.22);
+      --shadow:0 24px 60px rgba(15,23,42,.18);
+
       --tab-duration:220ms;
+
       --theme1:#2563eb;
       --theme2:#3b82f6;
       --theme3:#93c5fd;
       --soft:#dbeafe;
+
       --success:#22c55e;
       --success2:#16a34a;
       --danger:#ef4444;
       --danger2:#dc2626;
       --warning:#f59e0b;
       --warning2:#fbbf24;
+
+      --glass:rgba(255,255,255,.18);
+      --glassBorder:rgba(255,255,255,.24);
     }
 
     *{
@@ -83,7 +89,7 @@
     .base-bg{
       position:absolute;
       inset:0;
-      background:linear-gradient(180deg,var(--login1) 0%, var(--login2) 46%, #f8fafc 46%, #f8fafc 100%);
+      background:linear-gradient(180deg,var(--login1) 0%, var(--login2) 46%, var(--bg) 46%, var(--bg) 100%);
       z-index:1;
       transition:background .45s ease;
     }
@@ -123,15 +129,15 @@
 
     .login-card{
       background:rgba(255,255,255,.98);
-      border-radius:28px;
-      padding:20px;
+      border-radius:30px;
+      padding:22px;
       box-shadow:0 20px 50px rgba(0,0,0,.12);
       border:1px solid rgba(255,255,255,.7);
     }
 
     .logo{
-      width:76px;
-      height:76px;
+      width:78px;
+      height:78px;
       border-radius:50%;
       background:linear-gradient(180deg,var(--login1),var(--login2));
       display:flex;
@@ -146,12 +152,12 @@
     }
 
     h1{
-      font-size:26px;
+      font-size:28px;
       font-weight:900;
       color:var(--text);
       margin-bottom:8px;
       text-transform:uppercase;
-      letter-spacing:-.5px;
+      letter-spacing:-.7px;
     }
 
     .subtitle{
@@ -175,12 +181,11 @@
     }
 
     .field input,
-    .field select,
-    .field textarea{
+    .field select{
       width:100%;
       border:1px solid var(--line);
       background:#f9fafb;
-      border-radius:15px;
+      border-radius:16px;
       padding:14px 13px;
       font-size:14px;
       color:var(--text);
@@ -189,14 +194,8 @@
       min-width:0;
     }
 
-    .field textarea{
-      resize:vertical;
-      min-height:88px;
-    }
-
     .field input:focus,
-    .field select:focus,
-    .field textarea:focus{
+    .field select:focus{
       border-color:#93c5fd;
       box-shadow:0 0 0 4px rgba(59,130,246,.10);
     }
@@ -218,7 +217,7 @@
     .nav-item:active,
     .tabs span:active,
     .logout-btn:active,
-    .config-btn:active{
+    .avatar:active{
       transform:scale(.985);
     }
 
@@ -354,12 +353,15 @@
     }
 
     .avatar{
-      width:50px;
-      height:50px;
-      background:rgba(255,255,255,.92);
+      width:52px;
+      height:52px;
+      background:rgba(255,255,255,.95);
       color:#8a8a8a;
       font-size:22px;
       font-weight:900;
+      cursor:pointer;
+      box-shadow:0 10px 20px rgba(0,0,0,.14);
+      border:2px solid rgba(255,255,255,.72);
     }
 
     .mini-avatar{
@@ -476,7 +478,7 @@
     }
 
     .brand-text h2{
-      font-size:16px;
+      font-size:17px;
       font-weight:900;
       line-height:1.1;
       margin-bottom:4px;
@@ -494,11 +496,9 @@
       display:flex;
       align-items:center;
       gap:8px;
-      position:relative;
     }
 
-    .logout-btn,
-    .config-btn{
+    .logout-btn{
       background:var(--glass);
       color:#fff;
       border:1px solid var(--glassBorder);
@@ -509,53 +509,6 @@
       text-transform:uppercase;
       backdrop-filter:blur(8px);
       cursor:pointer;
-    }
-
-    .profile-popup{
-      position:absolute;
-      top:58px;
-      right:0;
-      width:220px;
-      background:rgba(255,255,255,.98);
-      color:#111827;
-      border:1px solid rgba(15,23,42,.08);
-      border-radius:18px;
-      padding:12px;
-      box-shadow:0 18px 45px rgba(15,23,42,.18);
-      z-index:20;
-      animation:popupIn .18s ease;
-      transform-origin:top right;
-    }
-
-    .profile-popup.hidden{display:none !important;}
-    .profile-popup.closing{animation:popupOut .16s ease both;}
-
-    .profile-popup .popup-title{
-      font-size:11px;
-      font-weight:900;
-      text-transform:uppercase;
-      margin-bottom:10px;
-      color:#111827;
-    }
-
-    .profile-popup .popup-line{
-      font-size:11px;
-      color:#6b7280;
-      text-transform:uppercase;
-      line-height:1.8;
-    }
-
-    .profile-popup .popup-line strong{color:#111827;}
-    .profile-popup .popup-actions{margin-top:10px;display:grid;gap:8px;}
-
-    @keyframes popupIn{
-      from{opacity:0;transform:translateY(-6px) scale(.98)}
-      to{opacity:1;transform:translateY(0) scale(1)}
-    }
-
-    @keyframes popupOut{
-      from{opacity:1;transform:translateY(0) scale(1)}
-      to{opacity:0;transform:translateY(-5px) scale(.98)}
     }
 
     .banner{
@@ -631,17 +584,18 @@
       flex:1;
       min-height:0;
       background:var(--bg);
-      border-top-left-radius:28px;
-      border-top-right-radius:28px;
+      border-top-left-radius:30px;
+      border-top-right-radius:30px;
       padding:14px 12px 84px;
       position:relative;
       z-index:2;
       overflow:auto;
+      box-shadow:0 -10px 24px rgba(15,23,42,.04);
     }
 
     .tabs{
       display:grid;
-      grid-template-columns:repeat(4,1fr);
+      grid-template-columns:repeat(3,1fr);
       gap:8px;
       margin-bottom:16px;
     }
@@ -669,7 +623,7 @@
 
     .panel{
       background:rgba(255,255,255,.98);
-      border-radius:24px;
+      border-radius:26px;
       padding:16px;
       box-shadow:0 18px 45px rgba(15,23,42,.07);
       border:1px solid rgba(15,23,42,.04);
@@ -766,7 +720,7 @@
     }
 
     .summary-card{
-      border-radius:18px;
+      border-radius:20px;
       background:#fff;
       border:1px solid #e5e7eb;
       padding:14px;
@@ -774,8 +728,12 @@
 
     .summary-grid{
       display:grid;
-      grid-template-columns:1fr 1fr 1fr;
+      grid-template-columns:1fr 1fr;
       gap:8px;
+    }
+
+    .summary-grid.three{
+      grid-template-columns:1fr 1fr 1fr;
     }
 
     .mini-box{
@@ -800,6 +758,26 @@
       word-break:break-word;
       text-transform:uppercase;
       color:#111827;
+    }
+
+    .settings-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .settings-avatar{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .settings-back{
+      width:auto;
+      padding:12px 14px;
     }
 
     .form-actions{
@@ -955,7 +933,7 @@
       <div class="top" id="topArea">
         <div class="topbar">
           <div class="brand">
-            <div class="avatar" id="mainAvatar">
+            <div class="avatar" id="mainAvatar" onclick="showMainView('configuracoes')">
               <img id="mainAvatarImg" class="avatar-img hidden" alt="Avatar">
               <span id="mainAvatarLetter">H</span>
             </div>
@@ -966,18 +944,7 @@
           </div>
 
           <div class="top-actions">
-            <button class="config-btn" onclick="toggleProfilePopup()">Configuração</button>
             <button class="logout-btn" onclick="logout()">Sair</button>
-
-            <div class="profile-popup hidden" id="profilePopup">
-              <div class="popup-title">Configuração</div>
-              <div class="popup-line">Resumo da sessão: <strong>ATIVA</strong></div>
-              <div class="popup-line">Usuário: <strong id="popupUser">-</strong></div>
-              <div class="popup-line">Status: <strong id="popupStatus">ONLINE</strong></div>
-              <div class="popup-actions">
-                <button class="btn btn-secondary" onclick="closeProfilePopup()">Fechar</button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -1031,7 +998,6 @@
         color: "#ef4444",
         badge: "H",
         title: "HG",
-        panel: "Entrando em HG...",
         c1: "#d62828",
         c2: "#ef4444",
         soft: "#fee2e2",
@@ -1041,7 +1007,6 @@
         color: "#8b5cf6",
         badge: "D",
         title: "DRIP",
-        panel: "Entrando em DRIP...",
         c1: "#6d28d9",
         c2: "#8b5cf6",
         soft: "#ede9fe",
@@ -1051,7 +1016,6 @@
         color: "#c026d3",
         badge: "M",
         title: "MISTO",
-        panel: "Entrando em MISTO...",
         c1: "#d81b60",
         c2: "#8e24aa",
         soft: "#fce7f3",
@@ -1061,7 +1025,6 @@
         color: "#fbbf24",
         badge: "D",
         title: "DEV",
-        panel: "Entrando em DEVELOPMENT...",
         c1: "#f59e0b",
         c2: "#fbbf24",
         soft: "#fef3c7",
@@ -1362,19 +1325,50 @@
           </div>
           <div class="list" id="invalidList"></div>
         `,
-        perfil: `
-          <div class="panel-title">Perfil</div>
-          <div style="display:flex;justify-content:center;margin-bottom:14px;">
+        configuracoes: `
+          <div class="settings-header">
+            <div class="panel-title" style="margin-bottom:0;">Configurações</div>
+            <button class="btn btn-secondary settings-back" onclick="showMainView('criar')">Voltar</button>
+          </div>
+
+          <div class="settings-avatar">
             <div class="avatar" style="width:72px;height:72px;cursor:default;">
-              <img id="profileAvatarImg" class="avatar-img hidden" alt="Avatar">
-              <span id="profileAvatarLetter">${currentUser.avatarBadge}</span>
+              <img id="settingsAvatarImg" class="avatar-img hidden" alt="Avatar">
+              <span id="settingsAvatarLetter">${currentUser.avatarBadge}</span>
+            </div>
+            <div>
+              <div style="font-size:12px;color:#6b7280;text-transform:uppercase;font-weight:700;margin-bottom:6px;">Conta</div>
+              <div style="font-size:18px;font-weight:900;color:#111827;text-transform:uppercase;line-height:1.1;">${(currentUser.username || currentUser.userCode).toUpperCase()}</div>
             </div>
           </div>
+
+          <div class="summary-card" style="margin-bottom:12px;">
+            <div class="summary-grid three">
+              <div class="mini-box">
+                <small>Painel</small>
+                <strong>${currentUser.panelType === "MIX" ? "MISTO" : currentUser.panelType}</strong>
+              </div>
+              <div class="mini-box">
+                <small>Status</small>
+                <strong>${currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO"}</strong>
+              </div>
+              <div class="mini-box">
+                <small>Resumo</small>
+                <strong>ATIVA</strong>
+              </div>
+            </div>
+          </div>
+
           <div class="summary-card">
             <div class="summary-grid">
-              <div class="mini-box"><small>Resumo</small><strong>ATIVA</strong></div>
-              <div class="mini-box"><small>Usuário</small><strong>${(currentUser.username || currentUser.userCode).toUpperCase()}</strong></div>
-              <div class="mini-box"><small>Status</small><strong>${currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO"}</strong></div>
+              <div class="mini-box">
+                <small>Usuário</small>
+                <strong>${(currentUser.username || currentUser.userCode).toUpperCase()}</strong>
+              </div>
+              <div class="mini-box">
+                <small>Validade</small>
+                <strong>${currentUser.expires_at ? fmtDate(currentUser.expires_at) : "PERMANENTE"}</strong>
+              </div>
             </div>
           </div>
         `
@@ -1393,7 +1387,7 @@
         perfil: `
           <div class="panel-title">Perfil</div>
           <div class="summary-card">
-            <div class="summary-grid">
+            <div class="summary-grid three">
               <div class="mini-box"><small>Admin</small><strong>DEV</strong></div>
               <div class="mini-box"><small>Status</small><strong>ONLINE</strong></div>
               <div class="mini-box"><small>Painel</small><strong>DEVELOPMENT</strong></div>
@@ -1466,18 +1460,16 @@
           <div class="nav-item" id="nav-novo" onclick="showMainView('novo')"><span class="icon">＋</span>Novo</div>
         `;
       } else {
-        tabs.className = "tabs";
+        tabs.className = "tabs tabs-3";
         tabs.innerHTML = `
           <span id="tab-criar" class="active-tab" onclick="showMainView('criar')">Criar</span>
           <span id="tab-validas" onclick="showMainView('validas')">Válidas</span>
           <span id="tab-invalidas" onclick="showMainView('invalidas')">Inválidas</span>
-          <span id="tab-perfil" onclick="showMainView('perfil')">Perfil</span>
         `;
         nav.innerHTML = `
           <div class="nav-item active" id="nav-criar" onclick="showMainView('criar')"><span class="icon">＋</span>Criar</div>
           <div class="nav-item" id="nav-validas" onclick="showMainView('validas')"><span class="icon">☰</span>Válidas</div>
           <div class="nav-item" id="nav-invalidas" onclick="showMainView('invalidas')"><span class="icon">⌕</span>Inválidas</div>
-          <div class="nav-item" id="nav-perfil" onclick="showMainView('perfil')"><span class="icon">◉</span>Perfil</div>
         `;
       }
     }
@@ -1517,6 +1509,7 @@
       }
 
       updateHeader();
+      updateSettingsAvatar();
     }
 
     function showMainView(view){
@@ -1524,7 +1517,7 @@
 
       const views = currentUser.isDev
         ? ["usuarios","perfil","novo"]
-        : ["criar","validas","invalidas","perfil"];
+        : ["criar","validas","invalidas","configuracoes"];
 
       const currentEl = document.getElementById("view-" + currentView);
       const nextEl = document.getElementById("view-" + view);
@@ -1553,8 +1546,11 @@
 
       currentView = view;
       clearTabsNav(views);
-      document.getElementById("tab-" + view)?.classList.add("active-tab");
-      document.getElementById("nav-" + view)?.classList.add("active");
+
+      if (view !== "configuracoes"){
+        document.getElementById("tab-" + view)?.classList.add("active-tab");
+        document.getElementById("nav-" + view)?.classList.add("active");
+      }
 
       if (currentUser.isDev){
         renderDevUsers();
@@ -1565,7 +1561,7 @@
       }
 
       updateHeader();
-      closeProfilePopup(true);
+      updateSettingsAvatar();
     }
 
     function setAvatarVisual(imgEl, letterEl, avatar, letter){
@@ -1584,13 +1580,19 @@
       }
     }
 
+    function updateSettingsAvatar(){
+      const sImg = document.getElementById("settingsAvatarImg");
+      const sLetter = document.getElementById("settingsAvatarLetter");
+      if (sImg && sLetter){
+        setAvatarVisual(sImg, sLetter, currentUser.avatar || "", currentUser.avatarBadge);
+      }
+    }
+
     function updateHeader(){
       const userLabel = (currentUser.username || currentUser.userCode).toUpperCase();
 
       document.getElementById("mainTitle").textContent = currentUser.title;
       document.getElementById("mainSubtitle").textContent = currentUser.isDev ? "Painel administrativo" : "Painel ativo";
-      document.getElementById("popupUser").textContent = userLabel;
-      document.getElementById("popupStatus").textContent = currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO";
       document.getElementById("mainBanner").textContent = currentUser.isDev
         ? "Modo desenvolvedor • acesso restrito"
         : (currentUser.panelType === "MIX" ? "Painel misto do cliente" : "Painel do cliente");
@@ -1607,6 +1609,8 @@
       if (pImg && pLetter){
         setAvatarVisual(pImg, pLetter, currentUser.avatar || "", currentUser.avatarBadge);
       }
+
+      updateSettingsAvatar();
 
       const themeKey = currentUser.isDev ? "dev" : getThemeKeyByPanelType(currentUser.panelType);
       document.getElementById("topArea").style.background = THEMES[themeKey].topBg;
@@ -2123,39 +2127,11 @@
       }
     }
 
-    function toggleProfilePopup(){
-      const popup = document.getElementById("profilePopup");
-      if (popup.classList.contains("hidden")){
-        popup.classList.remove("hidden");
-        popup.classList.remove("closing");
-      } else {
-        closeProfilePopup();
-      }
-    }
-
-    function closeProfilePopup(force){
-      const popup = document.getElementById("profilePopup");
-      if (force){
-        popup.classList.add("hidden");
-        popup.classList.remove("closing");
-        return;
-      }
-
-      popup.classList.remove("hidden");
-      popup.classList.add("closing");
-
-      setTimeout(() => {
-        popup.classList.add("hidden");
-        popup.classList.remove("closing");
-      }, 150);
-    }
-
     function openApp(themeKey, account){
       setTheme(themeKey);
       currentUser = account;
       document.getElementById("loginScreen").classList.add("hidden");
       document.getElementById("appScreen").classList.remove("hidden");
-      closeProfilePopup(true);
       buildTabsAndNav();
       instantShowView(currentUser.isDev ? "usuarios" : "criar");
       updateHeader();
@@ -2313,14 +2289,13 @@
       document.getElementById("username").value = "";
       clearLoginMessages();
       clearDevForm();
-      closeProfilePopup(true);
       currentUser = null;
       currentPreview = "";
       currentView = "";
       editingUserId = null;
       editingSnapshot = null;
       setTheme("hg");
-      document.getElementById("baseBg").style.background = "linear-gradient(180deg,#2563eb 0%, #3b82f6 46%, #f8fafc 46%, #f8fafc 100%)";
+      document.getElementById("baseBg").style.background = "linear-gradient(180deg,#2563eb 0%, #3b82f6 46%, #f4f7fb 46%, #f4f7fb 100%)";
       document.getElementById("topArea").style.background = "linear-gradient(180deg,#2563eb 0%, #3b82f6 100%)";
       const canvas = document.getElementById("virusCanvas");
       const ctx = canvas.getContext("2d");
@@ -2342,4 +2317,4 @@
     });
   </script>
 </body>
-  </html>
+</html>
