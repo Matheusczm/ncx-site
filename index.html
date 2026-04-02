@@ -2,34 +2,39 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>NCX App Final</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KeySync</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root{
-      --login1:#2563eb;
-      --login2:#3b82f6;
-      --bg:#f8fafc;
-      --text:#111827;
+      --bg1:#07101f;
+      --bg2:#0c1630;
+      --panelBg:#f3f4f6;
+      --panelText:#111827;
       --muted:#6b7280;
       --line:#e5e7eb;
-      --shadow:0 24px 60px rgba(0,0,0,.22);
-      --glass:rgba(255,255,255,.18);
-      --glassBorder:rgba(255,255,255,.22);
-      --tab-duration:220ms;
-      --theme1:#2563eb;
-      --theme2:#3b82f6;
-      --theme3:#93c5fd;
-      --soft:#dbeafe;
-      --success:#22c55e;
-      --success2:#16a34a;
-      --danger:#ef4444;
-      --danger2:#dc2626;
-      --warning:#f59e0b;
-      --warning2:#fbbf24;
+      --white:#ffffff;
+      --navy:#071b49;
+      --green:#22c55e;
+      --green2:#16a34a;
+      --red:#ef4444;
+      --red2:#dc2626;
+      --shadow:0 20px 60px rgba(0,0,0,.22);
+
+      --hg1:#d91c1c;
+      --hg2:#ff3b3b;
+
+      --drip1:#6d28d9;
+      --drip2:#8b5cf6;
+
+      --king1:#00cfff;
+      --king2:#2ab8ff;
+
+      --mix1:#d91c1c;
+      --mix2:#a21caf;
+
+      --tabActive:#dff8ff;
+      --tabActiveText:#0c7ca9;
     }
 
     *{
@@ -37,435 +42,244 @@
       padding:0;
       box-sizing:border-box;
       -webkit-tap-highlight-color:transparent;
-      font-family:"Inter",sans-serif;
-    }
-
-    html,body{
-      width:100%;
+      font-family:Arial,sans-serif;
     }
 
     body{
       min-height:100dvh;
-      display:flex;
-      justify-content:center;
-      align-items:flex-start;
-      padding:0;
-      overflow-x:hidden;
-      overflow-y:auto;
       background:
-        radial-gradient(circle at top, rgba(255,255,255,.08), transparent 30%),
-        linear-gradient(180deg,#07101f 0%, #0c1630 100%);
+        radial-gradient(circle at top left, rgba(18,231,255,.05), transparent 25%),
+        radial-gradient(circle at top right, rgba(177,0,209,.05), transparent 20%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:#fff;
+      overflow-x:hidden;
     }
 
-    .phone{
+    .app{
       width:100%;
-      max-width:390px;
+      max-width:430px;
       min-height:100dvh;
-      overflow:hidden;
+      margin:0 auto;
       position:relative;
-      background:#fff;
+      overflow:hidden;
     }
 
-    @media (min-width:431px){
-      body{
-        padding:18px;
-        align-items:center;
-      }
-      .phone{
-        width:390px;
-        min-height:844px;
-        max-height:calc(100dvh - 36px);
-        border-radius:32px;
-        box-shadow:var(--shadow);
-      }
-    }
-
-    .base-bg{
+    .bg-flash{
       position:absolute;
       inset:0;
-      background:linear-gradient(180deg,var(--login1) 0%, var(--login2) 46%, #f8fafc 46%, #f8fafc 100%);
-      z-index:1;
-      transition:background .45s ease;
-    }
-
-    canvas{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      z-index:2;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.08), transparent 24%),
+        radial-gradient(circle at center, rgba(18,231,255,.18), transparent 40%);
+      opacity:0;
+      transform:scale(.85);
+      transition:opacity .45s ease, transform .55s ease;
       pointer-events:none;
-      image-rendering:pixelated;
+      z-index:2;
+    }
+
+    .bg-flash.show{
+      opacity:1;
+      transform:scale(1.18);
+    }
+
+    .screen{
+      min-height:100dvh;
+      transition:opacity .45s ease, transform .45s ease;
+      position:relative;
+      z-index:3;
     }
 
     .hidden{display:none!important;}
 
-    .screen{
-      position:relative;
-      z-index:4;
-      min-height:100dvh;
-      padding:16px 14px;
-    }
-
-    .login-wrap{
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      min-height:100dvh;
-      transition:opacity .7s ease, transform .7s ease;
-    }
-
-    .login-wrap.hide{
+    .login-screen.hide{
       opacity:0;
-      transform:scale(.985);
+      transform:scale(.97) translateY(10px);
       pointer-events:none;
     }
 
-    .login-card{
-      background:rgba(255,255,255,.98);
-      border-radius:28px;
-      padding:20px;
-      box-shadow:0 20px 50px rgba(0,0,0,.12);
-      border:1px solid rgba(255,255,255,.7);
+    .panel-screen{
+      opacity:0;
+      transform:translateY(22px) scale(.985);
+      pointer-events:none;
+      position:absolute;
+      inset:0;
+      overflow-x:hidden;
+      overflow-y:auto;
     }
 
-    .logo{
-      width:76px;
-      height:76px;
-      border-radius:50%;
-      background:linear-gradient(180deg,var(--login1),var(--login2));
+    .panel-screen.show{
+      opacity:1;
+      transform:translateY(0) scale(1);
+      pointer-events:auto;
+    }
+
+    .login-wrap{
+      min-height:100dvh;
       display:flex;
       align-items:center;
       justify-content:center;
-      margin-bottom:14px;
-      box-shadow:0 16px 35px rgba(37,99,235,.28);
-      border:3px solid rgba(255,255,255,.8);
-      color:#fff;
-      font-size:32px;
-      font-weight:900;
+      padding:24px 18px;
     }
 
-    h1{
+    .login-card{
+      width:100%;
+      background:rgba(8,19,44,.9);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:30px;
+      padding:28px 22px 22px;
+      box-shadow:
+        0 0 0 1px rgba(18,231,255,.03),
+        0 0 40px rgba(18,231,255,.10),
+        0 0 70px rgba(177,0,209,.06);
+      backdrop-filter:blur(12px);
+    }
+
+    .login-title{
+      text-align:center;
       font-size:26px;
       font-weight:900;
-      color:var(--text);
       margin-bottom:8px;
-      text-transform:uppercase;
-      letter-spacing:-.5px;
     }
 
-    .subtitle{
-      color:var(--muted);
-      font-size:13px;
-      margin-bottom:16px;
+    .login-sub{
+      text-align:center;
+      color:#d4dbea;
+      font-size:14px;
+      margin-bottom:24px;
     }
 
     .field{
-      margin-bottom:12px;
+      margin-bottom:14px;
     }
 
     .field label{
       display:block;
       font-size:12px;
-      font-weight:800;
-      color:#1f2937;
+      font-weight:900;
       margin-bottom:8px;
+      color:#d8e4ff;
       text-transform:uppercase;
-      letter-spacing:.4px;
     }
 
     .field input,
-    .field select,
-    .field textarea{
+    .field select{
       width:100%;
-      border:1px solid var(--line);
-      background:#f9fafb;
-      border-radius:15px;
-      padding:14px 13px;
-      font-size:14px;
-      color:var(--text);
+      border:none;
       outline:none;
-      transition:.18s ease;
-      min-width:0;
-    }
-
-    .field textarea{
-      resize:vertical;
-      min-height:88px;
+      border-radius:16px;
+      padding:15px 14px;
+      background:#091120;
+      color:#fff;
+      font-size:15px;
+      border:1px solid rgba(255,255,255,.06);
+      transition:border-color .18s ease, box-shadow .18s ease;
     }
 
     .field input:focus,
-    .field select:focus,
-    .field textarea:focus{
-      border-color:#93c5fd;
-      box-shadow:0 0 0 4px rgba(59,130,246,.10);
+    .field select:focus{
+      border-color:rgba(18,231,255,.35);
+      box-shadow:0 0 0 4px rgba(18,231,255,.10);
+    }
+
+    .btn,
+    .logout-btn,
+    .tab,
+    .bottom-nav .nav-item,
+    .avatar{
+      transition:
+        transform .14s ease,
+        opacity .14s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        color .18s ease;
     }
 
     .btn{
-      width:100%;
       border:none;
-      border-radius:16px;
-      padding:14px 15px;
-      font-size:13px;
-      font-weight:800;
-      cursor:pointer;
+      border-radius:18px;
+      padding:15px 14px;
+      font-size:14px;
+      font-weight:900;
       text-transform:uppercase;
-      transition:transform .15s ease, opacity .15s ease, box-shadow .18s ease;
-      min-width:0;
+      cursor:pointer;
+      width:100%;
     }
 
     .btn:active,
-    .nav-item:active,
-    .tabs span:active,
     .logout-btn:active,
+    .tab:active,
+    .bottom-nav .nav-item:active,
     .avatar:active{
       transform:scale(.985);
     }
 
     .btn-login{
-      background:linear-gradient(180deg,var(--login1),var(--login2));
-      color:#fff;
-      box-shadow:0 12px 26px rgba(37,99,235,.22);
-    }
-
-    .btn-primary{
-      background:linear-gradient(180deg,var(--theme1),var(--theme2));
-      color:#fff;
-      box-shadow:0 12px 24px rgba(37,99,235,.18);
+      background:linear-gradient(90deg,#12e7ff,#2aa8ff,#b100d1);
+      color:#08111f;
+      margin-top:8px;
     }
 
     .btn-secondary{
-      background:#111827;
+      background:#091733;
       color:#fff;
     }
 
-    .btn-success{
-      background:linear-gradient(180deg,var(--success),var(--success2));
+    .btn-save{
+      background:linear-gradient(180deg,var(--green),var(--green2));
       color:#fff;
     }
 
-    .btn-danger{
-      background:linear-gradient(180deg,var(--danger),var(--danger2));
+    .btn-red{
+      background:linear-gradient(180deg,var(--red),var(--red2));
       color:#fff;
     }
 
-    .btn-warning{
-      background:linear-gradient(180deg,var(--warning),var(--warning2));
-      color:#fff;
+    .theme-btn-hg{ background:linear-gradient(180deg,var(--hg1),var(--hg2)); color:#fff; }
+    .theme-btn-drip{ background:linear-gradient(180deg,var(--drip1),var(--drip2)); color:#fff; }
+    .theme-btn-king{ background:linear-gradient(180deg,var(--king1),var(--king2)); color:#fff; }
+    .theme-btn-mix{ background:linear-gradient(180deg,var(--mix1),var(--mix2)); color:#fff; }
+
+    .login-actions{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
     }
 
-    .error-box,
-    .info-box{
+    .login-log{
+      margin-top:14px;
       border-radius:14px;
-      padding:11px 12px;
-      font-size:12px;
-      margin-bottom:12px;
-      display:none;
-      text-transform:uppercase;
-      font-weight:700;
-      white-space:pre-line;
+      background:#050b16;
+      border:1px solid rgba(255,255,255,.05);
+      padding:12px;
+      font-size:13px;
+      color:#d0d9ea;
+      min-height:48px;
+      white-space:pre-wrap;
       line-height:1.5;
     }
 
-    .error-box{
-      background:#fef2f2;
-      color:#b91c1c;
-      border:1px solid #fecaca;
-    }
-
-    .info-box{
-      background:#eff6ff;
-      color:#1d4ed8;
-      border:1px solid #bfdbfe;
-    }
-
-    .hint{
-      margin-top:12px;
-      color:#6b7280;
-      font-size:11px;
-      line-height:1.7;
-    }
-
-    .welcome-overlay{
-      position:absolute;
-      inset:0;
-      z-index:6;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity .7s ease;
-    }
-
-    .welcome-overlay.show{
-      opacity:1;
-      pointer-events:auto;
-    }
-
-    .welcome-card{
-      width:100%;
-      background:rgba(255,255,255,.16);
-      border:1px solid rgba(255,255,255,.22);
-      backdrop-filter:blur(18px);
-      border-radius:28px;
-      padding:24px 18px;
+    .panel-top{
       color:#fff;
-      transform:translateY(20px);
-      opacity:0;
-      box-shadow:0 18px 40px rgba(0,0,0,.16);
-      transition:transform 1s ease, opacity 1s ease;
-    }
-
-    .welcome-overlay.show .welcome-card{
-      transform:translateY(0);
-      opacity:1;
-    }
-
-    .welcome-top{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      margin-bottom:16px;
-    }
-
-    .welcome-avatar,
-    .avatar,
-    .mini-avatar{
-      overflow:hidden;
+      padding:20px 18px 38px;
+      border-bottom-left-radius:28px;
+      border-bottom-right-radius:28px;
+      box-shadow:var(--shadow);
       position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      flex-shrink:0;
-      border-radius:50%;
+      z-index:1;
     }
 
-    .welcome-avatar{
-      width:72px;
-      height:72px;
-      background:rgba(255,255,255,.92);
-      color:#7a7a7a;
-      font-size:30px;
-      font-weight:900;
-      border:3px solid rgba(255,255,255,.55);
-      box-shadow:0 8px 20px rgba(0,0,0,.18);
-    }
-
-    .avatar{
-      width:50px;
-      height:50px;
-      background:rgba(255,255,255,.92);
-      color:#8a8a8a;
-      font-size:22px;
-      font-weight:900;
-      cursor:pointer;
-    }
-
-    .mini-avatar{
-      width:48px;
-      height:48px;
-      background:#f3f4f6;
-      color:#9ca3af;
-      font-size:18px;
-      font-weight:800;
-      border:1px solid #e5e7eb;
-    }
-
-    .welcome-avatar img,
-    .avatar-img,
-    .mini-avatar img,
-    img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      max-width:100%;
-    }
-
-    .welcome-avatar span,
-    .avatar span,
-    .mini-avatar span{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .welcome-small{
-      font-size:12px;
-      font-weight:700;
-      letter-spacing:.6px;
-      opacity:.92;
-      text-transform:uppercase;
-      margin-bottom:6px;
-    }
-
-    .welcome-user{
-      font-size:22px;
-      font-weight:900;
-      line-height:1.1;
-      text-transform:uppercase;
-    }
-
-    .welcome-panel{
-      margin-top:14px;
-      font-size:16px;
-      font-weight:800;
-      text-transform:uppercase;
-      line-height:1.4;
-    }
-
-    .progress{
-      margin-top:18px;
-      width:100%;
-      height:11px;
-      border-radius:999px;
-      background:rgba(255,255,255,.20);
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.12);
-    }
-
-    .progress-bar{
-      width:0%;
-      height:100%;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,.55));
-      transition:width 5.5s linear;
-    }
-
-    .welcome-overlay.show .progress-bar{
-      width:100%;
-    }
-
-    .app-screen{
-      position:relative;
-      z-index:5;
-      min-height:100dvh;
-      display:flex;
-      flex-direction:column;
-      animation:fadeIn .35s ease;
-    }
-
-    @keyframes fadeIn{
-      from{opacity:0;transform:translateY(8px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-
-    .top{
-      padding:16px 14px 8px;
-      color:#fff;
-      background:linear-gradient(180deg,#2563eb 0%, #3b82f6 100%);
-    }
+    .theme-hg{ background:linear-gradient(180deg,var(--hg1),var(--hg2)); }
+    .theme-drip{ background:linear-gradient(180deg,var(--drip1),var(--drip2)); }
+    .theme-king{ background:linear-gradient(180deg,var(--king1),var(--king2)); }
+    .theme-mix{ background:linear-gradient(180deg,var(--mix1),var(--mix2)); }
 
     .topbar{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      margin-bottom:12px;
-      gap:10px;
+      gap:12px;
+      margin-bottom:14px;
       position:relative;
     }
 
@@ -476,55 +290,85 @@
       min-width:0;
     }
 
-    .brand-text h2{
-      font-size:16px;
+    .avatar{
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      background:#eef7ff;
+      color:#6d7784;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
       font-weight:900;
+      flex-shrink:0;
+      overflow:hidden;
+      cursor:pointer;
+      position:relative;
+    }
+
+    .brand-text h2{
+      font-size:18px;
+      font-weight:900;
+      text-transform:uppercase;
       line-height:1.1;
       margin-bottom:4px;
-      text-transform:uppercase;
-      letter-spacing:-.4px;
+      color:#fff;
     }
 
     .brand-text p{
-      font-size:12px;
-      opacity:.94;
-      font-weight:600;
+      font-size:13px;
+      font-weight:700;
+      color:#eef7ff;
+      opacity:.97;
     }
 
     .logout-btn{
-      background:var(--glass);
+      border:none;
+      background:rgba(255,255,255,.16);
       color:#fff;
-      border:1px solid var(--glassBorder);
-      border-radius:12px;
-      padding:8px 10px;
-      font-size:11px;
-      font-weight:800;
+      border:1px solid rgba(255,255,255,.25);
+      border-radius:14px;
+      padding:10px 14px;
+      font-size:12px;
+      font-weight:900;
       text-transform:uppercase;
-      backdrop-filter:blur(8px);
       cursor:pointer;
     }
 
     .profile-popup{
       position:absolute;
-      top:58px;
+      top:66px;
       left:0;
-      width:220px;
+      width:250px;
       background:rgba(255,255,255,.98);
       color:#111827;
       border:1px solid rgba(15,23,42,.08);
       border-radius:18px;
       padding:12px;
       box-shadow:0 18px 45px rgba(15,23,42,.18);
-      z-index:20;
-      animation:popupIn .18s ease;
+      z-index:30;
+      opacity:0;
+      transform:translateY(-6px) scale(.98);
       transform-origin:top left;
+      transition:opacity .18s ease, transform .18s ease;
+      pointer-events:none;
     }
 
-    .profile-popup.hidden{display:none !important;}
-    .profile-popup.closing{animation:popupOut .16s ease both;}
+    .profile-popup.show{
+      opacity:1;
+      transform:translateY(0) scale(1);
+      pointer-events:auto;
+    }
+
+    .profile-popup.closing{
+      opacity:0;
+      transform:translateY(-5px) scale(.98);
+      pointer-events:none;
+    }
 
     .profile-popup .popup-title{
-      font-size:11px;
+      font-size:12px;
       font-weight:900;
       text-transform:uppercase;
       margin-bottom:10px;
@@ -532,429 +376,438 @@
     }
 
     .profile-popup .popup-line{
-      font-size:11px;
+      font-size:12px;
       color:#6b7280;
       text-transform:uppercase;
       line-height:1.8;
     }
 
-    .profile-popup .popup-line strong{color:#111827;}
-    .profile-popup .popup-actions{margin-top:10px;display:grid;gap:8px;}
-
-    @keyframes popupIn{
-      from{opacity:0;transform:translateY(-6px) scale(.98)}
-      to{opacity:1;transform:translateY(0) scale(1)}
+    .profile-popup .popup-line strong{
+      color:#111827;
     }
 
-    @keyframes popupOut{
-      from{opacity:1;transform:translateY(0) scale(1)}
-      to{opacity:0;transform:translateY(-5px) scale(.98)}
+    .profile-popup .popup-actions{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
     }
 
     .banner{
       background:rgba(255,255,255,.16);
-      border:1px solid rgba(255,255,255,.14);
-      border-radius:16px;
-      padding:11px 12px;
-      margin-bottom:10px;
-      font-size:11px;
-      font-weight:800;
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      padding:13px 14px;
+      margin-bottom:12px;
+      font-size:12px;
+      font-weight:900;
       text-transform:uppercase;
-      letter-spacing:.35px;
-      backdrop-filter:blur(10px);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
-    }
-
-    .warning-banner{
-      background:linear-gradient(180deg,#fff7ed,#ffedd5);
-      border:1px solid #fdba74;
-      color:#9a3412;
-      border-radius:15px;
-      padding:10px 12px;
-      margin-bottom:10px;
-      font-size:10px;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:.35px;
-      line-height:1.5;
+      letter-spacing:.3px;
     }
 
     .stats{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-bottom:4px;
+      gap:12px;
     }
 
-    .card{
-      background:linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.08));
-      border-radius:20px;
-      padding:14px 12px;
-      min-height:116px;
+    .stat-card{
+      background:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.08));
+      border-radius:22px;
+      padding:16px 14px;
+      min-height:132px;
       border:1px solid rgba(255,255,255,.08);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+      animation:riseIn .28s ease both;
     }
 
-    .card .label{
-      font-size:10px;
-      opacity:.95;
-      margin-bottom:12px;
-      font-weight:800;
+    .stat-card .label{
+      font-size:11px;
+      font-weight:900;
       text-transform:uppercase;
-      letter-spacing:.4px;
+      margin-bottom:14px;
+      opacity:.97;
     }
 
-    .card .value{
-      font-size:36px;
+    .stat-card .value{
+      font-size:50px;
       font-weight:900;
       line-height:1;
-      margin-bottom:12px;
-      letter-spacing:-1px;
+      margin-bottom:14px;
     }
 
-    .card .sub{
-      font-size:10px;
-      opacity:.95;
+    .stat-card .sub{
+      font-size:11px;
+      font-weight:800;
       text-transform:uppercase;
-      font-weight:700;
-      line-height:1.4;
+      opacity:.96;
     }
 
-    .main{
-      flex:1;
-      min-height:0;
-      background:var(--bg);
+    .panel-main{
+      background:var(--panelBg);
+      margin-top:-26px;
       border-top-left-radius:28px;
       border-top-right-radius:28px;
-      padding:14px 12px 84px;
+      min-height:calc(100dvh - 255px);
+      padding:16px 14px 110px;
       position:relative;
       z-index:2;
-      overflow:auto;
+      color:var(--panelText);
     }
 
     .tabs{
       display:grid;
       grid-template-columns:repeat(4,1fr);
       gap:8px;
-      margin-bottom:16px;
+      margin-bottom:18px;
     }
 
-    .tabs.tabs-3{
-      grid-template-columns:repeat(3,1fr);
-    }
-
-    .tabs span{
+    .tab{
+      border:none;
+      background:transparent;
+      border-radius:16px;
+      padding:12px 6px;
       text-align:center;
-      font-size:11px;
+      font-size:12px;
       font-weight:900;
-      color:#1f2937;
-      padding:10px 4px;
-      border-radius:14px;
+      text-transform:uppercase;
+      color:#111827;
       cursor:pointer;
-      text-transform:uppercase;
-      transition:background .18s ease, color .18s ease;
     }
 
-    .tabs span.active-tab{
-      background:var(--soft);
-      color:var(--theme1);
-    }
-
-    .panel{
-      background:rgba(255,255,255,.98);
-      border-radius:24px;
-      padding:16px;
-      box-shadow:0 18px 45px rgba(15,23,42,.07);
-      border:1px solid rgba(15,23,42,.04);
-      overflow-y:auto;
-      overflow-x:hidden;
-      min-height:260px;
-      max-height:calc(100dvh - 300px);
-      transition:min-height .22s ease;
-    }
-
-    .panel.create-panel-active{
-      min-height:auto;
-    }
-
-    .panel-title{
-      font-size:17px;
-      font-weight:900;
-      color:var(--text);
-      margin-bottom:14px;
-      text-transform:uppercase;
-      letter-spacing:-.4px;
+    .tab.active{
+      background:var(--tabActive);
+      color:var(--tabActiveText);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
     }
 
     .view-stack{
       position:relative;
-      min-height:auto;
+      min-height:280px;
     }
 
-    .view{width:100%;}
-    .view.anim-enter-right{animation:slideInRight var(--tab-duration) ease both;}
-    .view.anim-enter-left{animation:slideInLeft var(--tab-duration) ease both;}
-    .view.anim-exit-left{animation:slideOutLeft var(--tab-duration) ease both;}
-    .view.anim-exit-right{animation:slideOutRight var(--tab-duration) ease both;}
-    .view.full-create-mode{animation:createExpand .28s ease both;}
-
-    @keyframes slideInRight{
-      from{opacity:0;transform:translateX(26px)}
-      to{opacity:1;transform:translateX(0)}
+    .view{
+      width:100%;
     }
 
-    @keyframes slideInLeft{
-      from{opacity:0;transform:translateX(-26px)}
-      to{opacity:1;transform:translateX(0)}
+    .view.anim-enter-right{ animation:slideInRight .22s ease both; }
+    .view.anim-enter-left{ animation:slideInLeft .22s ease both; }
+    .view.anim-exit-left{ animation:slideOutLeft .22s ease both; }
+    .view.anim-exit-right{ animation:slideOutRight .22s ease both; }
+
+    .panel-box{
+      background:#fff;
+      border-radius:26px;
+      padding:18px;
+      border:1px solid #ececec;
+      box-shadow:0 16px 36px rgba(15,23,42,.06);
+      animation:riseIn .28s ease both;
     }
 
-    @keyframes slideOutLeft{
-      from{opacity:1;transform:translateX(0)}
-      to{opacity:0;transform:translateX(-16px)}
-    }
-
-    @keyframes slideOutRight{
-      from{opacity:1;transform:translateX(0)}
-      to{opacity:0;transform:translateX(16px)}
-    }
-
-    @keyframes createExpand{
-      from{opacity:.92;transform:scale(.97) translateY(12px)}
-      to{opacity:1;transform:scale(1) translateY(0)}
+    .panel-title{
+      font-size:18px;
+      font-weight:900;
+      text-transform:uppercase;
+      color:#111827;
+      margin-bottom:16px;
     }
 
     .key-box{
-      background:linear-gradient(180deg,#04122e,#071a43);
-      color:#20ef66;
-      padding:16px 14px;
-      border-radius:18px;
-      font-size:20px;
-      font-weight:800;
-      text-align:center;
-      letter-spacing:1px;
-      margin-bottom:14px;
-      word-break:break-word;
-      min-height:58px;
+      background:linear-gradient(180deg,#05153b,#071e52);
+      color:#ffffff;
+      border-radius:22px;
+      min-height:86px;
       display:flex;
       align-items:center;
       justify-content:center;
-      transition:box-shadow .18s ease, transform .18s ease;
+      text-align:center;
+      padding:18px 16px;
+      font-size:20px;
+      font-weight:900;
+      word-break:break-word;
+      margin-bottom:16px;
+      border:1px solid rgba(255,255,255,.04);
+      transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;
     }
 
     .key-box.glow{
-      box-shadow:0 0 0 2px rgba(34,197,94,.12), 0 0 22px rgba(34,197,94,.22);
       transform:scale(1.01);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.05),
+        0 0 18px rgba(255,255,255,.10);
     }
 
-    .key-box.warning-state{
-      color:#ffb4b4;
-      background:linear-gradient(180deg,#2a0a0a,#3b0f0f);
+    .key-box.fade-refresh{
+      animation:keyRefresh .22s ease;
     }
 
     .btn-row{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:10px;
-      margin-top:8px;
-    }
-
-    .summary-card{
-      border-radius:18px;
-      background:#fff;
-      border:1px solid #e5e7eb;
-      padding:14px;
-    }
-
-    .summary-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr 1fr;
-      gap:8px;
-    }
-
-    .mini-box{
-      background:#f8fafc;
-      border:1px solid #e5e7eb;
-      border-radius:15px;
-      padding:11px;
-    }
-
-    .mini-box small{
-      display:block;
-      font-size:10px;
-      text-transform:uppercase;
-      color:#6b7280;
-      margin-bottom:6px;
-      font-weight:700;
-    }
-
-    .mini-box strong{
-      font-size:12px;
-      font-weight:800;
-      word-break:break-word;
-      text-transform:uppercase;
-      color:#111827;
-    }
-
-    .form-actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:8px;
-      position:sticky;
-      bottom:0;
-      background:#fff;
-      padding-top:10px;
+      margin-bottom:10px;
     }
 
     .list{
       display:grid;
-      gap:10px;
+      gap:12px;
     }
 
     .item{
       background:#f8fafc;
       border:1px solid #e5e7eb;
       border-radius:18px;
-      padding:13px;
-      box-shadow:0 6px 16px rgba(15,23,42,.04);
+      padding:14px;
       animation:riseIn .24s ease both;
     }
 
-    @keyframes riseIn{
-      from{opacity:0;transform:translateY(12px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-
     .item .code{
-      font-size:14px;
+      font-size:15px;
       font-weight:900;
       color:#111827;
       margin-bottom:8px;
-      text-transform:uppercase;
       word-break:break-word;
     }
 
     .item .meta{
-      font-size:12px;
+      font-size:13px;
       color:#6b7280;
       line-height:1.7;
+      text-transform:uppercase;
+    }
+
+    .profile-box{
+      border-radius:18px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      padding:16px;
+    }
+
+    .profile-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .mini{
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .mini small{
+      display:block;
+      font-size:11px;
+      text-transform:uppercase;
+      color:#6b7280;
+      margin-bottom:6px;
+      font-weight:800;
+    }
+
+    .mini strong{
+      display:block;
+      font-size:13px;
+      font-weight:900;
+      color:#111827;
       text-transform:uppercase;
       word-break:break-word;
     }
 
-    .item-actions{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin-top:12px;
+    .timer-box{
+      margin-bottom:12px;
+      background:#0b1732;
+      color:#fff;
+      border-radius:18px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,.08);
+    }
+
+    .timer-box .timer-label{
+      font-size:11px;
+      font-weight:900;
+      text-transform:uppercase;
+      color:#d7e6ff;
+      margin-bottom:8px;
+    }
+
+    .timer-box .timer-value{
+      font-size:18px;
+      font-weight:900;
+      line-height:1.3;
+    }
+
+    .timer-box .timer-date{
+      font-size:12px;
+      margin-top:8px;
+      color:#d2d8e3;
+      text-transform:uppercase;
     }
 
     .empty{
       text-align:center;
       color:#6b7280;
-      font-size:13px;
+      font-size:14px;
       padding:18px 8px;
       text-transform:uppercase;
-      font-weight:700;
+      font-weight:800;
     }
 
     .bottom-nav{
-      position:absolute;
-      left:0;
-      right:0;
+      position:fixed;
       bottom:0;
+      left:50%;
+      transform:translateX(-50%);
+      width:100%;
+      max-width:430px;
       background:rgba(255,255,255,.96);
-      backdrop-filter:blur(14px);
-      height:78px;
+      backdrop-filter:blur(12px);
+      border-top:1px solid rgba(15,23,42,.06);
+      height:82px;
       display:flex;
       justify-content:space-around;
       align-items:center;
-      border-top:1px solid rgba(15,23,42,.06);
+      z-index:20;
+      padding-bottom:env(safe-area-inset-bottom);
     }
 
-    .nav-item{
+    .bottom-nav .nav-item{
       text-align:center;
       color:#8a93a3;
-      font-size:11px;
-      font-weight:700;
-      cursor:pointer;
+      font-size:12px;
+      font-weight:800;
       text-transform:uppercase;
+      cursor:pointer;
     }
 
-    .nav-item .icon{
+    .bottom-nav .nav-item .icon{
       display:block;
-      font-size:20px;
+      font-size:22px;
       margin-bottom:5px;
     }
 
-    .nav-item.active{
-      color:var(--theme1);
+    .bottom-nav .nav-item.active{
+      color:#0ca4ff;
+    }
+
+    @keyframes riseIn{
+      from{ opacity:0; transform:translateY(12px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    @keyframes slideInRight{
+      from{ opacity:0; transform:translateX(24px); }
+      to{ opacity:1; transform:translateX(0); }
+    }
+
+    @keyframes slideInLeft{
+      from{ opacity:0; transform:translateX(-24px); }
+      to{ opacity:1; transform:translateX(0); }
+    }
+
+    @keyframes slideOutLeft{
+      from{ opacity:1; transform:translateX(0); }
+      to{ opacity:0; transform:translateX(-16px); }
+    }
+
+    @keyframes slideOutRight{
+      from{ opacity:1; transform:translateX(0); }
+      to{ opacity:0; transform:translateX(16px); }
+    }
+
+    @keyframes keyRefresh{
+      0%{ opacity:.65; transform:scale(.985); }
+      100%{ opacity:1; transform:scale(1); }
+    }
+
+    @media (min-width:431px){
+      body{ padding:18px; }
+      .app{
+        min-height:844px;
+        border-radius:34px;
+        box-shadow:0 30px 80px rgba(0,0,0,.35);
+        overflow:hidden;
+      }
+      .bottom-nav{
+        border-bottom-left-radius:34px;
+        border-bottom-right-radius:34px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="phone" id="phone">
-    <div class="base-bg" id="baseBg"></div>
-    <canvas id="virusCanvas"></canvas>
+  <div class="app">
+    <div class="bg-flash" id="bgFlash"></div>
 
-    <div class="screen" id="loginScreen">
-      <div class="login-wrap" id="loginWrap">
+    <div class="screen login-screen" id="loginScreen">
+      <div class="login-wrap">
         <div class="login-card">
-          <div class="logo">K</div>
-          <h1>Login</h1>
-          <div class="subtitle">Acesso aos 4 painéis.</div>
-          <div class="error-box" id="loginError"></div>
-          <div class="info-box" id="loginInfo"></div>
+          <div class="login-title">KeySync</div>
+          <div class="login-sub">Login e registro com key</div>
 
           <div class="field">
-            <label for="username">Usuário</label>
-            <input type="text" id="username" placeholder="Digite seu usuário">
+            <label>Usuário</label>
+            <input id="username" placeholder="Digite seu usuário">
           </div>
 
           <div class="field">
-            <label for="password">Senha</label>
-            <input type="password" id="password" placeholder="Digite sua senha">
+            <label>Senha</label>
+            <input id="password" type="password" placeholder="Digite sua senha">
           </div>
 
-          <button class="btn btn-login" onclick="fazerLogin()">Entrar</button>
-
-          <div class="hint">
-            DEV fica direto no HTML.<br>
-            HG, DRIP e MIX vêm do banco.<br>
-            Usuários novos são salvos sempre em minúsculo.
+          <div class="login-actions">
+            <button class="btn btn-login" onclick="fazerLogin()">Entrar</button>
+            <button class="btn btn-secondary" onclick="abrirRegistro()">Registre-se</button>
           </div>
+
+          <div class="login-log" id="loginLog">Aguardando ação...</div>
         </div>
       </div>
     </div>
 
-    <div class="welcome-overlay" id="welcomeOverlay">
-      <div class="welcome-card">
-        <div class="welcome-top">
-          <div class="welcome-avatar">
-            <img id="welcomeAvatarImg" class="hidden" alt="Avatar">
-            <span id="welcomeAvatarLetter">H</span>
+    <div class="screen hidden" id="registerScreen">
+      <div class="login-wrap">
+        <div class="login-card">
+          <div class="login-title">Registre-se</div>
+          <div class="login-sub">Crie sua conta usando uma key válida</div>
+
+          <div class="field">
+            <label>Usuário</label>
+            <input id="regUsername" placeholder="Digite seu usuário">
           </div>
-          <div>
-            <div class="welcome-small">Bem-vindo</div>
-            <div class="welcome-user" id="welcomeUser">HG</div>
+
+          <div class="field">
+            <label>Senha</label>
+            <input id="regPassword" type="password" placeholder="Digite sua senha">
           </div>
+
+          <div class="field">
+            <label>Confirmar senha</label>
+            <input id="regConfirmPassword" type="password" placeholder="Confirme sua senha">
+          </div>
+
+          <div class="field">
+            <label>Key de acesso</label>
+            <input id="regAccessKey" placeholder="KEY-SYNC-XXXXXX">
+          </div>
+
+          <div class="login-actions">
+            <button class="btn btn-login" onclick="registrar()">Criar conta</button>
+            <button class="btn btn-secondary" onclick="voltarLogin()">Voltar</button>
+          </div>
+
+          <div class="login-log" id="registerLog">Aguardando registro...</div>
         </div>
-        <div class="welcome-panel" id="welcomePanel">Entrando no painel...</div>
-        <div class="progress"><div class="progress-bar"></div></div>
       </div>
     </div>
 
-    <div class="app-screen hidden" id="appScreen">
-      <div class="top" id="topArea">
+    <div class="screen panel-screen hidden" id="panelScreen">
+      <div class="panel-top theme-hg" id="panelTop">
         <div class="topbar">
           <div class="brand">
-            <div class="avatar" id="mainAvatar" onclick="toggleProfilePopup()">
-              <img id="mainAvatarImg" class="avatar-img hidden" alt="Avatar">
-              <span id="mainAvatarLetter">H</span>
-            </div>
+            <div class="avatar" id="mainAvatar" onclick="toggleProfilePopup()">H</div>
             <div class="brand-text">
-              <h2 id="mainTitle">HG</h2>
-              <p id="mainSubtitle">Painel ativo</p>
+              <h2 id="mainTitle">HG MENU</h2>
+              <p>Painel ativo</p>
             </div>
           </div>
 
@@ -962,142 +815,163 @@
 
           <div class="profile-popup hidden" id="profilePopup">
             <div class="popup-title">Perfil</div>
-            <div class="popup-line">Resumo da sessão: <strong>ATIVA</strong></div>
+            <div class="popup-line">Painel: <strong id="popupPanel">-</strong></div>
             <div class="popup-line">Usuário: <strong id="popupUser">-</strong></div>
-            <div class="popup-line">Status: <strong id="popupStatus">ONLINE</strong></div>
+            <div class="popup-line">Status: <strong id="popupStatus">-</strong></div>
+            <div class="popup-line">Tempo restante: <strong id="popupTimer">-</strong></div>
+            <div class="popup-line">Expira em: <strong id="popupExpire">-</strong></div>
+
             <div class="popup-actions">
-              <button class="btn btn-secondary" onclick="closeProfilePopup()">Fechar</button>
+              <input id="extraKeyInput" placeholder="Adicionar outra key" style="width:100%;border:1px solid #e5e7eb;border-radius:12px;padding:12px 10px;font-size:13px;outline:none;">
+              <button class="btn btn-save" style="padding:12px 10px;font-size:12px;" onclick="aplicarOutraKey()">Aplicar key</button>
+              <button class="btn btn-secondary" style="padding:12px 10px;font-size:12px;" onclick="closeProfilePopup()">Fechar</button>
             </div>
           </div>
         </div>
 
         <div class="banner" id="mainBanner">Painel do cliente</div>
-        <div class="warning-banner hidden" id="accessWarning"></div>
 
         <div class="stats">
-          <div class="card">
-            <div class="label" id="statLabel1">Códigos válidos</div>
-            <div class="value" id="statValue1">0</div>
-            <div class="sub" id="statSub1">Ativos</div>
+          <div class="stat-card">
+            <div class="label">Códigos válidos</div>
+            <div class="value" id="validCount">0</div>
+            <div class="sub">Ativos</div>
           </div>
-
-          <div class="card">
-            <div class="label" id="statLabel2">Códigos inválidos</div>
-            <div class="value" id="statValue2">0</div>
-            <div class="sub" id="statSub2">Expirados</div>
+          <div class="stat-card">
+            <div class="label">Códigos inválidos</div>
+            <div class="value" id="invalidCount">0</div>
+            <div class="sub">Expirados</div>
           </div>
         </div>
       </div>
 
-      <div class="main">
-        <div class="tabs" id="mainTabs"></div>
-        <div class="panel" id="mainPanel">
-          <div class="view-stack" id="viewStack"></div>
+      <div class="panel-main">
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('criar', this)">Criar</button>
+          <button class="tab" onclick="switchTab('validas', this)">Válidas</button>
+          <button class="tab" onclick="switchTab('invalidas', this)">Inválidas</button>
+          <button class="tab" onclick="switchTab('perfil', this)">Perfil</button>
+        </div>
+
+        <div class="view-stack" id="viewStack">
+          <div class="view" id="view-criar">
+            <div class="panel-box">
+              <div class="panel-title">Criar código</div>
+
+              <div class="field hidden" id="mixGeneratorField">
+                <label>Gerador</label>
+                <select id="mixGenerator" onchange="clearPreview()">
+                  <option value="HG">HG</option>
+                  <option value="DRIP">DRIP</option>
+                  <option value="KING">KING</option>
+                </select>
+              </div>
+
+              <div class="key-box" id="keyBox"></div>
+
+              <div class="field">
+                <label>Duração</label>
+                <select id="duration">
+                  <option value="1">1 DIA</option>
+                  <option value="7">7 DIAS</option>
+                  <option value="30">30 DIAS</option>
+                  <option value="permanente">PERMANENTE</option>
+                </select>
+              </div>
+
+              <div class="btn-row">
+                <button class="btn theme-btn-hg" id="generateBtn" onclick="generateKey()">Gerar</button>
+                <button class="btn btn-secondary" onclick="copyKey()">Copiar</button>
+              </div>
+
+              <button class="btn btn-save" onclick="saveKey()">Salvar código</button>
+            </div>
+          </div>
+
+          <div class="view hidden" id="view-validas">
+            <div class="panel-box">
+              <div class="panel-title">Códigos válidos</div>
+              <div class="list" id="validList"></div>
+            </div>
+          </div>
+
+          <div class="view hidden" id="view-invalidas">
+            <div class="panel-box">
+              <div class="panel-title">Códigos inválidos</div>
+              <div class="list" id="invalidList"></div>
+            </div>
+          </div>
+
+          <div class="view hidden" id="view-perfil">
+            <div class="panel-box">
+              <div class="panel-title">Perfil</div>
+
+              <div class="profile-box">
+                <div class="profile-grid">
+                  <div class="mini">
+                    <small>Painel</small>
+                    <strong id="profilePanel">-</strong>
+                  </div>
+                  <div class="mini">
+                    <small>Status</small>
+                    <strong id="profileStatus">ATIVO</strong>
+                  </div>
+                </div>
+
+                <div class="timer-box">
+                  <div class="timer-label">Tempo restante</div>
+                  <div class="timer-value" id="timerValue">NENHUM CÓDIGO SALVO</div>
+                  <div class="timer-date" id="timerDate">EXPIRA EM: -</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="bottom-nav" id="bottomNav"></div>
+      <div class="bottom-nav">
+        <div class="nav-item active" onclick="triggerTab(0)">
+          <span class="icon">＋</span>
+          Criar
+        </div>
+        <div class="nav-item" onclick="triggerTab(1)">
+          <span class="icon">☰</span>
+          Válidas
+        </div>
+        <div class="nav-item" onclick="triggerTab(2)">
+          <span class="icon">⌕</span>
+          Inválidas
+        </div>
+        <div class="nav-item" onclick="triggerTab(3)">
+          <span class="icon">◉</span>
+          Perfil
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
+    // ===== SUPABASE =====
     const SUPABASE_URL = "https://iwhldffataeqmpntprvk.supabase.co";
     const SUPABASE_KEY = "sb_publishable_wYhrdDe0bM-H3QqmcMwXRQ_RGb_u5ok";
     const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const DEV_HTML_USER = "dev";
-    const DEV_HTML_PASS = "NcX!Dev#4827$Z";
-
-    let animFrame = null;
+    // ===== ESTADO =====
     let currentUser = null;
-    let currentView = "";
     let currentPreview = "";
-    let editingUserId = null;
-    let uploadedAvatarBase64 = "";
-    let editingSnapshot = null;
+    let currentView = "criar";
+    let timerInterval = null;
 
-    const THEMES = {
-      hg: {
-        color: "#ef4444",
-        badge: "H",
-        title: "HG",
-        panel: "Entrando em HG...",
-        c1: "#d62828",
-        c2: "#ef4444",
-        soft: "#fee2e2",
-        topBg: "linear-gradient(180deg,#b91c1c 0%, #ef4444 100%)"
-      },
-      drip: {
-        color: "#8b5cf6",
-        badge: "D",
-        title: "DRIP",
-        panel: "Entrando em DRIP...",
-        c1: "#6d28d9",
-        c2: "#8b5cf6",
-        soft: "#ede9fe",
-        topBg: "linear-gradient(180deg,#5b21b6 0%, #8b5cf6 100%)"
-      },
-      misto: {
-        color: "#c026d3",
-        badge: "M",
-        title: "MISTO",
-        panel: "Entrando em MISTO...",
-        c1: "#d81b60",
-        c2: "#8e24aa",
-        soft: "#fce7f3",
-        topBg: "linear-gradient(180deg,#b91c1c 0%, #8e24aa 100%)"
-      },
-      dev: {
-        color: "#fbbf24",
-        badge: "D",
-        title: "DEV",
-        panel: "Entrando em DEVELOPMENT...",
-        c1: "#f59e0b",
-        c2: "#fbbf24",
-        soft: "#fef3c7",
-        topBg: "linear-gradient(180deg,#f59e0b 0%, #fbbf24 100%)"
-      }
-    };
-
-    function normalize(value){
-      return (value || "").trim().toLowerCase();
+    function normalize(v){
+      return (v || "").trim().toLowerCase();
     }
 
-    function showLoginError(msg){
-      const error = document.getElementById("loginError");
-      const info = document.getElementById("loginInfo");
-      info.style.display = "none";
-      error.textContent = msg;
-      error.style.display = "block";
+    function logLogin(msg){
+      document.getElementById("loginLog").textContent = msg;
     }
 
-    function showLoginInfo(msg){
-      const error = document.getElementById("loginError");
-      const info = document.getElementById("loginInfo");
-      error.style.display = "none";
-      info.textContent = msg;
-      info.style.display = "block";
-    }
-
-    function clearLoginMessages(){
-      document.getElementById("loginError").style.display = "none";
-      document.getElementById("loginInfo").style.display = "none";
-    }
-
-    function setTheme(themeKey){
-      const t = THEMES[themeKey] || THEMES.hg;
-      const root = document.documentElement;
-      root.style.setProperty("--theme1", t.c1);
-      root.style.setProperty("--theme2", t.c2);
-      root.style.setProperty("--theme3", t.color);
-      root.style.setProperty("--soft", t.soft);
-    }
-
-    function getThemeKeyByPanelType(panelType){
-      if (panelType === "DRIP") return "drip";
-      if (panelType === "MIX" || panelType === "MISTO") return "misto";
-      if (panelType === "DEV") return "dev";
-      return "hg";
+    function logRegister(msg){
+      document.getElementById("registerLog").textContent = msg;
     }
 
     async function sha256(text){
@@ -1108,621 +982,441 @@
         .join("");
     }
 
-    function fmtDate(iso){
-      if (!iso) return "PERMANENTE";
-      return new Date(iso).toLocaleString("pt-BR");
+    // ===== LOGIN / REGISTRO =====
+    function abrirRegistro(){
+      document.getElementById("loginScreen").classList.add("hidden");
+      document.getElementById("registerScreen").classList.remove("hidden");
     }
 
-    function fmtDuration(v){
-      return v === "permanente" ? "PERMANENTE" : v + " DIAS";
+    function voltarLogin(){
+      document.getElementById("registerScreen").classList.add("hidden");
+      document.getElementById("loginScreen").classList.remove("hidden");
     }
 
-    function hexToRgb(hex){
-      const clean = hex.replace("#", "");
-      const bigint = parseInt(clean, 16);
-      return {
-        r: (bigint >> 16) & 255,
-        g: (bigint >> 8) & 255,
-        b: bigint & 255
-      };
-    }
+    async function registrar(){
+      try{
+        let username = document.getElementById("regUsername").value.trim().toLowerCase();
+        const password = document.getElementById("regPassword").value.trim();
+        const confirmPassword = document.getElementById("regConfirmPassword").value.trim();
+        const accessKey = document.getElementById("regAccessKey").value.trim();
 
-    function mixColor(a,b,t){
-      return {
-        r: Math.round(a.r + (b.r - a.r) * t),
-        g: Math.round(a.g + (b.g - a.g) * t),
-        b: Math.round(a.b + (b.b - a.b) * t)
-      };
-    }
-
-    function ease(t){
-      return t*t*(3-2*t);
-    }
-
-    function makeVirusAnimation(finalHex){
-      const canvas = document.getElementById("virusCanvas");
-      const ctx = canvas.getContext("2d", { alpha: true });
-      const phone = document.getElementById("phone");
-      const baseBg = document.getElementById("baseBg");
-
-      if (animFrame) cancelAnimationFrame(animFrame);
-
-      const rect = phone.getBoundingClientRect();
-      const internalScale = 0.28;
-      const iw = Math.max(90, Math.floor(rect.width * internalScale));
-      const ih = Math.max(180, Math.floor(rect.height * internalScale));
-
-      canvas.width = iw;
-      canvas.height = ih;
-      canvas.style.width = rect.width + "px";
-      canvas.style.height = rect.height + "px";
-
-      const startColor = hexToRgb("#2563eb");
-      const final = hexToRgb(finalHex);
-      const centerX = Math.floor(iw / 2);
-      const centerY = Math.floor(ih / 2);
-      const noise = new Float32Array(iw * ih);
-      const delayMap = new Float32Array(iw * ih);
-
-      for (let y = 0; y < ih; y++){
-        for (let x = 0; x < iw; x++){
-          const dx = x - centerX;
-          const dy = y - centerY;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const angle = Math.atan2(dy, dx);
-          const wave =
-            Math.sin(angle * 6) * 0.9 +
-            Math.cos(angle * 11) * 0.45 +
-            Math.sin((x + y) * 0.12) * 0.25;
-          const i = y * iw + x;
-          noise[i] = Math.random() * 0.55;
-          delayMap[i] = dist * 0.055 + wave * 0.35 + noise[i];
+        if(!username || !password || !confirmPassword || !accessKey){
+          logRegister("Preencha todos os campos.");
+          return;
         }
+
+        if(password !== confirmPassword){
+          logRegister("As senhas não coincidem.");
+          return;
+        }
+
+        logRegister("Verificando key no banco...");
+
+        const { data: keyData, error: keyError } = await supa
+          .from("access_keys")
+          .select("*")
+          .eq("code", accessKey)
+          .maybeSingle();
+
+        if(keyError){
+          logRegister("Erro ao consultar key:\n" + keyError.message);
+          return;
+        }
+
+        if(!keyData){
+          logRegister("Key não encontrada.");
+          return;
+        }
+
+        if(keyData.is_used){
+          logRegister("Essa key já foi utilizada.");
+          return;
+        }
+
+        if(keyData.is_disabled){
+          logRegister("Essa key está desativada.");
+          return;
+        }
+
+        const { data: existingUser, error: userCheckError } = await supa
+          .from("users")
+          .select("id, username")
+          .eq("username", username)
+          .maybeSingle();
+
+        if(userCheckError){
+          logRegister("Erro ao verificar usuário:\n" + userCheckError.message);
+          return;
+        }
+
+        if(existingUser){
+          logRegister("Esse usuário já existe.");
+          return;
+        }
+
+        let expiresAt = null;
+        if(!keyData.is_permanent && keyData.duration_days){
+          expiresAt = new Date(Date.now() + keyData.duration_days * 86400000).toISOString();
+        }
+
+        const panelType = keyData.panel_type || keyData.type || "HG";
+        const password_hash = await sha256(password);
+
+        const { error: createError } = await supa
+          .from("users")
+          .insert({
+            username,
+            password: null,
+            password_hash,
+            type: String(panelType).toUpperCase(),
+            avatar: null,
+            expires_at: expiresAt,
+            is_disabled: false,
+            created_at: new Date().toISOString()
+          });
+
+        if(createError){
+          logRegister("Erro ao criar conta:\n" + createError.message);
+          return;
+        }
+
+        const { error: updateKeyError } = await supa
+          .from("access_keys")
+          .update({
+            is_used: true,
+            used_by: username
+          })
+          .eq("id", keyData.id);
+
+        if(updateKeyError){
+          logRegister("Conta criada, mas houve erro ao marcar a key como usada:\n" + updateKeyError.message);
+          return;
+        }
+
+        logRegister("Conta criada com sucesso!");
+        document.getElementById("regUsername").value = "";
+        document.getElementById("regPassword").value = "";
+        document.getElementById("regConfirmPassword").value = "";
+        document.getElementById("regAccessKey").value = "";
+
+      }catch(e){
+        logRegister("Erro geral:\n" + String(e));
+      }
+    }
+
+    async function fazerLogin(){
+      const username = normalize(document.getElementById("username").value);
+      const password = document.getElementById("password").value.trim();
+
+      if(!username || !password){
+        logLogin("Preencha usuário e senha.");
+        return;
       }
 
-      const img = ctx.createImageData(iw, ih);
-      const data = img.data;
-      const start = performance.now();
-      const total = 5600;
+      try{
+        logLogin("Verificando no Supabase...");
 
-      function draw(now){
-        const elapsed = now - start;
-        const master = Math.min(elapsed / total, 1);
+        const { data, error } = await supa
+          .from("users")
+          .select("*")
+          .eq("username", username)
+          .maybeSingle();
 
-        if (master > 0.32){
-          baseBg.style.background = `linear-gradient(180deg, ${finalHex} 0%, ${finalHex} 100%)`;
+        if(error){
+          logLogin("Erro Supabase:\n" + error.message);
+          return;
         }
 
-        let completeCount = 0;
-
-        for (let y = 0; y < ih; y++){
-          for (let x = 0; x < iw; x++){
-            const i = y * iw + x;
-            let t = (master * 8.2) - delayMap[i];
-            t = Math.max(0, Math.min(1, t));
-            const smooth = ease(t);
-
-            if (smooth >= 0.999) completeCount++;
-
-            const c = mixColor(startColor, final, smooth);
-            const di = i * 4;
-            data[di] = c.r;
-            data[di + 1] = c.g;
-            data[di + 2] = c.b;
-            data[di + 3] = 255;
-          }
+        if(!data){
+          logLogin("Usuário não encontrado.");
+          return;
         }
 
-        ctx.putImageData(img, 0, 0);
+        const hash = await sha256(password);
+        const legacyOk = data.password && normalize(data.password) === normalize(password);
+        const hashOk = data.password_hash && data.password_hash === hash;
 
-        if (master < 1 && completeCount < iw * ih){
-          animFrame = requestAnimationFrame(draw);
-        } else {
-          ctx.clearRect(0, 0, iw, ih);
-          baseBg.style.background = `linear-gradient(180deg, ${finalHex} 0%, ${finalHex} 100%)`;
+        if(!legacyOk && !hashOk){
+          logLogin("Senha incorreta.");
+          return;
         }
+
+        if(data.is_disabled){
+          logLogin("Conta desativada.");
+          return;
+        }
+
+        if(data.expires_at && new Date() > new Date(data.expires_at)){
+          logLogin("Conta expirada.");
+          return;
+        }
+
+        currentUser = {
+          id: data.id,
+          username: data.username,
+          type: String(data.type || "HG").toUpperCase(),
+          expires_at: data.expires_at,
+          is_disabled: data.is_disabled
+        };
+
+        animateLoginToPanel("loginScreen", "panelScreen", "bgFlash");
+        applyPanelTheme(currentUser.type);
+        refreshCodes();
+        updateUserStatusFromDb();
+        startTimer();
+
+      }catch(e){
+        logLogin("Erro geral:\n" + String(e));
+      }
+    }
+
+    function animateLoginToPanel(loginId, panelId, flashId){
+      const login = document.getElementById(loginId);
+      const panel = document.getElementById(panelId);
+      const flash = document.getElementById(flashId);
+
+      flash.classList.add("show");
+      login.classList.add("hide");
+
+      setTimeout(() => {
+        panel.classList.remove("hidden");
+        panel.classList.add("show");
+      }, 220);
+
+      setTimeout(() => {
+        login.classList.add("hidden");
+        flash.classList.remove("show");
+      }, 560);
+    }
+
+    function logout(){
+      currentUser = null;
+      currentPreview = "";
+      currentView = "criar";
+      document.getElementById("keyBox").textContent = "";
+      document.getElementById("panelScreen").classList.add("hidden");
+      document.getElementById("panelScreen").classList.remove("show");
+      document.getElementById("loginScreen").classList.remove("hidden");
+      document.getElementById("loginScreen").classList.remove("hide");
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      logLogin("Aguardando ação...");
+      closeProfilePopup(true);
+      if(timerInterval) clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    // ===== TEMA / TITULOS =====
+    function getDisplayTitle(type){
+      if(type === "HG") return "HG MENU";
+      if(type === "DRIP") return "DRIP CLIENT";
+      if(type === "KING") return "KING CHEATS";
+      if(type === "MIX") return "MIX MENU";
+      return "PAINEL";
+    }
+
+    function getThemeClass(type){
+      if(type === "HG") return "theme-hg";
+      if(type === "DRIP") return "theme-drip";
+      if(type === "KING") return "theme-king";
+      if(type === "MIX") return "theme-mix";
+      return "theme-hg";
+    }
+
+    function getGenerateBtnClass(type){
+      if(type === "HG") return "theme-btn-hg";
+      if(type === "DRIP") return "theme-btn-drip";
+      if(type === "KING") return "theme-btn-king";
+      if(type === "MIX") return "theme-btn-mix";
+      return "theme-btn-hg";
+    }
+
+    function getAvatarLetter(type){
+      if(type === "HG") return "H";
+      if(type === "DRIP") return "D";
+      if(type === "KING") return "K";
+      if(type === "MIX") return "M";
+      return "P";
+    }
+
+    function applyPanelTheme(type){
+      const panelTop = document.getElementById("panelTop");
+      panelTop.className = "panel-top " + getThemeClass(type);
+
+      document.getElementById("mainTitle").textContent = getDisplayTitle(type);
+      document.getElementById("profilePanel").textContent = getDisplayTitle(type);
+      document.getElementById("popupPanel").textContent = getDisplayTitle(type);
+      document.getElementById("mainAvatar").textContent = getAvatarLetter(type);
+      document.getElementById("mainBanner").textContent = type === "MIX" ? "Painel misto do cliente" : "Painel do cliente";
+
+      const generateBtn = document.getElementById("generateBtn");
+      generateBtn.className = "btn " + getGenerateBtnClass(type);
+
+      const mixField = document.getElementById("mixGeneratorField");
+      if(type === "MIX"){
+        mixField.classList.remove("hidden");
+      } else {
+        mixField.classList.add("hidden");
       }
 
-      animFrame = requestAnimationFrame(draw);
+      document.getElementById("popupUser").textContent = currentUser.username;
     }
 
-    async function accountExpiresAt(account){
-      if (!account) return null;
-      if (account.expires_at) return new Date(account.expires_at);
-      return null;
+    // ===== POPUP PERFIL =====
+    function toggleProfilePopup(){
+      const popup = document.getElementById("profilePopup");
+      if(popup.classList.contains("hidden")){
+        popup.classList.remove("hidden");
+        requestAnimationFrame(() => {
+          popup.classList.add("show");
+          popup.classList.remove("closing");
+        });
+      } else {
+        closeProfilePopup();
+      }
     }
 
-    async function getAccountState(account){
-      if (!account) return "deleted";
-      if (account.is_disabled) return "disabled";
-      const expires = await accountExpiresAt(account);
-      if (!expires) return "active";
-      return new Date() > expires ? "expired" : "active";
+    function closeProfilePopup(force = false){
+      const popup = document.getElementById("profilePopup");
+      if(force){
+        popup.classList.add("hidden");
+        popup.classList.remove("show","closing");
+        return;
+      }
+      popup.classList.remove("show");
+      popup.classList.add("closing");
+      setTimeout(() => {
+        popup.classList.add("hidden");
+        popup.classList.remove("closing");
+      }, 180);
     }
 
+    // ===== PAINEL INTERNO =====
     function getCodesStorageKey(){
-      if (!currentUser) return "codes_default";
-      return "codes_" + normalize(currentUser.username || currentUser.userCode) + "_" + currentUser.panelType.toLowerCase();
+      if(!currentUser) return "keysync_codes_default";
+      return "keysync_codes_" + normalize(currentUser.username) + "_" + currentUser.type;
     }
 
     function getCodes(){
       const raw = localStorage.getItem(getCodesStorageKey());
-      if (!raw) return [];
-      try{
-        return JSON.parse(raw);
-      }catch{
-        return [];
-      }
+      if(!raw) return [];
+      try { return JSON.parse(raw); } catch { return []; }
     }
 
     function setCodes(codes){
       localStorage.setItem(getCodesStorageKey(), JSON.stringify(codes));
     }
 
-    function separateCodes(){
-      const now = new Date();
-      const codes = getCodes();
-      let changed = false;
-
-      codes.forEach(c => {
-        if (c.status === "valid" && !c.permanent && c.expiresAt && new Date(c.expiresAt) <= now){
-          c.status = "invalid";
-          c.reason = "EXPIRADO";
-          changed = true;
-        }
-      });
-
-      if (changed) setCodes(codes);
-
-      return {
-        valid: codes.filter(c => c.status === "valid"),
-        invalid: codes.filter(c => c.status === "invalid")
-      };
-    }
-
-    function canGenerate(){
-      return currentUser && currentUser.accessState === "active";
-    }
-
-    function getCurrentGeneratorMode(){
-      if (!currentUser) return "HG";
-      if (currentUser.panelType === "MIX"){
-        const el = document.getElementById("generatorMode");
-        return el ? el.value : "HG";
+    function rand(chars, size){
+      let r = "";
+      for(let i = 0; i < size; i++){
+        r += chars[Math.floor(Math.random() * chars.length)];
       }
-      return currentUser.panelType;
+      return r;
     }
 
-    function buildDurationOptions(){
-      const mode = getCurrentGeneratorMode();
-      if (mode === "DRIP"){
-        return `
-          <option value="1">1 DIA</option>
-          <option value="7">7 DIAS</option>
-          <option value="30">30 DIAS</option>
-        `;
+    function gerarKeyHG(){
+      return "HG-" + rand("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
+    }
+
+    function gerarKeyDRIP(){
+      return rand("0123456789", 10);
+    }
+
+    function gerarKeyKING(){
+      return "King_Cheats_" + rand("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 9);
+    }
+
+    function getGeneratorType(){
+      if(!currentUser) return "HG";
+      if(currentUser.type === "MIX"){
+        return document.getElementById("mixGenerator").value;
       }
-
-      return `
-        <option value="1">1 DIA</option>
-        <option value="7">7 DIAS</option>
-        <option value="10">10 DIAS</option>
-        <option value="30">30 DIAS</option>
-        <option value="permanente">PERMANENTE</option>
-      `;
-    }
-
-    function buildUserViews(){
-      const isMix = currentUser.panelType === "MIX";
-
-      return {
-        criar: `
-          <div class="panel-title">Criar código</div>
-          <div class="field ${isMix ? "" : "hidden"}">
-            <label for="generatorMode">Gerador</label>
-            <select id="generatorMode" onchange="clearPreview(); updateCreateView()">
-              <option value="HG">HG</option>
-              <option value="DRIP">DRIP</option>
-            </select>
-          </div>
-          <div class="key-box" id="keyPreview"></div>
-          <div class="field">
-            <label for="codeDuration">Duração</label>
-            <select id="codeDuration">${buildDurationOptions()}</select>
-          </div>
-          <div class="btn-row">
-            <button class="btn btn-primary" onclick="generateCode()">Gerar</button>
-            <button class="btn btn-secondary" onclick="copyCode()">Copiar</button>
-          </div>
-          <div style="margin-top:10px">
-            <button class="btn btn-success" onclick="saveCode()">Salvar código</button>
-          </div>
-        `,
-        validas: `
-          <div class="panel-title">Códigos válidos</div>
-          <div class="field">
-            <input type="text" id="searchValid" placeholder="Buscar código..." oninput="renderCodesLists()">
-          </div>
-          <div class="list" id="validList"></div>
-        `,
-        invalidas: `
-          <div class="panel-title">Códigos inválidos</div>
-          <div class="field">
-            <input type="text" id="searchInvalid" placeholder="Buscar código..." oninput="renderCodesLists()">
-          </div>
-          <div class="list" id="invalidList"></div>
-        `,
-        perfil: `
-          <div class="panel-title">Perfil</div>
-          <div style="display:flex;justify-content:center;margin-bottom:14px;">
-            <div class="avatar" style="width:72px;height:72px;cursor:default;">
-              <img id="profileAvatarImg" class="avatar-img hidden" alt="Avatar">
-              <span id="profileAvatarLetter">${currentUser.avatarBadge}</span>
-            </div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-grid">
-              <div class="mini-box"><small>Resumo</small><strong>ATIVA</strong></div>
-              <div class="mini-box"><small>Usuário</small><strong>${(currentUser.username || currentUser.userCode).toUpperCase()}</strong></div>
-              <div class="mini-box"><small>Status</small><strong>${currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO"}</strong></div>
-            </div>
-          </div>
-        `
-      };
-    }
-
-    function buildDevViews(){
-      return {
-        usuarios: `
-          <div class="panel-title">Usuários cadastrados</div>
-          <div class="field">
-            <input type="text" id="searchUsers" placeholder="Buscar usuário..." oninput="renderDevUsers()">
-          </div>
-          <div class="list" id="usersList"></div>
-        `,
-        perfil: `
-          <div class="panel-title">Perfil</div>
-          <div class="summary-card">
-            <div class="summary-grid">
-              <div class="mini-box"><small>Admin</small><strong>DEV</strong></div>
-              <div class="mini-box"><small>Status</small><strong>ONLINE</strong></div>
-              <div class="mini-box"><small>Painel</small><strong>DEVELOPMENT</strong></div>
-            </div>
-          </div>
-        `,
-        novo: `
-          <div class="panel-title">${editingUserId ? "Editar usuário" : "Novo usuário"}</div>
-          <div class="field">
-            <label for="newUsername">Nome de usuário</label>
-            <input type="text" id="newUsername" placeholder="Ex: cliente01">
-          </div>
-          <div class="field">
-            <label for="newPassword">Senha</label>
-            <input type="password" id="newPassword" placeholder="${editingUserId ? "Deixe vazio para manter" : "Ex: cliente01"}">
-          </div>
-          <div class="field">
-            <label for="newType">Tipo de painel</label>
-            <select id="newType">
-              <option value="HG">HG</option>
-              <option value="DRIP">DRIP</option>
-              <option value="MIX">MIX</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="newValidity">Validade</label>
-            <select id="newValidity">
-              <option value="1">1 DIA</option>
-              <option value="7">7 DIAS</option>
-              <option value="30">30 DIAS</option>
-              <option value="permanente">PERMANENTE</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="newAvatarFile">Foto de perfil</label>
-            <input type="file" id="newAvatarFile" accept="image/*" onchange="handleAvatarUpload(event)">
-          </div>
-          <div class="field">
-            <label>Prévia</label>
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div id="avatarPreviewBox" class="mini-avatar">
-                <img id="avatarPreviewImg" style="display:none;" alt="Prévia">
-                <span id="avatarPreviewLetter">IMG</span>
-              </div>
-              <button type="button" class="btn btn-secondary" style="width:auto;padding:12px 16px;" onclick="clearAvatarFile()">Remover</button>
-            </div>
-          </div>
-          <div class="form-actions">
-            <button class="btn btn-primary" onclick="saveDevUser()">${editingUserId ? "Salvar edição" : "Salvar"}</button>
-            <button class="btn btn-secondary" onclick="clearDevForm()">Limpar</button>
-          </div>
-        `
-      };
-    }
-
-    function buildTabsAndNav(){
-      const tabs = document.getElementById("mainTabs");
-      const nav = document.getElementById("bottomNav");
-
-      if (currentUser.isDev){
-        tabs.className = "tabs tabs-3";
-        tabs.innerHTML = `
-          <span id="tab-usuarios" class="active-tab" onclick="showMainView('usuarios')">Usuários</span>
-          <span id="tab-perfil" onclick="showMainView('perfil')">Perfil</span>
-          <span id="tab-novo" onclick="showMainView('novo')">Novo</span>
-        `;
-        nav.innerHTML = `
-          <div class="nav-item active" id="nav-usuarios" onclick="showMainView('usuarios')"><span class="icon">☰</span>Usuários</div>
-          <div class="nav-item" id="nav-perfil" onclick="showMainView('perfil')"><span class="icon">◉</span>Perfil</div>
-          <div class="nav-item" id="nav-novo" onclick="showMainView('novo')"><span class="icon">＋</span>Novo</div>
-        `;
-      } else {
-        tabs.className = "tabs";
-        tabs.innerHTML = `
-          <span id="tab-criar" class="active-tab" onclick="showMainView('criar')">Criar</span>
-          <span id="tab-validas" onclick="showMainView('validas')">Válidas</span>
-          <span id="tab-invalidas" onclick="showMainView('invalidas')">Inválidas</span>
-          <span id="tab-perfil" onclick="showMainView('perfil')">Perfil</span>
-        `;
-        nav.innerHTML = `
-          <div class="nav-item active" id="nav-criar" onclick="showMainView('criar')"><span class="icon">＋</span>Criar</div>
-          <div class="nav-item" id="nav-validas" onclick="showMainView('validas')"><span class="icon">☰</span>Válidas</div>
-          <div class="nav-item" id="nav-invalidas" onclick="showMainView('invalidas')"><span class="icon">⌕</span>Inválidas</div>
-          <div class="nav-item" id="nav-perfil" onclick="showMainView('perfil')"><span class="icon">◉</span>Perfil</div>
-        `;
-      }
-    }
-
-    function clearTabsNav(keys){
-      keys.forEach(k => {
-        document.getElementById("tab-" + k)?.classList.remove("active-tab");
-        document.getElementById("nav-" + k)?.classList.remove("active");
-      });
-    }
-
-    function instantShowView(view){
-      const stack = document.getElementById("viewStack");
-      const views = currentUser.isDev ? buildDevViews() : buildUserViews();
-
-      stack.innerHTML = Object.keys(views)
-        .map(k => `<div id="view-${k}" class="view hidden">${views[k]}</div>`)
-        .join("");
-
-      document.getElementById("view-" + view).classList.remove("hidden");
-      currentView = view;
-
-      clearTabsNav(Object.keys(views));
-      document.getElementById("tab-" + view)?.classList.add("active-tab");
-      document.getElementById("nav-" + view)?.classList.add("active");
-
-      const panel = document.getElementById("mainPanel");
-      panel.classList.remove("create-panel-active");
-      if (currentUser.isDev && view === "novo") panel.classList.add("create-panel-active");
-
-      if (currentUser.isDev){
-        renderDevUsers();
-        if (view === "novo") fillDevFormIfEditing();
-      } else {
-        renderCodesLists();
-        updateCreateView();
-      }
-
-      updateHeader();
-    }
-
-    function showMainView(view){
-      if (view === currentView) return;
-
-      const views = currentUser.isDev
-        ? ["usuarios","perfil","novo"]
-        : ["criar","validas","invalidas","perfil"];
-
-      const currentEl = document.getElementById("view-" + currentView);
-      const nextEl = document.getElementById("view-" + view);
-      const forward = views.indexOf(view) > views.indexOf(currentView);
-
-      currentEl.classList.remove("hidden","anim-enter-right","anim-enter-left","anim-exit-left","anim-exit-right","full-create-mode");
-      nextEl.classList.remove("hidden","anim-enter-right","anim-enter-left","anim-exit-left","anim-exit-right","full-create-mode");
-
-      currentEl.classList.add(forward ? "anim-exit-left" : "anim-exit-right");
-      nextEl.classList.add(forward ? "anim-enter-right" : "anim-enter-left");
-      nextEl.classList.remove("hidden");
-
-      setTimeout(() => {
-        currentEl.classList.add("hidden");
-        currentEl.classList.remove("anim-exit-left","anim-exit-right");
-        nextEl.classList.remove("anim-enter-right","anim-enter-left");
-
-        const panel = document.getElementById("mainPanel");
-        panel.classList.remove("create-panel-active");
-
-        if (currentUser.isDev && view === "novo"){
-          panel.classList.add("create-panel-active");
-          nextEl.classList.add("full-create-mode");
-        }
-      }, 220);
-
-      currentView = view;
-      clearTabsNav(views);
-      document.getElementById("tab-" + view)?.classList.add("active-tab");
-      document.getElementById("nav-" + view)?.classList.add("active");
-
-      if (currentUser.isDev){
-        renderDevUsers();
-        if (view === "novo") setTimeout(fillDevFormIfEditing, 50);
-      } else {
-        renderCodesLists();
-        updateCreateView();
-      }
-
-      updateHeader();
-    }
-
-    function setAvatarVisual(imgEl, letterEl, avatar, letter){
-      if (!imgEl || !letterEl) return;
-
-      letterEl.textContent = letter;
-
-      if (avatar && avatar.trim() !== ""){
-        imgEl.src = avatar;
-        imgEl.classList.remove("hidden");
-        letterEl.classList.add("hidden");
-      } else {
-        imgEl.src = "";
-        imgEl.classList.add("hidden");
-        letterEl.classList.remove("hidden");
-      }
-    }
-
-    function updateHeader(){
-      const userLabel = (currentUser.username || currentUser.userCode).toUpperCase();
-
-      document.getElementById("mainTitle").textContent = currentUser.title;
-      document.getElementById("mainSubtitle").textContent = currentUser.isDev ? "Painel administrativo" : "Painel ativo";
-      document.getElementById("popupUser").textContent = userLabel;
-      document.getElementById("popupStatus").textContent = currentUser.accessState === "active" ? "ONLINE" : currentUser.accessState === "expired" ? "EXPIRADO" : "DESATIVADO";
-      document.getElementById("mainBanner").textContent = currentUser.isDev
-        ? "Modo desenvolvedor • acesso restrito"
-        : (currentUser.panelType === "MIX" ? "Painel misto do cliente" : "Painel do cliente");
-
-      setAvatarVisual(
-        document.getElementById("mainAvatarImg"),
-        document.getElementById("mainAvatarLetter"),
-        currentUser.avatar || "",
-        currentUser.avatarBadge
-      );
-
-      const pImg = document.getElementById("profileAvatarImg");
-      const pLetter = document.getElementById("profileAvatarLetter");
-      if (pImg && pLetter){
-        setAvatarVisual(pImg, pLetter, currentUser.avatar || "", currentUser.avatarBadge);
-      }
-
-      const themeKey = currentUser.isDev ? "dev" : getThemeKeyByPanelType(currentUser.panelType);
-      document.getElementById("topArea").style.background = THEMES[themeKey].topBg;
-
-      if (currentUser.isDev){
-        const list = window.cachedDbUsers || [];
-        const hg = list.filter(u => u.type === "HG").length;
-        const drip = list.filter(u => u.type === "DRIP").length;
-        const mix = list.filter(u => u.type === "MIX" || u.type === "MISTO").length;
-        const typeCount = (hg ? 1 : 0) + (drip ? 1 : 0) + (mix ? 1 : 0) + 1;
-
-        document.getElementById("statLabel1").textContent = "Usuários";
-        document.getElementById("statValue1").textContent = list.length;
-        document.getElementById("statSub1").textContent = "Contas cadastradas";
-
-        document.getElementById("statLabel2").textContent = "Tipos";
-        document.getElementById("statValue2").textContent = typeCount;
-        document.getElementById("statSub2").textContent = "HG, DRIP, MIX e DEV";
-      } else {
-        const lists = separateCodes();
-
-        document.getElementById("statLabel1").textContent = "Códigos válidos";
-        document.getElementById("statValue1").textContent = lists.valid.length;
-        document.getElementById("statSub1").textContent = "Ativos";
-
-        document.getElementById("statLabel2").textContent = "Códigos inválidos";
-        document.getElementById("statValue2").textContent = lists.invalid.length;
-        document.getElementById("statSub2").textContent = "Expirados";
-      }
-
-      const warning = document.getElementById("accessWarning");
-      warning.classList.add("hidden");
-
-      if (!currentUser.isDev && currentUser.accessState === "expired"){
-        warning.innerHTML = "ACESSO EXPIRADO<br>VOCÊ NÃO PODE GERAR CÓDIGOS";
-        warning.classList.remove("hidden");
-      }
-
-      if (!currentUser.isDev && currentUser.accessState === "disabled"){
-        warning.innerHTML = "ACESSO DESATIVADO<br>ESTA CONTA FOI DESABILITADA PELO ADMIN";
-        warning.classList.remove("hidden");
-      }
-    }
-
-    function updateCreateView(){
-      if (currentUser.isDev) return;
-      const keyPreview = document.getElementById("keyPreview");
-      if (!keyPreview) return;
-
-      const duration = document.getElementById("codeDuration");
-      if (duration) duration.innerHTML = buildDurationOptions();
-
-      if (!currentPreview) keyPreview.textContent = "";
+      return currentUser.type;
     }
 
     function clearPreview(){
       currentPreview = "";
-      const keyBox = document.getElementById("keyPreview");
-      if (keyBox){
-        keyBox.classList.remove("warning-state","glow");
-        keyBox.textContent = "";
-      }
+      document.getElementById("keyBox").textContent = "";
     }
 
     function pulseKeyBox(){
-      const keyBox = document.getElementById("keyPreview");
-      if (!keyBox) return;
-      keyBox.classList.remove("glow");
-      void keyBox.offsetWidth;
-      keyBox.classList.add("glow");
-      setTimeout(() => keyBox.classList.remove("glow"), 260);
+      const box = document.getElementById("keyBox");
+      box.classList.remove("glow","fade-refresh");
+      void box.offsetWidth;
+      box.classList.add("fade-refresh","glow");
+      setTimeout(() => {
+        box.classList.remove("glow");
+      }, 260);
     }
 
-    function doGenerateCode(mode){
-      if (mode === "DRIP"){
-        return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-      }
+    async function updateUserStatusFromDb(){
+      if(!currentUser) return;
 
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let r = "";
-      for (let i = 0; i < 6; i++){
-        r += chars[Math.floor(Math.random() * chars.length)];
+      const { data } = await supa
+        .from("users")
+        .select("expires_at, is_disabled, type")
+        .eq("username", currentUser.username)
+        .maybeSingle();
+
+      if(data){
+        currentUser.expires_at = data.expires_at;
+        currentUser.is_disabled = data.is_disabled;
+        currentUser.type = String(data.type || currentUser.type).toUpperCase();
       }
-      return "HG-" + r;
     }
 
-    function generateCode(){
-      const keyBox = document.getElementById("keyPreview");
+    function canGenerate(){
+      if(!currentUser) return false;
+      if(currentUser.is_disabled) return false;
+      if(currentUser.expires_at && new Date() > new Date(currentUser.expires_at)) return false;
+      return true;
+    }
 
-      if (!canGenerate()){
-        keyBox.classList.add("warning-state");
-        keyBox.textContent = currentUser.accessState === "disabled" ? "ACESSO DESATIVADO" : "ACESSO EXPIRADO";
+    function generateKey(){
+      if(!canGenerate()){
+        document.getElementById("keyBox").textContent = currentUser.is_disabled ? "ACESSO DESATIVADO" : "ACESSO EXPIRADO";
         pulseKeyBox();
         return;
       }
 
-      const mode = getCurrentGeneratorMode();
-      currentPreview = doGenerateCode(mode);
-      keyBox.classList.remove("warning-state");
-      keyBox.textContent = currentPreview;
+      const generatorType = getGeneratorType();
+
+      if(generatorType === "HG") currentPreview = gerarKeyHG();
+      if(generatorType === "DRIP") currentPreview = gerarKeyDRIP();
+      if(generatorType === "KING") currentPreview = gerarKeyKING();
+
+      document.getElementById("keyBox").textContent = currentPreview;
       pulseKeyBox();
     }
 
-    function copyCode(){
-      if (!currentPreview){
-        alert("GERE UM CÓDIGO PRIMEIRO.");
+    function copyKey(){
+      if(!currentPreview){
+        alert("Gere um código primeiro.");
         return;
       }
-
       navigator.clipboard.writeText(currentPreview).then(() => {
-        alert("CÓDIGO COPIADO.");
+        alert("Código copiado.");
       });
     }
 
-    function saveCode(){
-      if (!currentPreview){
-        alert("GERE UM CÓDIGO PRIMEIRO.");
+    function saveKey(){
+      if(!canGenerate()){
+        alert(currentUser.is_disabled ? "Conta desativada." : "Conta expirada.");
         return;
       }
 
-      const duration = document.getElementById("codeDuration").value;
-      const mode = getCurrentGeneratorMode();
+      if(!currentPreview){
+        alert("Gere um código primeiro.");
+        return;
+      }
+
+      const duration = document.getElementById("duration").value;
       const now = new Date();
       let expiresAt = null;
       let permanent = false;
 
-      if (duration === "permanente"){
+      if(duration === "permanente"){
         permanent = true;
       } else {
         const dt = new Date();
@@ -1733,8 +1427,8 @@
       const codes = getCodes();
       codes.push({
         id: Date.now().toString() + Math.random().toString(36).slice(2,7),
-        mode,
         code: currentPreview,
+        generator: getGeneratorType(),
         duration,
         createdAt: now.toISOString(),
         expiresAt,
@@ -1745,62 +1439,53 @@
 
       setCodes(codes);
       clearPreview();
-      updateHeader();
-      renderCodesLists();
-      alert("CÓDIGO SALVO.");
+      refreshCodes();
+      alert("Código salvo.");
     }
 
-    function renderCodesLists(){
-      if (currentUser.isDev) return;
+    function refreshCodes(){
+      const now = new Date();
+      const codes = getCodes();
 
-      const lists = separateCodes();
-      const validWrap = document.getElementById("validList");
-      const invalidWrap = document.getElementById("invalidList");
-      if (!validWrap || !invalidWrap) return;
+      codes.forEach(code => {
+        if(code.status === "valid" && !code.permanent && code.expiresAt && new Date(code.expiresAt) <= now){
+          code.status = "invalid";
+          code.reason = "EXPIRADO";
+        }
+      });
 
-      const validTerm = normalize(document.getElementById("searchValid")?.value || "");
-      const invalidTerm = normalize(document.getElementById("searchInvalid")?.value || "");
+      setCodes(codes);
 
-      const validItems = lists.valid.filter(c =>
-        !validTerm ||
-        c.code.toLowerCase().includes(validTerm) ||
-        c.mode.toLowerCase().includes(validTerm)
-      );
+      const valid = codes.filter(c => c.status === "valid");
+      const invalid = codes.filter(c => c.status === "invalid");
 
-      const invalidItems = lists.invalid.filter(c =>
-        !invalidTerm ||
-        c.code.toLowerCase().includes(invalidTerm) ||
-        (c.reason || "").toLowerCase().includes(invalidTerm)
-      );
+      document.getElementById("validCount").textContent = valid.length;
+      document.getElementById("invalidCount").textContent = invalid.length;
 
-      validWrap.innerHTML = validItems.length
-        ? validItems.map(c => `
+      document.getElementById("validList").innerHTML = valid.length
+        ? valid.map(c => `
           <div class="item">
             <div class="code">${c.code}</div>
             <div class="meta">
-              GERADOR: ${c.mode}<br>
-              DURAÇÃO: ${fmtDuration(c.duration)}<br>
-              CRIADO EM: ${fmtDate(c.createdAt)}<br>
-              VALIDADE: ${c.permanent ? "PERMANENTE" : fmtDate(c.expiresAt)}<br>
+              GERADOR: ${c.generator}<br>
+              DURAÇÃO: ${c.permanent ? "PERMANENTE" : c.duration + " DIA(S)"}<br>
+              CRIADO EM: ${new Date(c.createdAt).toLocaleString("pt-BR")}<br>
+              VALIDADE: ${c.permanent ? "PERMANENTE" : new Date(c.expiresAt).toLocaleString("pt-BR")}<br>
               STATUS: VÁLIDO
-            </div>
-            <div class="item-actions">
-              <button class="btn btn-danger" onclick="disableCode('${c.id}')">Desativar</button>
-              <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('${c.code}')">Copiar</button>
             </div>
           </div>
         `).join("")
         : `<div class="empty">Nenhum código válido.</div>`;
 
-      invalidWrap.innerHTML = invalidItems.length
-        ? invalidItems.map(c => `
+      document.getElementById("invalidList").innerHTML = invalid.length
+        ? invalid.map(c => `
           <div class="item">
             <div class="code">${c.code}</div>
             <div class="meta">
-              GERADOR: ${c.mode}<br>
-              DURAÇÃO: ${fmtDuration(c.duration)}<br>
-              CRIADO EM: ${fmtDate(c.createdAt)}<br>
-              VALIDADE: ${c.permanent ? "PERMANENTE" : fmtDate(c.expiresAt)}<br>
+              GERADOR: ${c.generator}<br>
+              DURAÇÃO: ${c.permanent ? "PERMANENTE" : c.duration + " DIA(S)"}<br>
+              CRIADO EM: ${new Date(c.createdAt).toLocaleString("pt-BR")}<br>
+              VALIDADE: ${c.permanent ? "PERMANENTE" : new Date(c.expiresAt).toLocaleString("pt-BR")}<br>
               STATUS: INVÁLIDO<br>
               MOTIVO: ${c.reason || "NÃO DEFINIDO"}
             </div>
@@ -1809,526 +1494,200 @@
         : `<div class="empty">Nenhum código inválido.</div>`;
     }
 
-    function disableCode(id){
-      const codes = getCodes();
-      const item = codes.find(c => c.id === id);
-      if (!item) return;
-      item.status = "invalid";
-      item.reason = "DESATIVADO MANUALMENTE";
-      setCodes(codes);
-      updateHeader();
-      renderCodesLists();
+    // ===== TIMER / PERFIL =====
+    function formatRemaining(ms){
+      if(ms <= 0) return "EXPIRADO";
+      const totalSeconds = Math.floor(ms / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      return `${days} DIAS • ${hours} HORAS • ${minutes} MIN`;
     }
 
-    function updateAvatarPreview(src){
-      const img = document.getElementById("avatarPreviewImg");
-      const letter = document.getElementById("avatarPreviewLetter");
-      if (!img || !letter) return;
+    function updateTimer(){
+      if(!currentUser) return;
 
-      if (src){
-        img.src = src;
-        img.style.display = "block";
-        letter.style.display = "none";
-      } else {
-        img.src = "";
-        img.style.display = "none";
-        letter.style.display = "block";
-      }
-    }
+      const timerValue = document.getElementById("timerValue");
+      const timerDate = document.getElementById("timerDate");
+      const profileStatus = document.getElementById("profileStatus");
+      const popupStatus = document.getElementById("popupStatus");
+      const popupTimer = document.getElementById("popupTimer");
+      const popupExpire = document.getElementById("popupExpire");
 
-    function handleAvatarUpload(event){
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-
-      if (!file.type.startsWith("image/")){
-        alert("SELECIONE UMA IMAGEM.");
-        event.target.value = "";
+      if(currentUser.is_disabled){
+        timerValue.textContent = "DESATIVADO";
+        timerDate.textContent = "EXPIRA EM: -";
+        profileStatus.textContent = "DESATIVADO";
+        popupStatus.textContent = "DESATIVADO";
+        popupTimer.textContent = "DESATIVADO";
+        popupExpire.textContent = "-";
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = e => {
-        uploadedAvatarBase64 = e.target.result || "";
-        updateAvatarPreview(uploadedAvatarBase64);
-      };
-      reader.readAsDataURL(file);
+      if(!currentUser.expires_at){
+        timerValue.textContent = "PERMANENTE";
+        timerDate.textContent = "EXPIRA EM: PERMANENTE";
+        profileStatus.textContent = "ATIVO";
+        popupStatus.textContent = "ATIVO";
+        popupTimer.textContent = "PERMANENTE";
+        popupExpire.textContent = "PERMANENTE";
+        return;
+      }
+
+      const expires = new Date(currentUser.expires_at);
+      const now = new Date();
+      const diff = expires - now;
+
+      if(diff <= 0){
+        timerValue.textContent = "EXPIRADO";
+        timerDate.textContent = "EXPIRA EM: " + expires.toLocaleString("pt-BR");
+        profileStatus.textContent = "EXPIRADO";
+        popupStatus.textContent = "EXPIRADO";
+        popupTimer.textContent = "EXPIRADO";
+        popupExpire.textContent = expires.toLocaleString("pt-BR");
+      } else {
+        const remaining = formatRemaining(diff);
+        timerValue.textContent = remaining;
+        timerDate.textContent = "EXPIRA EM: " + expires.toLocaleString("pt-BR");
+        profileStatus.textContent = diff <= 86400000 ? "EXPIRANDO" : "ATIVO";
+        popupStatus.textContent = diff <= 86400000 ? "EXPIRANDO" : "ATIVO";
+        popupTimer.textContent = remaining;
+        popupExpire.textContent = expires.toLocaleString("pt-BR");
+      }
     }
 
-    function clearAvatarFile(){
-      uploadedAvatarBase64 = "";
-      const input = document.getElementById("newAvatarFile");
-      if (input) input.value = "";
-      updateAvatarPreview("");
+    function startTimer(){
+      if(timerInterval) clearInterval(timerInterval);
+      updateTimer();
+      timerInterval = setInterval(updateTimer, 1000);
     }
 
-    async function fetchDbUsers(){
-      const { data, error } = await supa
-        .from("users")
+    // ===== APLICAR OUTRA KEY =====
+    async function aplicarOutraKey(){
+      if(!currentUser) return;
+
+      const input = document.getElementById("extraKeyInput");
+      const accessKey = input.value.trim();
+
+      if(!accessKey){
+        alert("Digite uma key.");
+        return;
+      }
+
+      const { data: keyData, error: keyError } = await supa
+        .from("access_keys")
         .select("*")
-        .order("created_at", { ascending: false });
+        .eq("code", accessKey)
+        .maybeSingle();
 
-      if (error) throw error;
-      return data || [];
-    }
-
-    async function renderDevUsers(){
-      if (!currentUser.isDev) return;
-
-      const list = document.getElementById("usersList");
-      if (!list) return;
-
-      list.innerHTML = `<div class="empty">Carregando...</div>`;
-
-      try{
-        let users = await fetchDbUsers();
-        users = await Promise.all(
-          users.map(async u => ({ ...u, accessState: await getAccountState(u) }))
-        );
-
-        users = users.filter(u =>
-          u.accessState !== "deleted" &&
-          normalize(u.username) !== DEV_HTML_USER
-        );
-
-        window.cachedDbUsers = users;
-
-        const term = normalize(document.getElementById("searchUsers")?.value || "");
-        if (term){
-          users = users.filter(u =>
-            normalize(u.username).includes(term) ||
-            normalize(u.type).includes(term)
-          );
-        }
-
-        list.innerHTML = users.length
-          ? users.map(user => {
-              const expAt = user.expires_at ? new Date(user.expires_at) : null;
-              const stateText = user.accessState === "active"
-                ? "ATIVA"
-                : user.accessState === "expired"
-                  ? "EXPIRADA"
-                  : "DESATIVADA";
-
-              const avatarTxt = user.avatar ? "IMAGEM SALVA" : "NÃO DEFINIDO";
-
-              return `
-                <div class="item">
-                  <div class="code">${user.username}</div>
-                  <div class="meta">
-                    SENHA: •••••••<br>
-                    PAINEL: ${user.type}<br>
-                    VALIDADE: ${expAt ? fmtDate(expAt.toISOString()) : "PERMANENTE"}<br>
-                    STATUS: ${stateText}<br>
-                    CRIADA EM: ${user.created_at ? fmtDate(user.created_at) : "-"}<br>
-                    AVATAR: ${avatarTxt}
-                  </div>
-                  <div class="item-actions">
-                    <button class="btn btn-secondary" onclick="editDevUser('${user.id}')">Editar</button>
-                    <button class="btn ${user.is_disabled ? 'btn-success' : 'btn-warning'}" onclick="toggleDisableDevUser('${user.id}', ${user.is_disabled ? 'true' : 'false'})">
-                      ${user.is_disabled ? 'Reativar' : 'Desativar'}
-                    </button>
-                  </div>
-                  <div class="item-actions">
-                    <button class="btn btn-danger" onclick="removeDevUser('${user.id}')">Remover</button>
-                    <button class="btn btn-primary" onclick="renewDevUser('${user.id}')">Renovar</button>
-                  </div>
-                </div>
-              `;
-            }).join("")
-          : `<div class="empty">Nenhum usuário encontrado.</div>`;
-      } catch (e){
-        list.innerHTML = `<div class="empty">Erro ao carregar usuários do banco.</div>`;
-      }
-
-      updateHeader();
-    }
-
-    function clearDevForm(){
-      editingUserId = null;
-      editingSnapshot = null;
-
-      ["newUsername","newPassword"].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = "";
-      });
-
-      if (document.getElementById("newType")) document.getElementById("newType").value = "HG";
-      if (document.getElementById("newValidity")) document.getElementById("newValidity").value = "1";
-
-      clearAvatarFile();
-
-      if (currentUser?.isDev && currentView === "novo"){
-        instantShowView("novo");
-      }
-    }
-
-    function fillDevFormIfEditing(){
-      if (!editingUserId || !editingSnapshot) return;
-
-      document.getElementById("newUsername").value = editingSnapshot.username || "";
-      document.getElementById("newPassword").value = "";
-      document.getElementById("newType").value = editingSnapshot.type || "HG";
-
-      document.getElementById("newValidity").value = editingSnapshot.expires_at
-        ? (
-          Math.ceil((new Date(editingSnapshot.expires_at) - new Date()) / 86400000) <= 1
-            ? "1"
-            : Math.ceil((new Date(editingSnapshot.expires_at) - new Date()) / 86400000) <= 7
-              ? "7"
-              : "30"
-        )
-        : "permanente";
-
-      uploadedAvatarBase64 = editingSnapshot.avatar || "";
-      updateAvatarPreview(uploadedAvatarBase64);
-    }
-
-    async function saveDevUser(){
-      let username = document.getElementById("newUsername")?.value.trim();
-      const password = document.getElementById("newPassword")?.value.trim();
-      const type = document.getElementById("newType")?.value;
-      const validity = document.getElementById("newValidity")?.value;
-      const avatar = uploadedAvatarBase64 || "";
-
-      if (!username){
-        alert("PREENCHA NOME.");
+      if(keyError){
+        alert("Erro ao consultar key.");
         return;
       }
 
-      username = username.toLowerCase();
-
-      if (normalize(username) === DEV_HTML_USER || type === "DEV"){
-        alert("A CONTA DEV FICA SOMENTE NO HTML.");
+      if(!keyData){
+        alert("Key não encontrada.");
         return;
       }
 
-      const payload = {
-        username,
-        type,
-        avatar: avatar || null,
-        expires_at: validity === "permanente"
-          ? null
-          : new Date(Date.now() + parseInt(validity, 10) * 86400000).toISOString()
-      };
-
-      try{
-        if (password) payload.password_hash = await sha256(password);
-
-        if (editingUserId){
-          const { error } = await supa.from("users").update(payload).eq("id", editingUserId);
-          if (error) throw error;
-          alert("USUÁRIO EDITADO.");
-        } else {
-          if (!password){
-            alert("PREENCHA A SENHA.");
-            return;
-          }
-
-          const { error } = await supa.from("users").insert({
-            ...payload,
-            password: null,
-            is_disabled: false,
-            created_at: new Date().toISOString()
-          });
-
-          if (error) throw error;
-          alert("USUÁRIO ADICIONADO.");
-        }
-
-        clearDevForm();
-        renderDevUsers();
-      } catch (e){
-        alert("ERRO: " + (e.message || "Falha ao salvar"));
+      if(keyData.is_used){
+        alert("Essa key já foi utilizada.");
+        return;
       }
-    }
 
-    async function editDevUser(id){
-      try{
-        const { data, error } = await supa
-          .from("users")
-          .select("*")
-          .eq("id", id)
-          .maybeSingle();
-
-        if (error || !data) throw error || new Error("Usuário não encontrado");
-
-        editingUserId = id;
-        editingSnapshot = data;
-        showMainView("novo");
-      } catch (e){
-        alert("Erro ao carregar usuário.");
+      if(keyData.is_disabled){
+        alert("Essa key está desativada.");
+        return;
       }
-    }
 
-    async function removeDevUser(id){
-      if (!confirm("REMOVER ESTE USUÁRIO?")) return;
+      const currentType = String(currentUser.type).toUpperCase();
+      const keyType = String(keyData.panel_type || keyData.type || "").toUpperCase();
 
-      try{
-        const { error } = await supa.from("users").delete().eq("id", id);
-        if (error) throw error;
-
-        if (editingUserId === id) clearDevForm();
-
-        renderDevUsers();
-        alert("USUÁRIO REMOVIDO.");
-      } catch (e){
-        alert("Erro ao remover usuário.");
+      if(keyType !== currentType){
+        alert("Essa key não pertence a este painel.");
+        return;
       }
-    }
 
-    async function toggleDisableDevUser(id, currentDisabled){
-      try{
-        const { error } = await supa
-          .from("users")
-          .update({ is_disabled: !currentDisabled })
-          .eq("id", id);
+      let newExpiresAt = currentUser.expires_at ? new Date(currentUser.expires_at) : null;
+      const now = new Date();
 
-        if (error) throw error;
-
-        renderDevUsers();
-        alert(!currentDisabled ? "CONTA DESATIVADA." : "CONTA REATIVADA.");
-      } catch (e){
-        alert("Erro ao atualizar conta.");
-      }
-    }
-
-    async function renewDevUser(id){
-      try{
-        const { error } = await supa
-          .from("users")
-          .update({
-            created_at: new Date().toISOString(),
-            expires_at: new Date(Date.now() + 86400000).toISOString(),
-            is_disabled: false
-          })
-          .eq("id", id);
-
-        if (error) throw error;
-
-        renderDevUsers();
-        alert("CONTA RENOVADA PARA 1 DIA.");
-      } catch (e){
-        alert("Erro ao renovar conta.");
-      }
-    }
-
-    function toggleProfilePopup(){
-      const popup = document.getElementById("profilePopup");
-      if (popup.classList.contains("hidden")){
-        popup.classList.remove("hidden");
-        popup.classList.remove("closing");
+      if(keyData.is_permanent){
+        newExpiresAt = null;
       } else {
-        closeProfilePopup();
+        const addDays = Number(keyData.duration_days || 0);
+        if(!newExpiresAt || newExpiresAt < now){
+          newExpiresAt = new Date(now);
+        }
+        newExpiresAt.setDate(newExpiresAt.getDate() + addDays);
       }
-    }
 
-    function closeProfilePopup(force){
-      const popup = document.getElementById("profilePopup");
-      if (force){
-        popup.classList.add("hidden");
-        popup.classList.remove("closing");
+      const { error: updateUserError } = await supa
+        .from("users")
+        .update({
+          expires_at: newExpiresAt ? newExpiresAt.toISOString() : null
+        })
+        .eq("username", currentUser.username);
+
+      if(updateUserError){
+        alert("Erro ao atualizar conta.");
         return;
       }
 
-      popup.classList.remove("hidden");
-      popup.classList.add("closing");
+      const { error: updateKeyError } = await supa
+        .from("access_keys")
+        .update({
+          is_used: true,
+          used_by: currentUser.username
+        })
+        .eq("id", keyData.id);
+
+      if(updateKeyError){
+        alert("Conta atualizada, mas houve erro ao marcar a key.");
+        return;
+      }
+
+      currentUser.expires_at = newExpiresAt ? newExpiresAt.toISOString() : null;
+      input.value = "";
+      updateTimer();
+      alert("Key aplicada com sucesso.");
+    }
+
+    // ===== TROCA DE ABAS =====
+    function switchTab(nextView, button, order = ["criar","validas","invalidas","perfil"]){
+      if(nextView === currentView) return;
+
+      const currentEl = document.getElementById("view-" + currentView);
+      const nextEl = document.getElementById("view-" + nextView);
+      const forward = order.indexOf(nextView) > order.indexOf(currentView);
+
+      currentEl.classList.remove("hidden","anim-enter-right","anim-enter-left","anim-exit-left","anim-exit-right");
+      nextEl.classList.remove("hidden","anim-enter-right","anim-enter-left","anim-exit-left","anim-exit-right");
+
+      currentEl.classList.add(forward ? "anim-exit-left" : "anim-exit-right");
+      nextEl.classList.add(forward ? "anim-enter-right" : "anim-enter-left");
+      nextEl.classList.remove("hidden");
 
       setTimeout(() => {
-        popup.classList.add("hidden");
-        popup.classList.remove("closing");
-      }, 150);
+        currentEl.classList.add("hidden");
+        currentEl.classList.remove("anim-exit-left","anim-exit-right");
+        nextEl.classList.remove("anim-enter-right","anim-enter-left");
+      }, 220);
+
+      currentView = nextView;
+
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      button.classList.add("active");
+
+      document.querySelectorAll(".bottom-nav .nav-item").forEach(n => n.classList.remove("active"));
+      if(nextView === "criar") document.querySelectorAll(".bottom-nav .nav-item")[0].classList.add("active");
+      if(nextView === "validas") document.querySelectorAll(".bottom-nav .nav-item")[1].classList.add("active");
+      if(nextView === "invalidas") document.querySelectorAll(".bottom-nav .nav-item")[2].classList.add("active");
+      if(nextView === "perfil") document.querySelectorAll(".bottom-nav .nav-item")[3].classList.add("active");
     }
 
-    function openApp(themeKey, account){
-      setTheme(themeKey);
-      currentUser = account;
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("appScreen").classList.remove("hidden");
-      closeProfilePopup(true);
-      buildTabsAndNav();
-      instantShowView(currentUser.isDev ? "usuarios" : "criar");
-      updateHeader();
+    function triggerTab(index){
+      document.querySelectorAll(".tab")[index].click();
     }
-
-    function finalizarLogin(themeKey, account){
-      document.getElementById("welcomeOverlay").classList.remove("show");
-      openApp(themeKey, account);
-    }
-
-    async function createCurrentUserFromDb(row){
-      const type = row.type === "DRIP"
-        ? "DRIP"
-        : row.type === "MIX" || row.type === "MISTO"
-          ? "MIX"
-          : "HG";
-
-      const themeKey = type === "DRIP" ? "drip" : type === "MIX" ? "misto" : "hg";
-      const state = await getAccountState(row);
-
-      return {
-        themeKey,
-        user: {
-          isDev: false,
-          userCode: row.username,
-          username: row.username,
-          title: type === "MIX" ? "MISTO" : type,
-          panelType: type,
-          avatarBadge: type === "HG" ? "H" : type === "DRIP" ? "D" : "M",
-          avatar: row.avatar || "",
-          accessState: state,
-          id: row.id,
-          type,
-          expires_at: row.expires_at,
-          is_disabled: row.is_disabled
-        }
-      };
-    }
-
-    async function tryHtmlDevLogin(username, password){
-      if (username === DEV_HTML_USER && password === DEV_HTML_PASS){
-        return {
-          themeKey: "dev",
-          user: {
-            isDev: true,
-            userCode: DEV_HTML_USER,
-            username: DEV_HTML_USER,
-            title: "Development",
-            panelType: "DEV",
-            avatarBadge: "D",
-            avatar: "",
-            accessState: "active",
-            type: "DEV"
-          }
-        };
-      }
-      return null;
-    }
-
-    async function fazerLogin(){
-      clearLoginMessages();
-
-      const username = normalize(document.getElementById("username").value);
-      const password = document.getElementById("password").value.trim();
-
-      if (!username || !password){
-        showLoginError("PREENCHA USUÁRIO E SENHA");
-        return;
-      }
-
-      const htmlDev = await tryHtmlDevLogin(username, password);
-      if (htmlDev){
-        const theme = THEMES[htmlDev.themeKey];
-        document.getElementById("welcomeUser").textContent = htmlDev.user.username.toUpperCase();
-        document.getElementById("welcomePanel").textContent = "ENTRANDO EM DEV MENU...";
-        setAvatarVisual(
-          document.getElementById("welcomeAvatarImg"),
-          document.getElementById("welcomeAvatarLetter"),
-          "",
-          "D"
-        );
-        document.getElementById("loginWrap").classList.add("hide");
-        setTimeout(() => document.getElementById("welcomeOverlay").classList.add("show"), 500);
-        setTimeout(() => makeVirusAnimation(theme.color), 260);
-        setTimeout(() => finalizarLogin(htmlDev.themeKey, htmlDev.user), 5800);
-        return;
-      }
-
-      showLoginInfo("Verificando acesso no banco...");
-
-      try{
-        const { data, error } = await supa
-          .from("users")
-          .select("*")
-          .eq("username", username)
-          .maybeSingle();
-
-        if (error) throw error;
-
-        if (!data){
-          showLoginError("USUÁRIO OU SENHA INVÁLIDOS");
-          return;
-        }
-
-        const hash = await sha256(password);
-        const legacyOk = data.password && normalize(data.password) === normalize(password);
-        const hashOk = data.password_hash && data.password_hash === hash;
-
-        if (!legacyOk && !hashOk){
-          showLoginError("USUÁRIO OU SENHA INVÁLIDOS");
-          return;
-        }
-
-        const result = await createCurrentUserFromDb(data);
-
-        if (result.user.accessState === "expired"){
-          showLoginError("ACESSO EXPIRADO");
-          return;
-        }
-
-        if (result.user.accessState === "disabled"){
-          showLoginError("ACESSO DESATIVADO");
-          return;
-        }
-
-        const theme = THEMES[result.themeKey];
-        const panelName = result.user.panelType === "MIX"
-          ? "MISTO MENU"
-          : result.user.panelType + " MENU";
-
-        document.getElementById("welcomeUser").textContent = result.user.username.toUpperCase();
-        document.getElementById("welcomePanel").textContent = "ENTRANDO EM " + panelName + "...";
-        setAvatarVisual(
-          document.getElementById("welcomeAvatarImg"),
-          document.getElementById("welcomeAvatarLetter"),
-          result.user.avatar || "",
-          result.user.avatarBadge
-        );
-
-        document.getElementById("loginWrap").classList.add("hide");
-        setTimeout(() => document.getElementById("welcomeOverlay").classList.add("show"), 500);
-        setTimeout(() => makeVirusAnimation(theme.color), 260);
-        setTimeout(() => finalizarLogin(result.themeKey, result.user), 5800);
-      } catch (e){
-        showLoginError("ERRO AO CONECTAR NO SUPABASE");
-      }
-    }
-
-    function logout(){
-      document.getElementById("appScreen").classList.add("hidden");
-      document.getElementById("loginScreen").classList.remove("hidden");
-      document.getElementById("loginWrap").classList.remove("hide");
-      document.getElementById("welcomeOverlay").classList.remove("show");
-      document.getElementById("password").value = "";
-      document.getElementById("username").value = "";
-      clearLoginMessages();
-      clearDevForm();
-      closeProfilePopup(true);
-      currentUser = null;
-      currentPreview = "";
-      currentView = "";
-      editingUserId = null;
-      editingSnapshot = null;
-      setTheme("hg");
-      document.getElementById("baseBg").style.background = "linear-gradient(180deg,#2563eb 0%, #3b82f6 46%, #f8fafc 46%, #f8fafc 100%)";
-      document.getElementById("topArea").style.background = "linear-gradient(180deg,#2563eb 0%, #3b82f6 100%)";
-      const canvas = document.getElementById("virusCanvas");
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    document.getElementById("username").addEventListener("keydown", e => {
-      if (e.key === "Enter") fazerLogin();
-    });
-
-    document.getElementById("password").addEventListener("keydown", e => {
-      if (e.key === "Enter") fazerLogin();
-    });
-
-    window.addEventListener("resize", () => {
-      const canvas = document.getElementById("virusCanvas");
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    });
   </script>
 </body>
-  </html>
+</html>
